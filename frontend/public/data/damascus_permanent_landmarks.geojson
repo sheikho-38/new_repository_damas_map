@@ -1,0 +1,887 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          36.3067,
+          33.5116
+        ]
+      },
+      "properties": {
+        "id": 14729,
+        "title": "الجامع الأموي الكبير",
+        "title_en": "Umayyad Mosque",
+        "type": "monument",
+        "tier": 1,
+        "category_slug": "tourism",
+        "icon": "landmark",
+        "color": "#064239",
+        "description": "أحد أعظم شواهد التاريخ الإسلامي وأبرز معالم دمشق القديمة والعالم."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          36.3025,
+          33.5133
+        ]
+      },
+      "properties": {
+        "id": 14730,
+        "title": "قلعة دمشق",
+        "title_en": "Citadel of Damascus",
+        "type": "monument",
+        "tier": 1,
+        "category_slug": "tourism",
+        "icon": "shield",
+        "color": "#064239",
+        "description": "قلعة حصينة من العصر الأيوبي والمملوكي تقع في الزاوية الشمالية الغربية لدمشق القديمة."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          36.2766,
+          33.5138
+        ]
+      },
+      "properties": {
+        "id": 13059,
+        "title": "ساحة الأمويين",
+        "title_en": "Umayyad Square",
+        "type": "square",
+        "tier": 1,
+        "category_slug": "tourism",
+        "icon": "map-pin",
+        "color": "#c8a76a",
+        "description": "أكبر وأشهر ساحات العاصمة دمشق وبوابة غرب المدينة، تضم نصب السيف الدمشقي الشهير."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          36.2974,
+          33.5129
+        ]
+      },
+      "properties": {
+        "id": 10340,
+        "title": "ساحة المرجة",
+        "title_en": "Marjeh Square",
+        "type": "square",
+        "tier": 1,
+        "category_slug": "tourism",
+        "icon": "map-pin",
+        "color": "#c8a76a",
+        "description": "ساحة الشهداء التاريخية وقلب دمشق التجاري والإداري العريق بنصبها التذكاري الشهير."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          36.2961,
+          33.5206
+        ]
+      },
+      "properties": {
+        "id": 13080,
+        "title": "ساحة السبع بحرات",
+        "title_en": "Sabaa Bahrat Square",
+        "type": "square",
+        "tier": 1,
+        "category_slug": "tourism",
+        "icon": "map-pin",
+        "color": "#c8a76a",
+        "description": "أحد أهم المحاور المرورية في مركز دمشق تربط بين شارع 29 أيار والقصاع والصالحية."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          36.2949,
+          33.5115
+        ]
+      },
+      "properties": {
+        "id": 14731,
+        "title": "محطة الحجاز",
+        "title_en": "Hejaz Railway Station",
+        "type": "monument",
+        "tier": 1,
+        "category_slug": "tourism",
+        "icon": "landmark",
+        "color": "#064239",
+        "description": "المحطة التاريخية للخط الحديدي الحجازي بنمطها المعماري المشرقي البديع وسقفها الخشبي المزخرف."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          36.3031,
+          33.5109
+        ]
+      },
+      "properties": {
+        "id": 14732,
+        "title": "سوق الحميدية",
+        "title_en": "Al-Hamidiyah Souq",
+        "type": "monument",
+        "tier": 1,
+        "category_slug": "tourism",
+        "icon": "landmark",
+        "color": "#064239",
+        "description": "أشهر وأقدم الأسواق المغطاة في الشرق الأوسط، يمتد من الدرويشية إلى باحة الجامع الأموي."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          36.2698,
+          33.5169
+        ]
+      },
+      "properties": {
+        "id": 13175,
+        "title": "حديقة الأمويين",
+        "title_en": "Umayyad Park",
+        "type": "park",
+        "tier": 1,
+        "category_slug": "public-services",
+        "icon": "sparkles",
+        "color": "#059669",
+        "description": "أكبر رئة خضراء في وسط دمشق، تحتضن معارض الزهور السنوية والمسطحات المائية البديعة."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          36.2755,
+          33.5412
+        ]
+      },
+      "properties": {
+        "id": 14733,
+        "title": "جبل قاسيون (إطلالة دمشق)",
+        "title_en": "Mount Qasioun Lookout",
+        "type": "monument",
+        "tier": 1,
+        "category_slug": "tourism",
+        "icon": "landmark",
+        "color": "#064239",
+        "description": "الجبل الحاضن لدمشق وإطلالتها البانورامية الشهيرة التي تكشف كامل غوطة دمشق ومعالمها."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          36.2778,
+          33.5144
+        ]
+      },
+      "properties": {
+        "id": 14734,
+        "title": "دار الأوبرا السورية",
+        "title_en": "Syrian Opera House",
+        "type": "monument",
+        "tier": 2,
+        "category_slug": "tourism",
+        "icon": "landmark",
+        "color": "#064239",
+        "description": "دار الأوبرا ودار الثقافة والفنون، الصرح الموسيقي والمسرحي الرائد في ساحة الأمويين."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          36.29,
+          33.5125
+        ]
+      },
+      "properties": {
+        "id": 14735,
+        "title": "المتحف الوطني بدمشق",
+        "title_en": "National Museum of Damascus",
+        "type": "monument",
+        "tier": 2,
+        "category_slug": "tourism",
+        "icon": "landmark",
+        "color": "#064239",
+        "description": "أكبر متاحف سورية وأحد أهم متاحف الآثار في العالم بواجهته المنقولة من قصر الحير الغربي."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          36.2914,
+          33.5124
+        ]
+      },
+      "properties": {
+        "id": 13023,
+        "title": "التكية السليمانية",
+        "title_en": "Sulaymaniyya Takiyya",
+        "type": "monument",
+        "tier": 2,
+        "category_slug": "tourism",
+        "icon": "landmark",
+        "color": "#064239",
+        "description": "تحفة المعمار العثماني من تصميم المعماري سنان على ضفاف نهر بردى، تضم سوق المهن اليدوية."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          36.3069,
+          33.5097
+        ]
+      },
+      "properties": {
+        "id": 14736,
+        "title": "قصر العظم",
+        "title_en": "Azm Palace",
+        "type": "monument",
+        "tier": 2,
+        "category_slug": "tourism",
+        "icon": "landmark",
+        "color": "#064239",
+        "description": "أروع نماذج القصور الدمشقية التاريخية ومقر متحف التقاليد الشعبية والصنائع اليدوية."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          36.3073,
+          33.5133
+        ]
+      },
+      "properties": {
+        "id": 14512,
+        "title": "مقام السيدة رقية",
+        "title_en": "Sayyida Ruqayya Shrine",
+        "type": "monument",
+        "tier": 2,
+        "category_slug": "tourism",
+        "icon": "landmark",
+        "color": "#064239",
+        "description": "صرح ديني وتراثي بارز قريب من الجامع الأموي يتميز بعمارته الزخرفية والمرايا الدمشقية."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          36.3057,
+          33.5123
+        ]
+      },
+      "properties": {
+        "id": 14737,
+        "title": "ضريح صلاح الدين الأيوبي",
+        "title_en": "Mausoleum of Saladin",
+        "type": "monument",
+        "tier": 2,
+        "category_slug": "tourism",
+        "icon": "landmark",
+        "color": "#064239",
+        "description": "المدفن التاريخي للقائد صلاح الدين الأيوبي محاذياً للجدار الشمالي للجامع الأموي."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          36.2965,
+          33.5204
+        ]
+      },
+      "properties": {
+        "id": 14738,
+        "title": "مصرف سورية المركزي",
+        "title_en": "Central Bank of Syria",
+        "type": "monument",
+        "tier": 2,
+        "category_slug": "economy",
+        "icon": "landmark",
+        "color": "#064239",
+        "description": "المبنى التاريخي للبنك المركزي في ساحة السبع بحرات ورمز الاستقرار المالي والنقدي."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          36.2955,
+          33.5166
+        ]
+      },
+      "properties": {
+        "id": 14739,
+        "title": "مبنى محافظة دمشق",
+        "title_en": "Damascus Governorate HQ",
+        "type": "monument",
+        "tier": 2,
+        "category_slug": "government",
+        "icon": "landmark",
+        "color": "#064239",
+        "description": "المقر الرسمي والإداري لمحافظة دمشق في ساحة يوسف العظمة."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          36.2755,
+          33.5124
+        ]
+      },
+      "properties": {
+        "id": 14740,
+        "title": "مبنى الإذاعة والتلفزيون",
+        "title_en": "Radio & TV Building",
+        "type": "monument",
+        "tier": 2,
+        "category_slug": "government",
+        "icon": "landmark",
+        "color": "#064239",
+        "description": "صرح الإعلام السوري الرسمي المطل على ساحة الأمويين والربوة."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          36.2737,
+          33.5132
+        ]
+      },
+      "properties": {
+        "id": 14741,
+        "title": "فندق الشيراتون",
+        "title_en": "Sheraton Damascus Hotel",
+        "type": "monument",
+        "tier": 2,
+        "category_slug": "tourism",
+        "icon": "landmark",
+        "color": "#064239",
+        "description": "فندق دمشق التاريخي بطرازه المعماري المتميز على مدخل أوتوستراد المزة وساحة الأمويين."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          36.269,
+          33.5074
+        ]
+      },
+      "properties": {
+        "id": 10809,
+        "title": "جامعة دمشق (مجمع البرامكة)",
+        "title_en": "Damascus University",
+        "type": "monument",
+        "tier": 2,
+        "category_slug": "education",
+        "icon": "landmark",
+        "color": "#064239",
+        "description": "أعرق وأكبر جامعات سورية، مهد التعليم العالي في بلاد الشام منذ مطلع القرن العشرين."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          36.2776,
+          33.5151
+        ]
+      },
+      "properties": {
+        "id": 11208,
+        "title": "المكتبة الوطنية السورية",
+        "title_en": "National Library of Syria",
+        "type": "monument",
+        "tier": 2,
+        "category_slug": "education",
+        "icon": "landmark",
+        "color": "#064239",
+        "description": "المكتبة الوطنية الكبرى ومركز الإيداع القانوني والتراث الثقافي المطل على ساحة الأمويين."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          36.3006,
+          33.5274
+        ]
+      },
+      "properties": {
+        "id": 14742,
+        "title": "مدينة الفيحاء الرياضية",
+        "title_en": "Al-Fayhaa Sports Complex",
+        "type": "monument",
+        "tier": 2,
+        "category_slug": "public-services",
+        "icon": "sparkles",
+        "color": "#064239",
+        "description": "المجمع الرياضي الأبرز في منطقة المزرعة، يضم الصالات المغلقة والملاعب والمسابح الأولمبية."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          36.3214,
+          33.5276
+        ]
+      },
+      "properties": {
+        "id": 14743,
+        "title": "ملعب العباسيين",
+        "title_en": "Al-Abbasiyeen Stadium",
+        "type": "monument",
+        "tier": 2,
+        "category_slug": "public-services",
+        "icon": "sparkles",
+        "color": "#064239",
+        "description": "الاستاد الرياضي التاريخي للجمهورية في شرق دمشق، شهد أعظم بطولات ومباريات كرة القدم."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          36.3212,
+          33.5354
+        ]
+      },
+      "properties": {
+        "id": 13014,
+        "title": "بانوراما دمشق",
+        "title_en": "Damascus Panorama",
+        "type": "monument",
+        "tier": 2,
+        "category_slug": "tourism",
+        "icon": "landmark",
+        "color": "#064239",
+        "description": "متحف ومعلم تذكاري بانورامي على المدخل الشمالي للعاصمة دمشق."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          36.2952,
+          33.5163
+        ]
+      },
+      "properties": {
+        "id": 13100,
+        "title": "ساحة يوسف العظمة",
+        "title_en": "Yousef Al-Azmeh Square",
+        "type": "square",
+        "tier": 2,
+        "category_slug": "tourism",
+        "icon": "map-pin",
+        "color": "#c8a76a",
+        "description": "ساحة المحافظة التاريخية بتمثال البطل يوسف العظمة، تربط بين الصالحية والمرجة وبنك سورية."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          36.3185,
+          33.5242
+        ]
+      },
+      "properties": {
+        "id": 13085,
+        "title": "ساحة العباسيين",
+        "title_en": "Al-Abbasiyeen Square",
+        "type": "square",
+        "tier": 2,
+        "category_slug": "tourism",
+        "icon": "map-pin",
+        "color": "#c8a76a",
+        "description": "ملتقى محاور شرق دمشق نحو الغوطة والقصاع وبرزة وحلب، إحدى أكبر وأهم عقد المرور."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          36.2903,
+          33.5214
+        ]
+      },
+      "properties": {
+        "id": 14744,
+        "title": "ساحة عرنوس",
+        "title_en": "Arnous Square",
+        "type": "square",
+        "tier": 2,
+        "category_slug": "tourism",
+        "icon": "map-pin",
+        "color": "#c8a76a",
+        "description": "قلب الصالحية النابض بحديقتها وسوقها التجاري الشهير، ونقطة تقاطع شوارع الحلبوني والشهداء."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          36.2934,
+          33.5236
+        ]
+      },
+      "properties": {
+        "id": 13083,
+        "title": "ساحة الشهبندر",
+        "title_en": "Al-Shahbandar Square",
+        "type": "square",
+        "tier": 2,
+        "category_slug": "tourism",
+        "icon": "map-pin",
+        "color": "#c8a76a",
+        "description": "عقدة حيوية تصل بين المزرعة والميسات ومحيط وزارة التعليم العالي وشارع بغداد."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          36.3015,
+          33.4988
+        ]
+      },
+      "properties": {
+        "id": 14745,
+        "title": "ساحة باب مصلى",
+        "title_en": "Bab Musalla Square",
+        "type": "square",
+        "tier": 2,
+        "category_slug": "tourism",
+        "icon": "map-pin",
+        "color": "#c8a76a",
+        "description": "محور جنوب دمشق التاريخي ومدخل الميدان الفوقاني ومركز انطلاق المواصلات نحو الريف والجنوب."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          36.2783,
+          33.5105
+        ]
+      },
+      "properties": {
+        "id": 13069,
+        "title": "ساحة الجمارك",
+        "title_en": "Al-Jamarek Square",
+        "type": "square",
+        "tier": 2,
+        "category_slug": "tourism",
+        "icon": "map-pin",
+        "color": "#c8a76a",
+        "description": "ملتقى نفق المواساة والبرامكة وأوتوستراد المزة، مركز حيوي لحركة المشافي والجامعات."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          36.2936,
+          33.527
+        ]
+      },
+      "properties": {
+        "id": 13096,
+        "title": "ساحة الميسات",
+        "title_en": "Al-Maysat Square",
+        "type": "square",
+        "tier": 2,
+        "category_slug": "tourism",
+        "icon": "map-pin",
+        "color": "#c8a76a",
+        "description": "تقاطع حيوي عند سفح جبل قاسيون يربط ركن الدين والمزرعة والصالحية وشارع برنية."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          36.2999,
+          33.5227
+        ]
+      },
+      "properties": {
+        "id": 13239,
+        "title": "ساحة المزرعة",
+        "title_en": "Al-Mazraa Square",
+        "type": "square",
+        "tier": 2,
+        "category_slug": "tourism",
+        "icon": "map-pin",
+        "color": "#c8a76a",
+        "description": "مركز حي المزرعة التجاري والسياحي قرب جامع الإيمان والحديقة العامة."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          36.3152,
+          33.5135
+        ]
+      },
+      "properties": {
+        "id": 13060,
+        "title": "ساحة باب توما",
+        "title_en": "Bab Touma Square",
+        "type": "square",
+        "tier": 2,
+        "category_slug": "tourism",
+        "icon": "map-pin",
+        "color": "#c8a76a",
+        "description": "بوابة دمشق المسيحية والتراثية، نقطة ارتكاز حيوية لحركة الأسواق والأزقة التاريخية والقصاع."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          36.3195,
+          33.5097
+        ]
+      },
+      "properties": {
+        "id": 14746,
+        "title": "ساحة باب شرقي",
+        "title_en": "Bab Sharqi Square",
+        "type": "square",
+        "tier": 2,
+        "category_slug": "tourism",
+        "icon": "map-pin",
+        "color": "#c8a76a",
+        "description": "البوابة الرومانية الشرقية للشارع المستقيم (مدحت باشا)، إحدى أقدم مداخل دمشق التاريخية."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          36.2801,
+          33.5175
+        ]
+      },
+      "properties": {
+        "id": 13178,
+        "title": "حديقة الجاحظ",
+        "title_en": "Al-Jahiz Park",
+        "type": "park",
+        "tier": 2,
+        "category_slug": "public-services",
+        "icon": "sparkles",
+        "color": "#059669",
+        "description": "حديقة دمشقية عريقة في حي أبو رمانة الرفيع، ملاذ عائلي شهير بظلال أشجارها المعمرة."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          36.2884,
+          33.5194
+        ]
+      },
+      "properties": {
+        "id": 13193,
+        "title": "حديقة السبكي",
+        "title_en": "Al-Subki Park",
+        "type": "park",
+        "tier": 2,
+        "category_slug": "public-services",
+        "icon": "sparkles",
+        "color": "#059669",
+        "description": "متنزه شهير ومجدد في قلب الشعلان والصالحية بأحواضه المائية ونوافيره الجميلة."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          36.2868,
+          33.5198
+        ]
+      },
+      "properties": {
+        "id": 14747,
+        "title": "ساحة الجلاء",
+        "title_en": "Al-Jalaa Square",
+        "type": "square",
+        "tier": 3,
+        "category_slug": "tourism",
+        "icon": "map-pin",
+        "color": "#c8a76a",
+        "description": "ساحة أنيقة في حي أبو رمانة الدبلوماسي تقاطع شارعي الجلاء والمهدي بن بركة."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          36.2828,
+          33.5211
+        ]
+      },
+      "properties": {
+        "id": 13077,
+        "title": "ساحة الروضة",
+        "title_en": "Al-Rawda Square",
+        "type": "square",
+        "tier": 3,
+        "category_slug": "tourism",
+        "icon": "map-pin",
+        "color": "#c8a76a",
+        "description": "مركز حي الروضة الراقي بنوافيره الهادئة ومحيطه السكني والدبلوماسي المتميز."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          36.2961,
+          33.5348
+        ]
+      },
+      "properties": {
+        "id": 13082,
+        "title": "ساحة شمدين",
+        "title_en": "Shamdin Square",
+        "type": "square",
+        "tier": 3,
+        "category_slug": "tourism",
+        "icon": "map-pin",
+        "color": "#c8a76a",
+        "description": "ساحة شهيرة ومفصل مروري في ركن الدين تصعد نحو جبل قاسيون والمدارس الشرعية التاريخية."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          36.268,
+          33.5225
+        ]
+      },
+      "properties": {
+        "id": 13234,
+        "title": "حديقة النيربين",
+        "title_en": "Al-Nayrabayn Park",
+        "type": "park",
+        "tier": 3,
+        "category_slug": "public-services",
+        "icon": "sparkles",
+        "color": "#059669",
+        "description": "حديقة هادئة على مجرى فروع بردى في محيط الربوة والشارع السياحي القديم."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          36.3203,
+          33.5307
+        ]
+      },
+      "properties": {
+        "id": 13214,
+        "title": "حديقة الفيحاء",
+        "title_en": "Al-Fayhaa Park",
+        "type": "park",
+        "tier": 3,
+        "category_slug": "public-services",
+        "icon": "sparkles",
+        "color": "#059669",
+        "description": "حديقة عامة رحبة تخدم سكان العباسيين والتجارة وشارع فارس الخوري."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          36.2582,
+          33.5085
+        ]
+      },
+      "properties": {
+        "id": 14748,
+        "title": "حديقة البيئة (المزة)",
+        "title_en": "Al-Bee'ah Park",
+        "type": "park",
+        "tier": 3,
+        "category_slug": "public-services",
+        "icon": "sparkles",
+        "color": "#059669",
+        "description": "حديقة بيئية نموذجية في أوتوستراد المزة تطل على الفيلات الغربية وتوفر مسارات مشي مشجرة."
+      }
+    }
+  ]
+}

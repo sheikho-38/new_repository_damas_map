@@ -1,0 +1,31 @@
+# Virtual Environment
+backend/venv*/
+venv*/
+*.pyc
+__pycache__/
+*/__pycache__/
+*/*/__pycache__/
+backend/*.sqlite3
+*.sqlite3
+
+
+# One-off scripts and temporary tools (keep local, do not push to git)
+/scripts/
+backend/places/management/commands/seed_categories.py
+*.bak
+
+# Node modules & Next.js build
+node_modules/
+frontend/node_modules/
+frontend/.next/
+frontend/out/
+
+# System / IDE
+.vscode/
+.idea/
+*.log
+.DS_Store
+*/.DS_Store
+*/*/.DS_Store
+Thumbs.db
+docs/
