@@ -77,3 +77,7 @@ npm run dev
 
 - رابط الخريطة الرئيسي: `http://localhost:3000/` أو `http://localhost:3000/viewer`
 - الخريطة تعمل **محلياً 100% Offline** بدون الحاجة لأي اتصال خارجي.
+
+
+للتواصل مع الداشبورد
+python -m pip install django-cors-headers
