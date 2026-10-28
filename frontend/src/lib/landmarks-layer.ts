@@ -33,6 +33,7 @@ export function setupLandmarkLayers(
   map.addSource('damascus-permanent-landmarks', {
     type: 'geojson',
     data: getAssetUrl('/data/damascus_permanent_landmarks.geojson'),
+    attribution: '<a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">© OpenStreetMap contributors</a>',
     promoteId: 'id',
   });
 

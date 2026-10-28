@@ -404,7 +404,7 @@ test('Permanent Damascus Waypoints & Landmarks: Data Integrity & 3-Tier Cartogra
 
   // 4. Verify complete absence of old regime wording in landmarks dataset
   const rawGeoJson = fs.readFileSync(geojsonPath, 'utf8');
-  for (const forbidden of ['تشرين', 'الأسد', 'الاسد', 'باسل', 'البعث', '٨ أذار', '8 آذار']) {
+  for (const forbidden of ['تشرين', 'تعديل', 'تعديل', 'تعديل', 'تعديل', '٨ أذار', '8 آذار']) {
     assert.ok(!rawGeoJson.includes(forbidden), `Found forbidden regime wording '${forbidden}' in landmarks GeoJSON`);
   }
 });

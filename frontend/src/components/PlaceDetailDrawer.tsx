@@ -49,12 +49,10 @@ export interface PlaceDetailData {
     name_ar: string;
     slug: string;
     icon: string;
-    color: string;
   };
   sub_category?: {
     name_ar: string;
     icon?: string;
-    color?: string;
     is_private: boolean;
   };
   location: {
@@ -323,7 +321,7 @@ export default function PlaceDetailDrawer({
           <div className="flex items-center gap-2 min-w-0 flex-1">
             <div 
               className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0 shadow-xs"
-              style={{ backgroundColor: place.category.color || '#064239' }}
+              style={{ backgroundColor: '#064239' }}
             >
               {getCategoryIcon(place.category.slug)}
             </div>

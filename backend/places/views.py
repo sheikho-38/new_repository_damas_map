@@ -74,6 +74,37 @@ def list_admin_areas_geojson(request):
 
 
 @require_GET
+def list_streets_geojson(request):
+    """Serve active street geometry and names from PostgreSQL for map rendering."""
+    features = []
+    for street in Street.objects.filter(is_active=True).iterator():
+        highway = street.highway_type or 'residential'
+        road_class = highway.removesuffix('_link')
+        if road_class in {'residential', 'unclassified', 'living_street', 'road'}:
+            road_class = 'minor'
+        elif road_class in {'footway', 'cycleway', 'pedestrian', 'steps', 'bridleway'}:
+            road_class = 'path'
+        features.append({
+            'type': 'Feature',
+            'id': street.id,
+            'properties': {
+                'id': street.id,
+                'name': street.name_ar or street.name_en,
+                'name:ar': street.name_ar or street.name_en,
+                'name:latin': street.name_en,
+                'name_ar': street.name_ar,
+                'name_en': street.name_en,
+                'highway_type': highway,
+                'class': road_class,
+                'ramp': int(highway.endswith('_link')),
+                'admin_area_id': street.admin_area_id,
+            },
+            'geometry': street.geometry,
+        })
+    return JsonResponse({'type': 'FeatureCollection', 'count': len(features), 'features': features})
+
+
+@require_GET
 def list_categories(request):
     """
     إرجاع قائمة تصنيفات الطبقات (مشافي، مدارس، مباني حكومية...) مع عدد الأماكن
@@ -87,15 +118,15 @@ def list_categories(request):
             "name_ar": cat.name_ar,
             "name_en": cat.name_en,
             "icon": cat.icon,
-            "color": cat.color,
+            "sort_order": cat.sort_order,
             "places_count": cat.places.filter(is_visible=True).count(),
             "subcategories": [
                 {
                     "id": sub.id,
                     "slug": sub.slug,
                     "name_ar": sub.name_ar,
+                    "name_en": sub.name_en,
                     "icon": sub.effective_icon,
-                    "color": sub.effective_color,
                 }
                 for sub in cat.subcategories.all()
             ]

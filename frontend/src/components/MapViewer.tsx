@@ -8,6 +8,7 @@ import CategoryCommandBar from './CategoryCommandBar';
 import type { CategoryInfo } from './LayersPanel';
 import PlaceDetailDrawer, { PlaceDetailData } from './PlaceDetailDrawer';
 import { createPlacePreview } from '@/lib/place-preview';
+import { useDatabaseMapData } from '@/lib/database-map-style';
 import UserLocationButton from './UserLocationButton';
 import { PLATFORM_CATEGORIES, mergePlatformCategories } from '@/lib/platform-categories';
 import RoutingPanel from './RoutingPanel';
@@ -117,17 +118,26 @@ export default function MapViewer({
     return getChildNeighborhoods(adminFeatures, selectedMunicipality.id).map((f) => f.properties);
   }, [selectedMunicipality, adminFeatures]);
 
-  // جلب ملف الـ GeoJSON محلياً للذاكرة للتعامل مع الحدود الجغرافية والأحياء التابعة بسرعة فائقة
+  // تحميل الحدود الإدارية من قاعدة البيانات عبر API للخريطة وقوائم الأحياء
   useEffect(() => {
-    fetch(getAssetUrl('/data/damascus_admin_areas.geojson'))
-      .then((res) => res.json())
+    const controller = new AbortController();
+    fetch(`${getApiBaseUrl()}/admin-areas/`, { signal: controller.signal })
+      .then((res) => {
+        if (!res.ok) throw new Error(`Admin areas request failed: ${res.status}`);
+        return res.json();
+      })
       .then((data) => {
         adminGeoJsonRef.current = data;
         if (data && Array.isArray(data.features)) {
           setAdminFeatures(data.features);
+          const source = mapInstanceRef.current?.getSource('admin-boundaries');
+          if (source && 'setData' in source) source.setData(data);
         }
       })
-      .catch((err) => console.error('Failed to load admin GeoJSON:', err));
+      .catch((err) => {
+        if (err.name !== 'AbortError') console.error('Failed to load admin GeoJSON:', err);
+      });
+    return () => controller.abort();
   }, []);
 
   // 3. حالة شبكة المواصلات العامة
@@ -218,7 +228,6 @@ export default function MapViewer({
                 id: selectedPlace.id,
                 title: selectedPlace.title,
                 category_slug: selectedPlace.category?.slug || '',
-                category_color: selectedPlace.category?.color || '#064239',
               },
             };
             source.setData({
@@ -293,7 +302,7 @@ export default function MapViewer({
         type: 'circle',
         source: 'places-poi-source',
         paint: {
-          'circle-color': ['get', 'category_color'],
+          'circle-color': '#064239',
           'circle-radius': [
             'interpolate',
             ['linear'],
@@ -926,9 +935,9 @@ export default function MapViewer({
 
       try {
         const res = await fetch(getAssetUrl('/damascus-clean-style.json?v=2'));
-        const style = await res.json();
+        const style = useDatabaseMapData(await res.json(), getApiBaseUrl());
 
-        if (style.sources && style.sources.openmaptiles) {
+        if (style.sources.openmaptiles?.type === 'vector') {
           style.sources.openmaptiles.tiles = [
             getAssetUrl('/vector-tiles/{z}/{x}/{y}.pbf'),
           ];
@@ -959,6 +968,10 @@ export default function MapViewer({
           new maplibregl.ScaleControl({ unit: 'metric' }),
           'bottom-left'
         );
+        map.addControl(
+          new maplibregl.AttributionControl({ compact: true }),
+          'bottom-left'
+        );
 
         // إعداد طبقات التقسيمات الإدارية الذكية (التسلسل الهرمي: بلديات ثم أحياء)
         const setupAdminLayers = () => {
@@ -966,7 +979,7 @@ export default function MapViewer({
 
           map.addSource('admin-boundaries', {
             type: 'geojson',
-            data: getAssetUrl('/data/damascus_admin_areas.geojson'),
+            data: adminGeoJsonRef.current || { type: 'FeatureCollection', features: [] },
             promoteId: 'id',
           });
 
@@ -1620,7 +1633,14 @@ export default function MapViewer({
         const res = await fetch(`${getApiBaseUrl()}/places/${item.id}/`);
         if (res.ok) {
           const pData = await res.json();
-          setSelectedPlace(current => current === preview ? pData : current);
+          setSelectedPlace(current => current === preview ? {
+            ...pData,
+            location: {
+              ...pData.location,
+              longitude: item.coordinates[0],
+              latitude: item.coordinates[1],
+            },
+          } : current);
         }
       } catch (err) {
         console.error('Error fetching landmark detail:', err);

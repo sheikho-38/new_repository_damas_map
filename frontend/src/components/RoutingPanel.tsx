@@ -55,7 +55,7 @@ export default function RoutingPanel({
   const [loading, setLoading] = useState(false);
   const [routeResult, setRouteResult] = useState<RouteResult | null>(null);
 
-  // نقطة الانطلاق الافتراضية: ساحة المرجة / جسر الرئيس (قلب دمشق)
+  // نقطة الانطلاق الافتراضية: ساحة المرجة / جسر الحرية (قلب دمشق)
   const [origin, setOrigin] = useState({
     title: 'جسر الحرية / ساحة الأمويين',
     lat: 33.5132,
