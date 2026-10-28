@@ -30,6 +30,3 @@ Thumbs.db
 docs/
 
 # BRouter runs from the official Docker image; these copied local binaries are not used.
-/brouter/*.jar
-/brouter/*.apk
-/brouter/lib/
