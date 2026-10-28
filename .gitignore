@@ -11,7 +11,6 @@ backend/*.sqlite3
 
 # One-off scripts and temporary tools (keep local, do not push to git)
 /scripts/
-backend/places/management/commands/seed_categories.py
 *.bak
 
 # Node modules & Next.js build
