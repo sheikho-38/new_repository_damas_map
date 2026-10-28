@@ -78,6 +78,27 @@ npm run dev
 - رابط الخريطة الرئيسي: `http://localhost:3000/` أو `http://localhost:3000/viewer`
 - الخريطة تعمل **محلياً 100% Offline** بدون الحاجة لأي اتصال خارجي.
 
+## تشغيل لوحة التحكم (Dashboard)
 
-للتواصل مع الداشبورد
-python -m pip install django-cors-headers
+تحتاج لوحة التحكم إلى Node.js 20.19 أو أحدث (أو 22.12 أو أحدث) وإلى الـ backend يعمل على `http://127.0.0.1:8000`.
+افتح PowerShell من جذر المشروع وشغّل:
+
+```powershell
+cd dashboard
+# نفّذ هذا السطر مرة واحدة فقط إذا لم يكن لديك ملف .env
+Copy-Item .env.example .env
+npm install
+npm run dev
+```
+
+افتح الرابط الذي يظهر في الطرفية (عادةً `http://localhost:5173`). يحدد `VITE_API_URL` في `dashboard/.env` عنوان الـ API؛ القيمة الافتراضية هي `http://127.0.0.1:8000/api`.
+إذا غيّرت العنوان أو المنفذ، تأكد أن إعداد CORS في Django يسمح بعنوان لوحة التحكم.
+
+## تشغيل BRouter
+
+يستخدم الـ backend خدمة BRouter HTTP على المنفذ `17777` لحساب مسارات الباصات. ملفات `brouter/segments4` و`brouter/profiles2` في هذا المشروع هي بيانات الخرائط والبروفايلات؛ أما ملفات JAR وAPK المنسوخة فهي ليست خادم HTTP ولا يحتاجها هذا الإعداد. شغّل Docker Desktop، ثم افتح PowerShell من جذر المشروع وشغّل الحاوية:
+
+```powershell
+cd brouter
+java -cp brouter-1.7.10-all.jar btools.server.RouteServer segments4 profiles2 customprofiles 17777 1
+```
