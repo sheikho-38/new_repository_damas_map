@@ -27,7 +27,6 @@ export interface SubcategoryInfo {
   name_ar: string;
   name_en?: string;
   icon?: string;
-  color?: string;
   is_private?: boolean;
 }
 
@@ -37,7 +36,7 @@ export interface CategoryInfo {
   name_ar: string;
   name_en: string;
   icon: string;
-  color: string;
+  sort_order: number;
   places_count: number;
   subcategories?: SubcategoryInfo[];
 }
@@ -104,7 +103,7 @@ export default function LayersPanel({
       default:
         return <Layers className="w-4 h-4 text-[#064239] dark:text-emerald-400" />;
     }
-  };
+  }; 
 
   const renderSections = () => (
     <>
@@ -224,7 +223,7 @@ export default function LayersPanel({
                   <div 
                     className="w-7 h-7 rounded-lg flex items-center justify-center transition-all"
                     style={{ 
-                      backgroundColor: isSelected ? `${cat.color}18` : '#e4e4e7',
+                      backgroundColor: isSelected ? '#06423918' : '#e4e4e7',
                     }}
                   >
                     {getCategoryIcon(cat.slug)}

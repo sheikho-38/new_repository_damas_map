@@ -10,7 +10,7 @@ export const PLATFORM_CATEGORIES: CategoryInfo[] = [
   ['religious', 'دور العبادة', 'Places of Worship', 'moon'],
   ['healthcare', 'صحة', 'Healthcare', 'hospital'],
 ].map(([slug, name_ar, name_en, icon], index) => ({
-  id: -(index + 1), slug, name_ar, name_en, icon, color: '#064239', places_count: 0, subcategories: [],
+  id: -(index + 1), slug, name_ar, name_en, icon, sort_order: index + 1, places_count: 0, subcategories: [],
 }));
 
 export function mergePlatformCategories(categories: CategoryInfo[]): CategoryInfo[] {
@@ -20,5 +20,6 @@ export function mergePlatformCategories(categories: CategoryInfo[]): CategoryInf
     name_ar: category.name_ar,
   }));
   // Keep existing categories (including holy sites) accessible without reclassifying places.
-  return [...main, ...categories.filter(category => !main.some(item => item.slug === category.slug))];
+  return [...main, ...categories.filter(category => !main.some(item => item.slug === category.slug))]
+    .sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0) || a.id - b.id);
 }

@@ -201,7 +201,7 @@ html, body {
   top: max(12px, env(safe-area-inset-top, 0px));
   inset-inline: 16px;
   z-index: 30;
-  max-width: 1320px;
+  max-width: 1440px;
   margin-inline: auto;
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(160px, 220px);

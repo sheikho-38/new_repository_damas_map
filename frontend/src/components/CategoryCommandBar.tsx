@@ -60,7 +60,7 @@ export default function CategoryCommandBar({
       {/* المستوى 2: تفريعات التصنيف النشط (Subcategories Drill-Down) — أزرار ثابتة + تفريعات متمركزة تماماً فوق البحث */}
       {activeCategory ? (
         <div className="flex items-center gap-1.5 sm:gap-2 px-1 max-w-full w-max mx-auto h-full select-none" dir="rtl">
-          {/* الأزرار الثابتة التي لا تختفي أثناء التمرير (Pinned Actions: كافة الفئات + الكل) */}
+          {/* زر العودة ثابت أثناء تمرير الفئات الفرعية */}
           <div className="flex items-center gap-1.5 shrink-0 z-10">
             {/* زر العودة لكافة الفئات الرئيسية */}
             <button
@@ -69,24 +69,11 @@ export default function CategoryCommandBar({
                 onSelectCategory(null);
                 onSelectSubcategory(null);
               }}
-              className="shrink-0 h-9 sm:h-10 px-2.5 sm:px-3 rounded-xl bg-[#064239] hover:bg-[#04352e] text-[#f7f4ed] border border-[#c8a76a]/60 shadow-md flex items-center gap-1 text-xs font-black cursor-pointer active:scale-95 transition-all whitespace-nowrap"
+              className="shrink-0 w-9 h-9 sm:w-10 sm:h-10 rounded-xl text-[#c8a76a] hover:bg-[#c8a76a]/10 flex items-center justify-center cursor-pointer active:scale-95 transition-all focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#c8a76a]"
               title="العودة لعرض كافة الفئات"
+              aria-label="العودة لعرض كافة الفئات"
             >
-              <ChevronRight className="w-3.5 h-3.5 text-[#ecc988]" />
-              <span>كافة الفئات</span>
-            </button>
-
-            {/* زر عرض كل معالم الفئة (All in Category) */}
-            <button
-              type="button"
-              onClick={() => onSelectSubcategory(null)}
-              className={`shrink-0 h-9 sm:h-10 px-2.5 sm:px-3 rounded-xl text-xs font-extrabold transition-all shadow-xs cursor-pointer flex items-center gap-1 whitespace-nowrap ${
-                selectedSubcategorySlug === null
-                  ? 'bg-[#c8a76a] text-[#064239] ring-2 ring-[#064239]/40 font-black'
-                  : 'bg-[#fdfbf7]/95 dark:bg-zinc-900/95 text-zinc-700 dark:text-zinc-200 border border-[#064239]/15 hover:bg-[#edebe0]'
-              }`}
-            >
-              <span>الكل</span>
+              <ChevronRight className="w-6 h-6" aria-hidden="true" />
             </button>
           </div>
 
@@ -105,12 +92,26 @@ export default function CategoryCommandBar({
             dir="rtl"
           >
             <div className="flex items-center gap-1.5 sm:gap-2 px-1 min-w-max justify-start py-0.5">
+              <button
+                type="button"
+                onClick={() => onSelectSubcategory(null)}
+                aria-pressed={selectedSubcategorySlug === null}
+                className={`shrink-0 h-9 sm:h-10 px-3 sm:px-3.5 rounded-xl text-xs font-bold transition-all shadow-xs cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
+                  selectedSubcategorySlug === null
+                    ? 'bg-[#064239] text-[#f7f4ed] ring-2 ring-[#c8a76a] scale-[1.02]'
+                    : 'bg-[#fdfbf7]/95 dark:bg-zinc-900/95 text-zinc-700 dark:text-zinc-200 border border-[#064239]/15 hover:bg-[#edebe0] hover:text-[#064239]'
+                }`}
+              >
+                {selectedSubcategorySlug === null && <Check className="w-3.5 h-3.5 text-[#ecc988]" />}
+                <span>الكل</span>
+              </button>
               {activeCategory.subcategories && activeCategory.subcategories.map((sub: SubcategoryInfo) => {
                 const isSubSelected = selectedSubcategorySlug === sub.slug;
                 return (
                   <button
                     key={sub.slug}
                     type="button"
+                    aria-pressed={isSubSelected}
                     onClick={() => onSelectSubcategory(isSubSelected ? null : sub.slug)}
                     className={`shrink-0 h-9 sm:h-10 px-3 sm:px-3.5 rounded-xl text-xs font-bold transition-all shadow-xs cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
                       isSubSelected

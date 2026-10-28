@@ -1,0 +1,786 @@
+[
+  {
+    "id": 366,
+    "name": "حي ابن عساكر",
+    "osm_id": 13433883,
+    "osm_name": "حي ابن عساكر",
+    "iou": 0.69237,
+    "max_boundary_distance_approx_m": 103.4
+  },
+  {
+    "id": 367,
+    "name": "حي أبو جرش",
+    "osm_id": 13334716,
+    "osm_name": "حي أبو جرش",
+    "iou": 0.58102,
+    "max_boundary_distance_approx_m": 112.2
+  },
+  {
+    "id": 368,
+    "name": "حي أبو رمانة",
+    "osm_id": 13289446,
+    "osm_name": "حي أبو رمانة",
+    "iou": 0.71983,
+    "max_boundary_distance_approx_m": 257.4
+  },
+  {
+    "id": 369,
+    "name": "حي أسد الدين",
+    "osm_id": 13288134,
+    "osm_name": "حي أسد الدين",
+    "iou": 0.69091,
+    "max_boundary_distance_approx_m": 290.3
+  },
+  {
+    "id": 370,
+    "name": "حي الاخلاص",
+    "osm_id": 14041925,
+    "osm_name": "حي الإخلاص",
+    "iou": 0.81549,
+    "max_boundary_distance_approx_m": 197.5
+  },
+  {
+    "id": 371,
+    "name": "حي الاستقلال",
+    "osm_id": 13438165,
+    "osm_name": "حي الاستقلال",
+    "iou": 0.84863,
+    "max_boundary_distance_approx_m": 119.3
+  },
+  {
+    "id": 372,
+    "name": "حي الأمين",
+    "osm_id": 13442501,
+    "osm_name": "حي الأمين",
+    "iou": 0.61263,
+    "max_boundary_distance_approx_m": 125.9
+  },
+  {
+    "id": 373,
+    "name": "حي الأنصاري",
+    "osm_id": 13384158,
+    "osm_name": "حي الأنصاري",
+    "iou": 0.40031,
+    "max_boundary_distance_approx_m": 125.3
+  },
+  {
+    "id": 374,
+    "name": "حي الأيوبية",
+    "osm_id": 13288713,
+    "osm_name": "حي الأيوبية",
+    "iou": 0.49607,
+    "max_boundary_distance_approx_m": 111.4
+  },
+  {
+    "id": 375,
+    "name": "حي البرامكة",
+    "osm_id": 13384157,
+    "osm_name": "حي البرامكة",
+    "iou": 0.7561,
+    "max_boundary_distance_approx_m": 116.0
+  },
+  {
+    "id": 377,
+    "name": "حي الجلاء",
+    "osm_id": 13359472,
+    "osm_name": "حي الجلاء",
+    "iou": 0.46656,
+    "max_boundary_distance_approx_m": 114.0
+  },
+  {
+    "id": 378,
+    "name": "حي الجورة",
+    "osm_id": 13442499,
+    "osm_name": "حي الجورة",
+    "iou": 0.5211,
+    "max_boundary_distance_approx_m": 108.3
+  },
+  {
+    "id": 379,
+    "name": "حي الحبوبي",
+    "osm_id": 13289447,
+    "osm_name": "حي الحبوبي",
+    "iou": 0.57064,
+    "max_boundary_distance_approx_m": 112.5
+  },
+  {
+    "id": 380,
+    "name": "حي الحجاز",
+    "osm_id": 13384156,
+    "osm_name": "حي الحجاز",
+    "iou": 0.81333,
+    "max_boundary_distance_approx_m": 112.9
+  },
+  {
+    "id": 381,
+    "name": "حي الحريقة",
+    "osm_id": 13442504,
+    "osm_name": "حي الحريقة",
+    "iou": 0.45315,
+    "max_boundary_distance_approx_m": 218.6
+  },
+  {
+    "id": 382,
+    "name": "حي الحقلة",
+    "osm_id": 14042913,
+    "osm_name": "حي الحقلة",
+    "iou": 0.60013,
+    "max_boundary_distance_approx_m": 142.1
+  },
+  {
+    "id": 383,
+    "name": "حي الحميدية",
+    "osm_id": 13442506,
+    "osm_name": "حي الحميدية",
+    "iou": 0.52642,
+    "max_boundary_distance_approx_m": 120.2
+  },
+  {
+    "id": 384,
+    "name": "حي السيدة عائشة",
+    "osm_id": 14043002,
+    "osm_name": "حي الدحاديل",
+    "iou": 0.40602,
+    "max_boundary_distance_approx_m": 825.7
+  },
+  {
+    "id": 385,
+    "name": "حي الدقاق",
+    "osm_id": 14042915,
+    "osm_name": "حي الدقاق",
+    "iou": 0.61426,
+    "max_boundary_distance_approx_m": 107.6
+  },
+  {
+    "id": 386,
+    "name": "حي الربوة",
+    "osm_id": 13359474,
+    "osm_name": "حي الربوة",
+    "iou": 0.8599,
+    "max_boundary_distance_approx_m": 159.2
+  },
+  {
+    "id": 387,
+    "name": "حي الروضة",
+    "osm_id": 13289448,
+    "osm_name": "حي الروضة",
+    "iou": 0.61648,
+    "max_boundary_distance_approx_m": 155.7
+  },
+  {
+    "id": 388,
+    "name": "حي الزهور",
+    "osm_id": 13433882,
+    "osm_name": "حي الزهور",
+    "iou": 0.59045,
+    "max_boundary_distance_approx_m": 716.4
+  },
+  {
+    "id": 390,
+    "name": "حي السويقة",
+    "osm_id": 13384311,
+    "osm_name": "حي السويقة",
+    "iou": 0.50246,
+    "max_boundary_distance_approx_m": 113.8
+  },
+  {
+    "id": 392,
+    "name": "حي الشهداء",
+    "osm_id": 13289447,
+    "osm_name": "حي الحبوبي",
+    "iou": 0.07038,
+    "max_boundary_distance_approx_m": 517.2
+  },
+  {
+    "id": 393,
+    "name": "حي الشيخ محي الدين",
+    "osm_id": 13338692,
+    "osm_name": "حي المدارس",
+    "iou": 0.13896,
+    "max_boundary_distance_approx_m": 531.8
+  },
+  {
+    "id": 394,
+    "name": "حي العباس",
+    "osm_id": 13304264,
+    "osm_name": "حي العباس",
+    "iou": 0.76371,
+    "max_boundary_distance_approx_m": 107.7
+  },
+  {
+    "id": 395,
+    "name": "حي العدوي",
+    "osm_id": 13338557,
+    "osm_name": "حي العدوي",
+    "iou": 0.74583,
+    "max_boundary_distance_approx_m": 113.2
+  },
+  {
+    "id": 396,
+    "name": "حي العرين",
+    "osm_id": 13360834,
+    "osm_name": "حي العرين",
+    "iou": 0.61105,
+    "max_boundary_distance_approx_m": 619.5
+  },
+  {
+    "id": 397,
+    "name": "حي العسالي",
+    "osm_id": 14043005,
+    "osm_name": "حي العسالي",
+    "iou": 0.40035,
+    "max_boundary_distance_approx_m": 442.7
+  },
+  {
+    "id": 398,
+    "name": "حي العقيبة",
+    "osm_id": 13338933,
+    "osm_name": "حي العقبية",
+    "iou": 0.6477,
+    "max_boundary_distance_approx_m": 112.1
+  },
+  {
+    "id": 399,
+    "name": "حي العمارة البرانية",
+    "osm_id": 13338935,
+    "osm_name": "حي العمارة البرانية",
+    "iou": 0.30869,
+    "max_boundary_distance_approx_m": 110.6
+  },
+  {
+    "id": 400,
+    "name": "حي العمارة الجوانية",
+    "osm_id": 13442507,
+    "osm_name": "حي العمارة الجوانية",
+    "iou": 0.60243,
+    "max_boundary_distance_approx_m": 114.2
+  },
+  {
+    "id": 401,
+    "name": "حي الفالوجة",
+    "osm_id": 15775455,
+    "osm_name": "حي الفالوجة",
+    "iou": 0.69185,
+    "max_boundary_distance_approx_m": 186.3
+  },
+  {
+    "id": 402,
+    "name": "حي الفردوس",
+    "osm_id": 14041922,
+    "osm_name": "حي الفردوس",
+    "iou": 0.80501,
+    "max_boundary_distance_approx_m": 108.6
+  },
+  {
+    "id": 403,
+    "name": "حي الفيحاء",
+    "osm_id": 13288714,
+    "osm_name": "حي الفيحاء",
+    "iou": 0.70125,
+    "max_boundary_distance_approx_m": 112.4
+  },
+  {
+    "id": 404,
+    "name": "حي القابون",
+    "osm_id": 13333331,
+    "osm_name": "حي القابون",
+    "iou": 0.56565,
+    "max_boundary_distance_approx_m": 1369.3
+  },
+  {
+    "id": 405,
+    "name": "حي القاعة",
+    "osm_id": 14042914,
+    "osm_name": "حي القاعة",
+    "iou": 0.70185,
+    "max_boundary_distance_approx_m": 112.4
+  },
+  {
+    "id": 406,
+    "name": "حي القدم",
+    "osm_id": 14043060,
+    "osm_name": "حي القدم",
+    "iou": 0.66704,
+    "max_boundary_distance_approx_m": 123.6
+  },
+  {
+    "id": 407,
+    "name": "حي القدم الشرقي",
+    "osm_id": 14043004,
+    "osm_name": "حي القدم الشرقي",
+    "iou": 0.33892,
+    "max_boundary_distance_approx_m": 668.7
+  },
+  {
+    "id": 408,
+    "name": "حي القصاع",
+    "osm_id": 13337429,
+    "osm_name": "حي القصاع",
+    "iou": 0.62356,
+    "max_boundary_distance_approx_m": 125.9
+  },
+  {
+    "id": 409,
+    "name": "حي القصور",
+    "osm_id": 13338556,
+    "osm_name": "حي القصور",
+    "iou": 0.67184,
+    "max_boundary_distance_approx_m": 113.2
+  },
+  {
+    "id": 410,
+    "name": "حي القنوات",
+    "osm_id": 13384309,
+    "osm_name": "حي القنوات",
+    "iou": 0.59434,
+    "max_boundary_distance_approx_m": 110.8
+  },
+  {
+    "id": 411,
+    "name": "حي القيمرية",
+    "osm_id": 13442505,
+    "osm_name": "حي القيمرية",
+    "iou": 0.50988,
+    "max_boundary_distance_approx_m": 215.6
+  },
+  {
+    "id": 412,
+    "name": "حي الكرمل",
+    "osm_id": 15775456,
+    "osm_name": "حي الكرمل",
+    "iou": 0.60525,
+    "max_boundary_distance_approx_m": 298.5
+  },
+  {
+    "id": 413,
+    "name": "حي اللوان",
+    "osm_id": 14041921,
+    "osm_name": "حي اللوان",
+    "iou": 0.823,
+    "max_boundary_distance_approx_m": 601.7
+  },
+  {
+    "id": 414,
+    "name": "حي المالكي",
+    "osm_id": 13288839,
+    "osm_name": "حي المالكي",
+    "iou": 0.80352,
+    "max_boundary_distance_approx_m": 134.8
+  },
+  {
+    "id": 415,
+    "name": "حي المامونية",
+    "osm_id": 13337429,
+    "osm_name": "حي القصاع",
+    "iou": 0.06795,
+    "max_boundary_distance_approx_m": 868.8
+  },
+  {
+    "id": 416,
+    "name": "حي المجتهد",
+    "osm_id": 13384306,
+    "osm_name": "حي المجتهد",
+    "iou": 0.6436,
+    "max_boundary_distance_approx_m": 117.8
+  },
+  {
+    "id": 417,
+    "name": "حي المدارس",
+    "osm_id": 13338692,
+    "osm_name": "حي المدارس",
+    "iou": 0.50886,
+    "max_boundary_distance_approx_m": 133.7
+  },
+  {
+    "id": 418,
+    "name": "حي المرابط",
+    "osm_id": 13288840,
+    "osm_name": "حي المرابط",
+    "iou": 0.74639,
+    "max_boundary_distance_approx_m": 112.6
+  },
+  {
+    "id": 419,
+    "name": "حي المزرعة",
+    "osm_id": 13338558,
+    "osm_name": "حي المزرعة",
+    "iou": 0.68413,
+    "max_boundary_distance_approx_m": 112.7
+  },
+  {
+    "id": 420,
+    "name": "حي المصانع",
+    "osm_id": 13333331,
+    "osm_name": "حي القابون",
+    "iou": 0.02766,
+    "max_boundary_distance_approx_m": 1392.6
+  },
+  {
+    "id": 421,
+    "name": "حي المصطبة",
+    "osm_id": 13289444,
+    "osm_name": "حي المصطبة",
+    "iou": 0.49405,
+    "max_boundary_distance_approx_m": 168.9
+  },
+  {
+    "id": 422,
+    "name": "حي المصطفى",
+    "osm_id": 14043059,
+    "osm_name": "حي المصطفى",
+    "iou": 0.60157,
+    "max_boundary_distance_approx_m": 251.5
+  },
+  {
+    "id": 423,
+    "name": "حي المنارة",
+    "osm_id": 13297124,
+    "osm_name": "حي المنارة",
+    "iou": 0.79826,
+    "max_boundary_distance_approx_m": 373.6
+  },
+  {
+    "id": 424,
+    "name": "حي النزهة",
+    "osm_id": 13329940,
+    "osm_name": "حي النزهة",
+    "iou": 0.85146,
+    "max_boundary_distance_approx_m": 110.2
+  },
+  {
+    "id": 425,
+    "name": "حي النضال",
+    "osm_id": 13433878,
+    "osm_name": "حي النضال",
+    "iou": 0.6258,
+    "max_boundary_distance_approx_m": 194.9
+  },
+  {
+    "id": 426,
+    "name": "حي النقشبندي",
+    "osm_id": 13288135,
+    "osm_name": "حي النقشبندي",
+    "iou": 0.58428,
+    "max_boundary_distance_approx_m": 290.3
+  },
+  {
+    "id": 427,
+    "name": "حي الواحة",
+    "osm_id": 14041923,
+    "osm_name": "حي الواحة",
+    "iou": 0.81571,
+    "max_boundary_distance_approx_m": 110.9
+  },
+  {
+    "id": 428,
+    "name": "حي الوحدة",
+    "osm_id": 13433879,
+    "osm_name": "حي الوحدة",
+    "iou": 0.49857,
+    "max_boundary_distance_approx_m": 613.2
+  },
+  {
+    "id": 429,
+    "name": "حي الورود",
+    "osm_id": 13361542,
+    "osm_name": "حي الورود",
+    "iou": 0.40361,
+    "max_boundary_distance_approx_m": 685.3
+  },
+  {
+    "id": 430,
+    "name": "حي باب الجابية",
+    "osm_id": 13384310,
+    "osm_name": "حي باب الجابية",
+    "iou": 0.32319,
+    "max_boundary_distance_approx_m": 111.7
+  },
+  {
+    "id": 431,
+    "name": "حي باب توما",
+    "osm_id": 13442500,
+    "osm_name": "حي باب توما",
+    "iou": 0.6215,
+    "max_boundary_distance_approx_m": 122.1
+  },
+  {
+    "id": 432,
+    "name": "حي باب السريجة",
+    "osm_id": 13384308,
+    "osm_name": "حي باب سريجة",
+    "iou": 0.50836,
+    "max_boundary_distance_approx_m": 111.7
+  },
+  {
+    "id": 433,
+    "name": "حي باب شرقي",
+    "osm_id": 13433877,
+    "osm_name": "حي باب شرقي",
+    "iou": 0.81927,
+    "max_boundary_distance_approx_m": 114.5
+  },
+  {
+    "id": 434,
+    "name": "حي باب مصر",
+    "osm_id": 14042916,
+    "osm_name": "حي باب مصر",
+    "iou": 0.65182,
+    "max_boundary_distance_approx_m": 108.0
+  },
+  {
+    "id": 435,
+    "name": "حي برزة البلد",
+    "osm_id": 13329938,
+    "osm_name": "حي برزة البلد",
+    "iou": 0.65823,
+    "max_boundary_distance_approx_m": 684.2
+  },
+  {
+    "id": 436,
+    "name": "حي تشرين",
+    "osm_id": 13333330,
+    "osm_name": "حي تشرين",
+    "iou": 0.55156,
+    "max_boundary_distance_approx_m": 1057.1
+  },
+  {
+    "id": 437,
+    "name": "حي جوبر الشرقي",
+    "osm_id": 13438165,
+    "osm_name": "حي الاستقلال",
+    "iou": 0.00255,
+    "max_boundary_distance_approx_m": 2618.4
+  },
+  {
+    "id": 438,
+    "name": "حي جوبر الغربي",
+    "osm_id": 13438165,
+    "osm_name": "حي الاستقلال",
+    "iou": 0.00013,
+    "max_boundary_distance_approx_m": 1823.5
+  },
+  {
+    "id": 439,
+    "name": "حي الشريباتي",
+    "osm_id": 14043003,
+    "osm_name": "حي جورة الشريباتي",
+    "iou": 0.73885,
+    "max_boundary_distance_approx_m": 231.7
+  },
+  {
+    "id": 440,
+    "name": "حي حطين",
+    "osm_id": 15775457,
+    "osm_name": "حي حطين",
+    "iou": 0.67749,
+    "max_boundary_distance_approx_m": 252.3
+  },
+  {
+    "id": 441,
+    "name": "حي دمر الشرقية",
+    "osm_id": 13334691,
+    "osm_name": "حي دمر الشرقية",
+    "iou": 0.81994,
+    "max_boundary_distance_approx_m": 989.1
+  },
+  {
+    "id": 442,
+    "name": "حي دمر الغربية",
+    "osm_id": 13360832,
+    "osm_name": "حي دمر الغربية",
+    "iou": 0.54703,
+    "max_boundary_distance_approx_m": 1930.3
+  },
+  {
+    "id": 443,
+    "name": "حي روضة الميدان",
+    "osm_id": 13433881,
+    "osm_name": "حي روضة الميدان",
+    "iou": 0.46881,
+    "max_boundary_distance_approx_m": 178.6
+  },
+  {
+    "id": 444,
+    "name": "حي ساروجة",
+    "osm_id": 13338932,
+    "osm_name": "حي ساروجة",
+    "iou": 0.66644,
+    "max_boundary_distance_approx_m": 110.8
+  },
+  {
+    "id": 445,
+    "name": "حي شاغور براني",
+    "osm_id": 13433885,
+    "osm_name": "حي شاغور براني",
+    "iou": 0.69205,
+    "max_boundary_distance_approx_m": 114.5
+  },
+  {
+    "id": 446,
+    "name": "حي شاغور جواني",
+    "osm_id": 13442503,
+    "osm_name": "حي شاغور جواني",
+    "iou": 0.57551,
+    "max_boundary_distance_approx_m": 109.0
+  },
+  {
+    "id": 447,
+    "name": "حي شورى",
+    "osm_id": 13289445,
+    "osm_name": "حي شورى",
+    "iou": 0.50081,
+    "max_boundary_distance_approx_m": 197.4
+  },
+  {
+    "id": 448,
+    "name": "حي الحرية _ عش الورور",
+    "osm_id": 13298994,
+    "osm_name": "حي عش الورور",
+    "iou": 0.14534,
+    "max_boundary_distance_approx_m": 789.7
+  },
+  {
+    "id": 449,
+    "name": "حي فارس الخوري",
+    "osm_id": 13337448,
+    "osm_name": "حي فارس الخوري",
+    "iou": 0.6087,
+    "max_boundary_distance_approx_m": 111.9
+  },
+  {
+    "id": 450,
+    "name": "حي فيلات شرقية",
+    "osm_id": 13359356,
+    "osm_name": "حي فيلات شرقية",
+    "iou": 0.76119,
+    "max_boundary_distance_approx_m": 465.5
+  },
+  {
+    "id": 451,
+    "name": "حي فيلات غربية",
+    "osm_id": 13359357,
+    "osm_name": "حي فيلات غربية",
+    "iou": 0.7772,
+    "max_boundary_distance_approx_m": 432.5
+  },
+  {
+    "id": 452,
+    "name": "حي قاسيون",
+    "osm_id": 13334690,
+    "osm_name": "حي قاسيون",
+    "iou": 0.68492,
+    "max_boundary_distance_approx_m": 226.0
+  },
+  {
+    "id": 453,
+    "name": "حي قبر عاتكة",
+    "osm_id": 13384307,
+    "osm_name": "حي قبر عاتكة",
+    "iou": 0.45884,
+    "max_boundary_distance_approx_m": 114.2
+  },
+  {
+    "id": 454,
+    "name": "حي كفرسوسة البلد",
+    "osm_id": 14041924,
+    "osm_name": "حي كفر سوسة البلد",
+    "iou": 0.82081,
+    "max_boundary_distance_approx_m": 121.0
+  },
+  {
+    "id": 455,
+    "name": "حي مأذنة الشحم",
+    "osm_id": 13442502,
+    "osm_name": "حي مأذنة الشحم",
+    "iou": 0.51174,
+    "max_boundary_distance_approx_m": 111.7
+  },
+  {
+    "id": 456,
+    "name": "حي مزة 86",
+    "osm_id": 13360458,
+    "osm_name": "حي مزة ٨٦",
+    "iou": 0.78175,
+    "max_boundary_distance_approx_m": 172.1
+  },
+  {
+    "id": 457,
+    "name": "حي المزة القديمة",
+    "osm_id": 13359473,
+    "osm_name": "حي مزة القديمة",
+    "iou": 0.62643,
+    "max_boundary_distance_approx_m": 110.1
+  },
+  {
+    "id": 458,
+    "name": "حي مزة بساتين",
+    "osm_id": 14041926,
+    "osm_name": "حي مزة بساتين",
+    "iou": 0.5772,
+    "max_boundary_distance_approx_m": 177.8
+  },
+  {
+    "id": 459,
+    "name": "حي مزة جبل",
+    "osm_id": 13360457,
+    "osm_name": "حي مزة جبل",
+    "iou": 0.63574,
+    "max_boundary_distance_approx_m": 114.3
+  },
+  {
+    "id": 460,
+    "name": "حي مساكن برزة",
+    "osm_id": 13329939,
+    "osm_name": "حي مساكن برزة",
+    "iou": 0.79241,
+    "max_boundary_distance_approx_m": 110.5
+  },
+  {
+    "id": 461,
+    "name": "حي مسجد الأقصاب",
+    "osm_id": 13338934,
+    "osm_name": "حي مسجد أقصاب",
+    "iou": 0.63178,
+    "max_boundary_distance_approx_m": 125.9
+  },
+  {
+    "id": 462,
+    "name": "حي ضاحية دمر",
+    "osm_id": 13360833,
+    "osm_name": "ضاحية الشام الجديدة",
+    "iou": 0.75912,
+    "max_boundary_distance_approx_m": 602.5
+  },
+  {
+    "id": 463,
+    "name": "حي التضامن",
+    "osm_id": 13433884,
+    "osm_name": "حي التضامن",
+    "iou": 0.74009,
+    "max_boundary_distance_approx_m": 404.3
+  },
+  {
+    "id": 464,
+    "name": "حي بلال",
+    "osm_id": 13433880,
+    "osm_name": "حي البلال",
+    "iou": 0.79315,
+    "max_boundary_distance_approx_m": 243.0
+  },
+  {
+    "id": 465,
+    "name": "حي الزاهرة",
+    "osm_id": 14042915,
+    "osm_name": "حي الدقاق",
+    "iou": 0.04477,
+    "max_boundary_distance_approx_m": 1307.7
+  },
+  {
+    "id": 466,
+    "name": "حي ميدان وسطاني",
+    "osm_id": 14041923,
+    "osm_name": "حي الواحة",
+    "iou": 0.04635,
+    "max_boundary_distance_approx_m": 1514.9
+  }
+]

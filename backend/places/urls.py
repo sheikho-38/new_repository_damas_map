@@ -2,6 +2,7 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
+    path('streets/geojson/', views.list_streets_geojson, name='streets_geojson'),
     # التقسيمات الإدارية المعتمدة
     path('admin-areas/', views.list_admin_areas_geojson, name='admin_areas_geojson'),
     

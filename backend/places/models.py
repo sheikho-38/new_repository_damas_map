@@ -2,7 +2,7 @@ from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
 from .text_utils import build_search_index_text
 #! جدول التقسيمات الإدارية (AdminArea) مرتبط بنفسه عبر علاقة ForeignKey، ويحتوي على الحقول التالية:
-#!Done
+#TODO: Remove adminarea and street models and use the new geospatial data from the new database instead. The new database has a more accurate representation of administrative areas and streets in Damascus.
 class AdminArea(models.Model):
     """
     التقسيمات الإدارية الرسمية (محافظة دمشق -> البلديات والدوائر الخدمية -> الأحياء)

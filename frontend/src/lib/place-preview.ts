@@ -15,7 +15,6 @@ export function createPlacePreview(
       name_ar: String(properties.category_name_ar || properties.category_name || 'معلم على الخريطة'),
       slug: String(properties.category_slug || ''),
       icon: String(properties.icon || ''),
-      color: String(properties.category_color || properties.color || '#064239'),
     },
     location: {
       longitude: coordinates[0],

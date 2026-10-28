@@ -31,7 +31,6 @@ export interface SearchResultItem {
   title: string;
   subtitle: string;
   icon?: string;
-  color?: string;
   coordinates: [number, number];
   category_slug?: string;
   level?: number;
