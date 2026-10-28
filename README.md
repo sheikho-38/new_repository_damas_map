@@ -102,21 +102,6 @@ npm run dev
 يستخدم الـ backend خدمة BRouter HTTP على المنفذ `17777` لحساب مسارات الباصات. ملفات `brouter/segments4` و`brouter/profiles2` هي بيانات الخرائط والبروفايلات. شغّل Docker Desktop، ثم افتح PowerShell من جذر المشروع وشغّل الحاوية:
 
 ```powershell
-docker run --rm --name brouter -p 17777:17777 --mount "type=bind,source=$((Resolve-Path .\brouter\segments4).Path),target=/segments4,readonly" --mount "type=bind,source=$((Resolve-Path .\brouter\profiles2).Path),target=/profiles2,readonly" -e "JAVA_OPTS=-Xmx512M -DmaxRunningTime=300" ghcr.io/abrensch/brouter:v1.7.10
+cd brouter
+java -cp brouter-1.7.10-all.jar btools.server.RouteServer segments4 profiles2 customprofiles 17777 1
 ```
-
-اترك الطرفية مفتوحة أثناء الاستخدام. يتطلب التشغيل الأول اتصالاً بالإنترنت لتنزيل صورة Docker. اختبر الخدمة من نافذة PowerShell أخرى:
-
-```powershell
-Invoke-RestMethod "http://127.0.0.1:17777/brouter?lonlats=36.3,33.5%7C36.32,33.51&profile=car-eco&alternativeidx=0&format=geojson"
-```
-
-بعد تشغيل BRouter، شغّل Django من نافذة ثانية مع عنوان الخدمة:
-
-```powershell
-cd backend
-$env:BROUTER_URL = "http://127.0.0.1:17777"
-python manage.py runserver 8000
-```
-
-ثم شغّل لوحة التحكم باتباع التعليمات أعلاه. بيانات `segments4` المضمّنة تغطي منطقة محدودة حول دمشق؛ قد لا تتوفر مسارات خارج نطاقها.
