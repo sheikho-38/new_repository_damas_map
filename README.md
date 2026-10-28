@@ -43,6 +43,9 @@ pip install -r requirements.txt
 # تطبيق ترحيلات قاعدة البيانات
 python manage.py migrate
 
+# SEED EVERYTHING:
+python manage.py seed_admin_areas & python manage.py seed_categories & python manage.py seed_poi_rich_details & python manage.py seed_streets
+
 # استيراد الحدود والتقسيمات الإدارية الرسمية لدمشق (16 بلدية و 98 حي)
 python manage.py seed_admin_areas
 
