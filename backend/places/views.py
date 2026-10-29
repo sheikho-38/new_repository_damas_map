@@ -74,6 +74,26 @@ def list_admin_areas_geojson(request):
 
 
 @require_GET
+def list_place_sectors(request):
+    """Return the sectors represented by places in a subcategory."""
+    subcategory = request.GET.get('subcategory', '').strip()
+    category = request.GET.get('category', '').strip()
+    if not subcategory:
+        return JsonResponse({"results": []})
+
+    queryset = Place.objects.filter(is_visible=True, sub_category__slug=subcategory)
+    if category:
+        queryset = queryset.filter(sub_category__category__slug=category)
+    sectors = queryset.values_list('sector', flat=True).distinct()
+    results = [
+        {"slug": sector.lower(), "label": sector_label(sector)}
+        for sector in sectors
+        if sector
+    ]
+    return JsonResponse({"results": results})
+
+
+@require_GET
 def list_streets_geojson(request):
     """Serve active street geometry and names from PostgreSQL for map rendering."""
     features = []
@@ -207,7 +227,7 @@ def list_places_geojson(request):
                 "category_slug": p.category.slug if p.category else "",
                 "category_name": p.category.name_ar if p.category else "",
                 "category_icon": p.category.icon if p.category else "map-pin",
-                "category_color": p.category.color if p.category else "#064239",
+                "category_color": getattr(p.category, 'color', '#064239') if p.category else "#064239",
                 "sub_category_slug": p.sub_category.slug if p.sub_category else "",
                 "sub_category_name": p.sub_category.name_ar if p.sub_category else "",
                 "sub_category_icon": p.sub_category.effective_icon if p.sub_category else "map-pin",
@@ -266,7 +286,7 @@ def get_place_detail(request, place_id):
             "name_ar": p.category.name_ar if p.category else "",
             "slug": p.category.slug if p.category else "",
             "icon": p.category.icon if p.category else "map-pin",
-            "color": p.category.color if p.category else "#064239",
+            "color": getattr(p.category, 'color', '#064239') if p.category else "#064239",
         },
         "sub_category": {
             "name_ar": p.sub_category.name_ar if p.sub_category else "",
@@ -423,7 +443,7 @@ def search_all(request):
             "title": p.title_ar,
             "subtitle": f"{p.category.name_ar if p.category else ''} • {p.admin_area.name_ar if p.admin_area else 'دمشق'}",
             "icon": p.category.icon if p.category else "map-pin",
-            "color": p.category.color if p.category else "#064239",
+            "color": getattr(p.category, 'color', '#064239') if p.category else "#064239",
             "coordinates": [p.longitude, p.latitude],
             "category_slug": p.category.slug if p.category else "",
         })

@@ -6,8 +6,8 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          36.3066526,
-          33.511579
+          36.3067,
+          33.5116
         ]
       },
       "properties": {
@@ -19,16 +19,7 @@
         "category_slug": "tourism",
         "icon": "landmark",
         "color": "#064239",
-        "description": "أحد أعظم شواهد التاريخ الإسلامي وأبرز معالم دمشق القديمة والعالم.",
-        "coordinate_source": "OpenStreetMap",
-        "osm_type": "way",
-        "osm_id": 315255977,
-        "osm_url": "https://www.openstreetmap.org/way/315255977",
-        "osm_version": 12,
-        "osm_timestamp": "2025-11-11T10:55:17Z",
-        "coordinate_method": "osm_overpass_center",
-        "coordinate_status": "osm_matched",
-        "source_checked_at": "2026-10-28T09:24:41Z"
+        "description": "أحد أعظم شواهد التاريخ الإسلامي وأبرز معالم دمشق القديمة والعالم."
       }
     },
     {
@@ -36,8 +27,8 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          36.3021347,
-          33.5118946
+          36.3025,
+          33.5133
         ]
       },
       "properties": {
@@ -49,16 +40,7 @@
         "category_slug": "tourism",
         "icon": "shield",
         "color": "#064239",
-        "description": "قلعة حصينة من العصر الأيوبي والمملوكي تقع في الزاوية الشمالية الغربية لدمشق القديمة.",
-        "coordinate_source": "OpenStreetMap",
-        "osm_type": "way",
-        "osm_id": 166612328,
-        "osm_url": "https://www.openstreetmap.org/way/166612328",
-        "osm_version": 12,
-        "osm_timestamp": "2025-11-14T10:41:07Z",
-        "coordinate_method": "osm_overpass_center",
-        "coordinate_status": "osm_matched",
-        "source_checked_at": "2026-10-28T09:24:41Z"
+        "description": "قلعة حصينة من العصر الأيوبي والمملوكي تقع في الزاوية الشمالية الغربية لدمشق القديمة."
       }
     },
     {
@@ -66,8 +48,8 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          36.2765801,
-          33.513801
+          36.2766,
+          33.5138
         ]
       },
       "properties": {
@@ -79,16 +61,7 @@
         "category_slug": "tourism",
         "icon": "map-pin",
         "color": "#c8a76a",
-        "description": "أكبر وأشهر ساحات العاصمة دمشق وبوابة غرب المدينة، تضم نصب السيف الدمشقي الشهير.",
-        "coordinate_source": "OpenStreetMap",
-        "osm_type": "way",
-        "osm_id": 30121196,
-        "osm_url": "https://www.openstreetmap.org/way/30121196",
-        "osm_version": 15,
-        "osm_timestamp": "2022-12-21T01:14:58Z",
-        "coordinate_method": "osm_overpass_center",
-        "coordinate_status": "osm_matched",
-        "source_checked_at": "2026-10-28T09:24:41Z"
+        "description": "أكبر وأشهر ساحات العاصمة دمشق وبوابة غرب المدينة، تضم نصب السيف الدمشقي الشهير."
       }
     },
     {
@@ -96,8 +69,8 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          36.2979886,
-          33.5127548
+          36.2974,
+          33.5129
         ]
       },
       "properties": {
@@ -109,16 +82,7 @@
         "category_slug": "tourism",
         "icon": "map-pin",
         "color": "#c8a76a",
-        "description": "ساحة الشهداء التاريخية وقلب دمشق التجاري والإداري العريق بنصبها التذكاري الشهير.",
-        "coordinate_source": "OpenStreetMap",
-        "osm_type": "way",
-        "osm_id": 318160413,
-        "osm_url": "https://www.openstreetmap.org/way/318160413",
-        "osm_version": 6,
-        "osm_timestamp": "2022-11-06T00:56:22Z",
-        "coordinate_method": "osm_overpass_center",
-        "coordinate_status": "osm_matched",
-        "source_checked_at": "2026-10-28T09:24:41Z"
+        "description": "ساحة الشهداء التاريخية وقلب دمشق التجاري والإداري العريق بنصبها التذكاري الشهير."
       }
     },
     {
@@ -126,8 +90,8 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          36.2960651,
-          33.5205841
+          36.2961,
+          33.5206
         ]
       },
       "properties": {
@@ -139,16 +103,7 @@
         "category_slug": "tourism",
         "icon": "map-pin",
         "color": "#c8a76a",
-        "description": "أحد أهم المحاور المرورية في مركز دمشق تربط بين شارع 29 أيار والقصاع والصالحية.",
-        "coordinate_source": "OpenStreetMap",
-        "osm_type": "way",
-        "osm_id": 219102506,
-        "osm_url": "https://www.openstreetmap.org/way/219102506",
-        "osm_version": 6,
-        "osm_timestamp": "2023-08-31T12:14:10Z",
-        "coordinate_method": "osm_overpass_center",
-        "coordinate_status": "osm_matched",
-        "source_checked_at": "2026-10-28T09:24:41Z"
+        "description": "أحد أهم المحاور المرورية في مركز دمشق تربط بين شارع 29 أيار والقصاع والصالحية."
       }
     },
     {
@@ -156,8 +111,8 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          36.2949445,
-          33.5112344
+          36.2949,
+          33.5115
         ]
       },
       "properties": {
@@ -169,16 +124,7 @@
         "category_slug": "tourism",
         "icon": "landmark",
         "color": "#064239",
-        "description": "المحطة التاريخية للخط الحديدي الحجازي بنمطها المعماري المشرقي البديع وسقفها الخشبي المزخرف.",
-        "coordinate_source": "OpenStreetMap",
-        "osm_type": "way",
-        "osm_id": 28843859,
-        "osm_url": "https://www.openstreetmap.org/way/28843859",
-        "osm_version": 14,
-        "osm_timestamp": "2022-12-11T22:21:04Z",
-        "coordinate_method": "osm_overpass_center",
-        "coordinate_status": "osm_matched",
-        "source_checked_at": "2026-10-28T09:24:41Z"
+        "description": "المحطة التاريخية للخط الحديدي الحجازي بنمطها المعماري المشرقي البديع وسقفها الخشبي المزخرف."
       }
     },
     {
@@ -186,8 +132,8 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          36.3035916,
-          33.5111395
+          36.3031,
+          33.5109
         ]
       },
       "properties": {
@@ -199,16 +145,7 @@
         "category_slug": "tourism",
         "icon": "landmark",
         "color": "#064239",
-        "description": "أشهر وأقدم الأسواق المغطاة في الشرق الأوسط، يمتد من الدرويشية إلى باحة الجامع الأموي.",
-        "coordinate_source": "OpenStreetMap",
-        "osm_type": "node",
-        "osm_id": 10026526986,
-        "osm_url": "https://www.openstreetmap.org/node/10026526986",
-        "osm_version": 1,
-        "osm_timestamp": "2022-09-15T09:09:34Z",
-        "coordinate_method": "osm_node",
-        "coordinate_status": "osm_matched",
-        "source_checked_at": "2026-10-28T09:24:41Z"
+        "description": "أشهر وأقدم الأسواق المغطاة في الشرق الأوسط، يمتد من الدرويشية إلى باحة الجامع الأموي."
       }
     },
     {
@@ -216,8 +153,8 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          36.2698262,
-          33.5169363
+          36.2698,
+          33.5169
         ]
       },
       "properties": {
@@ -229,16 +166,7 @@
         "category_slug": "public-services",
         "icon": "sparkles",
         "color": "#059669",
-        "description": "أكبر رئة خضراء في وسط دمشق، تحتضن معارض الزهور السنوية والمسطحات المائية البديعة.",
-        "coordinate_source": "OpenStreetMap",
-        "osm_type": "way",
-        "osm_id": 30419151,
-        "osm_url": "https://www.openstreetmap.org/way/30419151",
-        "osm_version": 17,
-        "osm_timestamp": "2026-07-19T14:51:02Z",
-        "coordinate_method": "osm_overpass_center",
-        "coordinate_status": "osm_matched",
-        "source_checked_at": "2026-10-28T09:24:41Z"
+        "description": "أكبر رئة خضراء في وسط دمشق، تحتضن معارض الزهور السنوية والمسطحات المائية البديعة."
       }
     },
     {
@@ -246,29 +174,20 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          36.2733052,
-          33.5334213
+          36.2755,
+          33.5412
         ]
       },
       "properties": {
         "id": 14733,
-        "title": "جبل قاسيون",
-        "title_en": "Mount Qasioun",
+        "title": "جبل قاسيون (إطلالة دمشق)",
+        "title_en": "Mount Qasioun Lookout",
         "type": "monument",
         "tier": 1,
         "category_slug": "tourism",
         "icon": "landmark",
         "color": "#064239",
-        "description": "جبل قاسيون المطل على دمشق؛ تمثل النقطة موقع القمة المسجلة في OpenStreetMap.",
-        "coordinate_source": "OpenStreetMap",
-        "osm_type": "node",
-        "osm_id": 364352036,
-        "osm_url": "https://www.openstreetmap.org/node/364352036",
-        "osm_version": 8,
-        "osm_timestamp": "2024-12-21T16:33:50Z",
-        "coordinate_method": "osm_node",
-        "coordinate_status": "osm_matched",
-        "source_checked_at": "2026-10-28T09:24:41Z"
+        "description": "الجبل الحاضن لدمشق وإطلالتها البانورامية الشهيرة التي تكشف كامل غوطة دمشق ومعالمها."
       }
     },
     {
@@ -276,8 +195,8 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          36.2784335,
-          33.5123812
+          36.2778,
+          33.5144
         ]
       },
       "properties": {
@@ -289,16 +208,7 @@
         "category_slug": "tourism",
         "icon": "landmark",
         "color": "#064239",
-        "description": "دار الأوبرا ودار الثقافة والفنون، الصرح الموسيقي والمسرحي الرائد في ساحة الأمويين.",
-        "coordinate_source": "OpenStreetMap",
-        "osm_type": "node",
-        "osm_id": 1246877086,
-        "osm_url": "https://www.openstreetmap.org/node/1246877086",
-        "osm_version": 6,
-        "osm_timestamp": "2025-12-20T13:22:14Z",
-        "coordinate_method": "osm_node",
-        "coordinate_status": "osm_matched",
-        "source_checked_at": "2026-10-28T09:24:41Z"
+        "description": "دار الأوبرا ودار الثقافة والفنون، الصرح الموسيقي والمسرحي الرائد في ساحة الأمويين."
       }
     },
     {
@@ -306,8 +216,8 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          36.2900271,
-          33.5125474
+          36.29,
+          33.5125
         ]
       },
       "properties": {
@@ -319,16 +229,7 @@
         "category_slug": "tourism",
         "icon": "landmark",
         "color": "#064239",
-        "description": "أكبر متاحف سورية وأحد أهم متاحف الآثار في العالم بواجهته المنقولة من قصر الحير الغربي.",
-        "coordinate_source": "OpenStreetMap",
-        "osm_type": "way",
-        "osm_id": 986470197,
-        "osm_url": "https://www.openstreetmap.org/way/986470197",
-        "osm_version": 2,
-        "osm_timestamp": "2021-09-26T21:24:55Z",
-        "coordinate_method": "osm_overpass_center",
-        "coordinate_status": "osm_matched",
-        "source_checked_at": "2026-10-28T09:24:41Z"
+        "description": "أكبر متاحف سورية وأحد أهم متاحف الآثار في العالم بواجهته المنقولة من قصر الحير الغربي."
       }
     },
     {
@@ -336,8 +237,8 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          36.291375,
-          33.5123582
+          36.2914,
+          33.5124
         ]
       },
       "properties": {
@@ -349,16 +250,7 @@
         "category_slug": "tourism",
         "icon": "landmark",
         "color": "#064239",
-        "description": "تحفة المعمار العثماني من تصميم المعماري سنان على ضفاف نهر بردى، تضم سوق المهن اليدوية.",
-        "coordinate_source": "OpenStreetMap",
-        "osm_type": "way",
-        "osm_id": 1094781900,
-        "osm_url": "https://www.openstreetmap.org/way/1094781900",
-        "osm_version": 6,
-        "osm_timestamp": "2025-12-18T13:37:07Z",
-        "coordinate_method": "osm_overpass_center",
-        "coordinate_status": "osm_matched",
-        "source_checked_at": "2026-10-28T09:24:41Z"
+        "description": "تحفة المعمار العثماني من تصميم المعماري سنان على ضفاف نهر بردى، تضم سوق المهن اليدوية."
       }
     },
     {
@@ -366,8 +258,8 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          36.3070002,
-          33.5101941
+          36.3069,
+          33.5097
         ]
       },
       "properties": {
@@ -379,16 +271,7 @@
         "category_slug": "tourism",
         "icon": "landmark",
         "color": "#064239",
-        "description": "أروع نماذج القصور الدمشقية التاريخية ومقر متحف التقاليد الشعبية والصنائع اليدوية.",
-        "coordinate_source": "OpenStreetMap",
-        "osm_type": "way",
-        "osm_id": 102768609,
-        "osm_url": "https://www.openstreetmap.org/way/102768609",
-        "osm_version": 13,
-        "osm_timestamp": "2024-12-11T17:17:37Z",
-        "coordinate_method": "osm_overpass_center",
-        "coordinate_status": "osm_matched",
-        "source_checked_at": "2026-10-28T09:24:41Z"
+        "description": "أروع نماذج القصور الدمشقية التاريخية ومقر متحف التقاليد الشعبية والصنائع اليدوية."
       }
     },
     {
@@ -396,8 +279,8 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          36.3073294,
-          33.5132703
+          36.3073,
+          33.5133
         ]
       },
       "properties": {
@@ -409,16 +292,7 @@
         "category_slug": "tourism",
         "icon": "landmark",
         "color": "#064239",
-        "description": "صرح ديني وتراثي بارز قريب من الجامع الأموي يتميز بعمارته الزخرفية والمرايا الدمشقية.",
-        "coordinate_source": "OpenStreetMap",
-        "osm_type": "way",
-        "osm_id": 1486782802,
-        "osm_url": "https://www.openstreetmap.org/way/1486782802",
-        "osm_version": 1,
-        "osm_timestamp": "2026-03-09T06:04:30Z",
-        "coordinate_method": "osm_overpass_center",
-        "coordinate_status": "osm_matched",
-        "source_checked_at": "2026-10-28T09:24:41Z"
+        "description": "صرح ديني وتراثي بارز قريب من الجامع الأموي يتميز بعمارته الزخرفية والمرايا الدمشقية."
       }
     },
     {
@@ -426,8 +300,8 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          36.3059486,
-          33.5121136
+          36.3057,
+          33.5123
         ]
       },
       "properties": {
@@ -439,16 +313,7 @@
         "category_slug": "tourism",
         "icon": "landmark",
         "color": "#064239",
-        "description": "المدفن التاريخي للقائد صلاح الدين الأيوبي محاذياً للجدار الشمالي للجامع الأموي.",
-        "coordinate_source": "OpenStreetMap",
-        "osm_type": "node",
-        "osm_id": 12420762430,
-        "osm_url": "https://www.openstreetmap.org/node/12420762430",
-        "osm_version": 4,
-        "osm_timestamp": "2026-02-10T09:46:56Z",
-        "coordinate_method": "osm_node",
-        "coordinate_status": "osm_matched",
-        "source_checked_at": "2026-10-28T09:24:41Z"
+        "description": "المدفن التاريخي للقائد صلاح الدين الأيوبي محاذياً للجدار الشمالي للجامع الأموي."
       }
     },
     {
@@ -456,8 +321,8 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          36.2962077,
-          33.5214922
+          36.2965,
+          33.5204
         ]
       },
       "properties": {
@@ -469,16 +334,7 @@
         "category_slug": "economy",
         "icon": "landmark",
         "color": "#064239",
-        "description": "المبنى التاريخي للبنك المركزي في ساحة السبع بحرات ورمز الاستقرار المالي والنقدي.",
-        "coordinate_source": "OpenStreetMap",
-        "osm_type": "relation",
-        "osm_id": 11570463,
-        "osm_url": "https://www.openstreetmap.org/relation/11570463",
-        "osm_version": 5,
-        "osm_timestamp": "2025-12-12T22:42:06Z",
-        "coordinate_method": "osm_overpass_center",
-        "coordinate_status": "osm_matched",
-        "source_checked_at": "2026-10-28T09:24:41Z"
+        "description": "المبنى التاريخي للبنك المركزي في ساحة السبع بحرات ورمز الاستقرار المالي والنقدي."
       }
     },
     {
@@ -486,8 +342,8 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          36.2957025,
-          33.5157411
+          36.2955,
+          33.5166
         ]
       },
       "properties": {
@@ -499,16 +355,7 @@
         "category_slug": "government",
         "icon": "landmark",
         "color": "#064239",
-        "description": "المقر الرسمي والإداري لمحافظة دمشق في ساحة يوسف العظمة.",
-        "coordinate_source": "OpenStreetMap",
-        "osm_type": "relation",
-        "osm_id": 130945,
-        "osm_url": "https://www.openstreetmap.org/relation/130945",
-        "osm_version": 4,
-        "osm_timestamp": "2026-06-21T01:23:40Z",
-        "coordinate_method": "osm_overpass_center",
-        "coordinate_status": "osm_matched",
-        "source_checked_at": "2026-10-28T09:24:41Z"
+        "description": "المقر الرسمي والإداري لمحافظة دمشق في ساحة يوسف العظمة."
       }
     },
     {
@@ -516,8 +363,8 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          36.2755286,
-          33.5124136
+          36.2755,
+          33.5124
         ]
       },
       "properties": {
@@ -529,16 +376,7 @@
         "category_slug": "government",
         "icon": "landmark",
         "color": "#064239",
-        "description": "صرح الإعلام السوري الرسمي المطل على ساحة الأمويين والربوة.",
-        "coordinate_source": "OpenStreetMap",
-        "osm_type": "node",
-        "osm_id": 1246879700,
-        "osm_url": "https://www.openstreetmap.org/node/1246879700",
-        "osm_version": 10,
-        "osm_timestamp": "2025-10-27T02:42:26Z",
-        "coordinate_method": "osm_node",
-        "coordinate_status": "osm_matched",
-        "source_checked_at": "2026-10-28T09:24:41Z"
+        "description": "صرح الإعلام السوري الرسمي المطل على ساحة الأمويين والربوة."
       }
     },
     {
@@ -546,8 +384,8 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          36.2737475,
-          33.5131629
+          36.2737,
+          33.5132
         ]
       },
       "properties": {
@@ -559,16 +397,7 @@
         "category_slug": "tourism",
         "icon": "landmark",
         "color": "#064239",
-        "description": "فندق دمشق التاريخي بطرازه المعماري المتميز على مدخل أوتوستراد المزة وساحة الأمويين.",
-        "coordinate_source": "OpenStreetMap",
-        "osm_type": "node",
-        "osm_id": 10026601393,
-        "osm_url": "https://www.openstreetmap.org/node/10026601393",
-        "osm_version": 2,
-        "osm_timestamp": "2022-12-29T21:16:52Z",
-        "coordinate_method": "osm_node",
-        "coordinate_status": "osm_matched",
-        "source_checked_at": "2026-10-28T09:24:41Z"
+        "description": "فندق دمشق التاريخي بطرازه المعماري المتميز على مدخل أوتوستراد المزة وساحة الأمويين."
       }
     },
     {
@@ -576,29 +405,20 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          36.2908593,
-          33.5113519
+          36.269,
+          33.5074
         ]
       },
       "properties": {
         "id": 10809,
-        "title": "مبنى رئاسة جامعة دمشق",
-        "title_en": "Damascus University Head Office",
+        "title": "جامعة دمشق (مجمع البرامكة)",
+        "title_en": "Damascus University",
         "type": "monument",
         "tier": 2,
         "category_slug": "education",
         "icon": "landmark",
         "color": "#064239",
-        "description": "مبنى رئاسة جامعة دمشق، وفق الموقع الموثق في OpenStreetMap.",
-        "coordinate_source": "OpenStreetMap",
-        "osm_type": "way",
-        "osm_id": 30805597,
-        "osm_url": "https://www.openstreetmap.org/way/30805597",
-        "osm_version": 5,
-        "osm_timestamp": "2023-12-04T18:47:00Z",
-        "coordinate_method": "osm_overpass_center",
-        "coordinate_status": "osm_matched",
-        "source_checked_at": "2026-10-28T09:24:41Z"
+        "description": "أعرق وأكبر جامعات سورية، مهد التعليم العالي في بلاد الشام منذ مطلع القرن العشرين."
       }
     },
     {
@@ -606,8 +426,8 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          36.2776419,
-          33.515079
+          36.2776,
+          33.5151
         ]
       },
       "properties": {
@@ -619,16 +439,7 @@
         "category_slug": "education",
         "icon": "landmark",
         "color": "#064239",
-        "description": "المكتبة الوطنية الكبرى ومركز الإيداع القانوني والتراث الثقافي المطل على ساحة الأمويين.",
-        "coordinate_source": "OpenStreetMap",
-        "osm_type": "way",
-        "osm_id": 29085052,
-        "osm_url": "https://www.openstreetmap.org/way/29085052",
-        "osm_version": 16,
-        "osm_timestamp": "2026-05-08T08:49:12Z",
-        "coordinate_method": "osm_overpass_center",
-        "coordinate_status": "osm_matched",
-        "source_checked_at": "2026-10-28T09:24:41Z"
+        "description": "المكتبة الوطنية الكبرى ومركز الإيداع القانوني والتراث الثقافي المطل على ساحة الأمويين."
       }
     },
     {
@@ -636,8 +447,8 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          36.2987696,
-          33.5300295
+          36.3006,
+          33.5274
         ]
       },
       "properties": {
@@ -649,16 +460,7 @@
         "category_slug": "public-services",
         "icon": "sparkles",
         "color": "#064239",
-        "description": "المجمع الرياضي الأبرز في منطقة المزرعة، يضم الصالات المغلقة والملاعب والمسابح الأولمبية.",
-        "coordinate_source": "OpenStreetMap",
-        "osm_type": "way",
-        "osm_id": 564479513,
-        "osm_url": "https://www.openstreetmap.org/way/564479513",
-        "osm_version": 9,
-        "osm_timestamp": "2023-01-24T04:09:41Z",
-        "coordinate_method": "osm_overpass_center",
-        "coordinate_status": "osm_matched",
-        "source_checked_at": "2026-10-28T09:24:41Z"
+        "description": "المجمع الرياضي الأبرز في منطقة المزرعة، يضم الصالات المغلقة والملاعب والمسابح الأولمبية."
       }
     },
     {
@@ -666,8 +468,8 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          36.3200176,
-          33.5228833
+          36.3214,
+          33.5276
         ]
       },
       "properties": {
@@ -679,16 +481,7 @@
         "category_slug": "public-services",
         "icon": "sparkles",
         "color": "#064239",
-        "description": "الاستاد الرياضي التاريخي للجمهورية في شرق دمشق، شهد أعظم بطولات ومباريات كرة القدم.",
-        "coordinate_source": "OpenStreetMap",
-        "osm_type": "way",
-        "osm_id": 564473106,
-        "osm_url": "https://www.openstreetmap.org/way/564473106",
-        "osm_version": 2,
-        "osm_timestamp": "2023-12-31T02:49:22Z",
-        "coordinate_method": "osm_overpass_center",
-        "coordinate_status": "osm_matched",
-        "source_checked_at": "2026-10-28T09:24:41Z"
+        "description": "الاستاد الرياضي التاريخي للجمهورية في شرق دمشق، شهد أعظم بطولات ومباريات كرة القدم."
       }
     },
     {
@@ -696,8 +489,8 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          36.3211893,
-          33.5354477
+          36.3212,
+          33.5354
         ]
       },
       "properties": {
@@ -709,16 +502,7 @@
         "category_slug": "tourism",
         "icon": "landmark",
         "color": "#064239",
-        "description": "متحف ومعلم تذكاري بانورامي على المدخل الشمالي للعاصمة دمشق.",
-        "coordinate_source": "OpenStreetMap",
-        "osm_type": "way",
-        "osm_id": 107760199,
-        "osm_url": "https://www.openstreetmap.org/way/107760199",
-        "osm_version": 10,
-        "osm_timestamp": "2023-12-11T16:21:03Z",
-        "coordinate_method": "osm_overpass_center",
-        "coordinate_status": "osm_matched",
-        "source_checked_at": "2026-10-28T09:24:41Z"
+        "description": "متحف ومعلم تذكاري بانورامي على المدخل الشمالي للعاصمة دمشق."
       }
     },
     {
@@ -726,8 +510,8 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          36.2952475,
-          33.5163362
+          36.2952,
+          33.5163
         ]
       },
       "properties": {
@@ -739,16 +523,7 @@
         "category_slug": "tourism",
         "icon": "map-pin",
         "color": "#c8a76a",
-        "description": "ساحة المحافظة التاريخية بتمثال البطل يوسف العظمة، تربط بين الصالحية والمرجة وبنك سورية.",
-        "coordinate_source": "OpenStreetMap",
-        "osm_type": "way",
-        "osm_id": 957756205,
-        "osm_url": "https://www.openstreetmap.org/way/957756205",
-        "osm_version": 6,
-        "osm_timestamp": "2026-06-21T01:23:40Z",
-        "coordinate_method": "osm_overpass_center",
-        "coordinate_status": "osm_matched",
-        "source_checked_at": "2026-10-28T09:24:41Z"
+        "description": "ساحة المحافظة التاريخية بتمثال البطل يوسف العظمة، تربط بين الصالحية والمرجة وبنك سورية."
       }
     },
     {
@@ -756,8 +531,8 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          36.3185426,
-          33.5241924
+          36.3185,
+          33.5242
         ]
       },
       "properties": {
@@ -769,16 +544,7 @@
         "category_slug": "tourism",
         "icon": "map-pin",
         "color": "#c8a76a",
-        "description": "ملتقى محاور شرق دمشق نحو الغوطة والقصاع وبرزة وحلب، إحدى أكبر وأهم عقد المرور.",
-        "coordinate_source": "OpenStreetMap",
-        "osm_type": "way",
-        "osm_id": 708301579,
-        "osm_url": "https://www.openstreetmap.org/way/708301579",
-        "osm_version": 5,
-        "osm_timestamp": "2022-11-22T16:00:53Z",
-        "coordinate_method": "osm_overpass_center",
-        "coordinate_status": "osm_matched",
-        "source_checked_at": "2026-10-28T09:24:41Z"
+        "description": "ملتقى محاور شرق دمشق نحو الغوطة والقصاع وبرزة وحلب، إحدى أكبر وأهم عقد المرور."
       }
     },
     {
@@ -786,8 +552,8 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          36.2903046,
-          33.521389
+          36.2903,
+          33.5214
         ]
       },
       "properties": {
@@ -799,16 +565,7 @@
         "category_slug": "tourism",
         "icon": "map-pin",
         "color": "#c8a76a",
-        "description": "قلب الصالحية النابض بحديقتها وسوقها التجاري الشهير، ونقطة تقاطع شوارع الحلبوني والشهداء.",
-        "coordinate_source": "OpenStreetMap",
-        "osm_type": "node",
-        "osm_id": 10008609090,
-        "osm_url": "https://www.openstreetmap.org/node/10008609090",
-        "osm_version": 2,
-        "osm_timestamp": "2023-08-09T10:20:09Z",
-        "coordinate_method": "osm_node",
-        "coordinate_status": "osm_matched",
-        "source_checked_at": "2026-10-28T09:24:41Z"
+        "description": "قلب الصالحية النابض بحديقتها وسوقها التجاري الشهير، ونقطة تقاطع شوارع الحلبوني والشهداء."
       }
     },
     {
@@ -816,8 +573,8 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          36.2933545,
-          33.5235511
+          36.2934,
+          33.5236
         ]
       },
       "properties": {
@@ -829,16 +586,7 @@
         "category_slug": "tourism",
         "icon": "map-pin",
         "color": "#c8a76a",
-        "description": "عقدة حيوية تصل بين المزرعة والميسات ومحيط وزارة التعليم العالي وشارع بغداد.",
-        "coordinate_source": "OpenStreetMap",
-        "osm_type": "way",
-        "osm_id": 1009712438,
-        "osm_url": "https://www.openstreetmap.org/way/1009712438",
-        "osm_version": 1,
-        "osm_timestamp": "2021-12-06T20:31:39Z",
-        "coordinate_method": "osm_overpass_center",
-        "coordinate_status": "osm_matched",
-        "source_checked_at": "2026-10-28T09:24:41Z"
+        "description": "عقدة حيوية تصل بين المزرعة والميسات ومحيط وزارة التعليم العالي وشارع بغداد."
       }
     },
     {
@@ -846,8 +594,8 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          36.3004871,
-          33.4989121
+          36.3015,
+          33.4988
         ]
       },
       "properties": {
@@ -859,16 +607,7 @@
         "category_slug": "tourism",
         "icon": "map-pin",
         "color": "#c8a76a",
-        "description": "محور جنوب دمشق التاريخي ومدخل الميدان الفوقاني ومركز انطلاق المواصلات نحو الريف والجنوب.",
-        "coordinate_source": "OpenStreetMap",
-        "osm_type": "way",
-        "osm_id": 30807444,
-        "osm_url": "https://www.openstreetmap.org/way/30807444",
-        "osm_version": 8,
-        "osm_timestamp": "2026-06-24T21:49:42Z",
-        "coordinate_method": "osm_overpass_center",
-        "coordinate_status": "osm_matched",
-        "source_checked_at": "2026-10-28T09:24:41Z"
+        "description": "محور جنوب دمشق التاريخي ومدخل الميدان الفوقاني ومركز انطلاق المواصلات نحو الريف والجنوب."
       }
     },
     {
@@ -876,8 +615,8 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          36.2782917,
-          33.5104622
+          36.2783,
+          33.5105
         ]
       },
       "properties": {
@@ -889,16 +628,7 @@
         "category_slug": "tourism",
         "icon": "map-pin",
         "color": "#c8a76a",
-        "description": "ملتقى نفق المواساة والبرامكة وأوتوستراد المزة، مركز حيوي لحركة المشافي والجامعات.",
-        "coordinate_source": "OpenStreetMap",
-        "osm_type": "way",
-        "osm_id": 846035897,
-        "osm_url": "https://www.openstreetmap.org/way/846035897",
-        "osm_version": 3,
-        "osm_timestamp": "2022-12-21T01:14:58Z",
-        "coordinate_method": "osm_overpass_center",
-        "coordinate_status": "osm_matched",
-        "source_checked_at": "2026-10-28T09:24:41Z"
+        "description": "ملتقى نفق المواساة والبرامكة وأوتوستراد المزة، مركز حيوي لحركة المشافي والجامعات."
       }
     },
     {
@@ -906,8 +636,8 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          36.293645,
-          33.5269914
+          36.2936,
+          33.527
         ]
       },
       "properties": {
@@ -919,16 +649,7 @@
         "category_slug": "tourism",
         "icon": "map-pin",
         "color": "#c8a76a",
-        "description": "تقاطع حيوي عند سفح جبل قاسيون يربط ركن الدين والمزرعة والصالحية وشارع برنية.",
-        "coordinate_source": "OpenStreetMap",
-        "osm_type": "way",
-        "osm_id": 967956885,
-        "osm_url": "https://www.openstreetmap.org/way/967956885",
-        "osm_version": 3,
-        "osm_timestamp": "2024-06-14T14:21:16Z",
-        "coordinate_method": "osm_overpass_center",
-        "coordinate_status": "osm_matched",
-        "source_checked_at": "2026-10-28T09:24:41Z"
+        "description": "تقاطع حيوي عند سفح جبل قاسيون يربط ركن الدين والمزرعة والصالحية وشارع برنية."
       }
     },
     {
@@ -936,8 +657,8 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          36.2998737,
-          33.5226958
+          36.2999,
+          33.5227
         ]
       },
       "properties": {
@@ -949,16 +670,7 @@
         "category_slug": "tourism",
         "icon": "map-pin",
         "color": "#c8a76a",
-        "description": "مركز حي المزرعة التجاري والسياحي قرب جامع الإيمان والحديقة العامة.",
-        "coordinate_source": "OpenStreetMap",
-        "osm_type": "way",
-        "osm_id": 219154144,
-        "osm_url": "https://www.openstreetmap.org/way/219154144",
-        "osm_version": 2,
-        "osm_timestamp": "2022-12-12T04:44:05Z",
-        "coordinate_method": "osm_overpass_center",
-        "coordinate_status": "osm_matched",
-        "source_checked_at": "2026-10-28T09:24:41Z"
+        "description": "مركز حي المزرعة التجاري والسياحي قرب جامع الإيمان والحديقة العامة."
       }
     },
     {
@@ -966,8 +678,8 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          36.3152076,
-          33.5135451
+          36.3152,
+          33.5135
         ]
       },
       "properties": {
@@ -979,16 +691,7 @@
         "category_slug": "tourism",
         "icon": "map-pin",
         "color": "#c8a76a",
-        "description": "بوابة دمشق المسيحية والتراثية، نقطة ارتكاز حيوية لحركة الأسواق والأزقة التاريخية والقصاع.",
-        "coordinate_source": "OpenStreetMap",
-        "osm_type": "way",
-        "osm_id": 1000620510,
-        "osm_url": "https://www.openstreetmap.org/way/1000620510",
-        "osm_version": 2,
-        "osm_timestamp": "2022-09-15T13:37:59Z",
-        "coordinate_method": "osm_overpass_center",
-        "coordinate_status": "osm_matched",
-        "source_checked_at": "2026-10-28T09:24:41Z"
+        "description": "بوابة دمشق المسيحية والتراثية، نقطة ارتكاز حيوية لحركة الأسواق والأزقة التاريخية والقصاع."
       }
     },
     {
@@ -1009,8 +712,7 @@
         "category_slug": "tourism",
         "icon": "map-pin",
         "color": "#c8a76a",
-        "description": "البوابة الرومانية الشرقية للشارع المستقيم (مدحت باشا)، إحدى أقدم مداخل دمشق التاريخية.",
-        "coordinate_status": "unverified_unchanged"
+        "description": "البوابة الرومانية الشرقية للشارع المستقيم (مدحت باشا)، إحدى أقدم مداخل دمشق التاريخية."
       }
     },
     {
@@ -1018,8 +720,8 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          36.2801293,
-          33.5174798
+          36.2801,
+          33.5175
         ]
       },
       "properties": {
@@ -1031,16 +733,7 @@
         "category_slug": "public-services",
         "icon": "sparkles",
         "color": "#059669",
-        "description": "حديقة دمشقية عريقة في حي أبو رمانة الرفيع، ملاذ عائلي شهير بظلال أشجارها المعمرة.",
-        "coordinate_source": "OpenStreetMap",
-        "osm_type": "way",
-        "osm_id": 28845614,
-        "osm_url": "https://www.openstreetmap.org/way/28845614",
-        "osm_version": 10,
-        "osm_timestamp": "2020-07-30T17:07:35Z",
-        "coordinate_method": "osm_overpass_center",
-        "coordinate_status": "osm_matched",
-        "source_checked_at": "2026-10-28T09:24:41Z"
+        "description": "حديقة دمشقية عريقة في حي أبو رمانة الرفيع، ملاذ عائلي شهير بظلال أشجارها المعمرة."
       }
     },
     {
@@ -1048,8 +741,8 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          36.2884032,
-          33.5194371
+          36.2884,
+          33.5194
         ]
       },
       "properties": {
@@ -1061,16 +754,7 @@
         "category_slug": "public-services",
         "icon": "sparkles",
         "color": "#059669",
-        "description": "متنزه شهير ومجدد في قلب الشعلان والصالحية بأحواضه المائية ونوافيره الجميلة.",
-        "coordinate_source": "OpenStreetMap",
-        "osm_type": "way",
-        "osm_id": 28869028,
-        "osm_url": "https://www.openstreetmap.org/way/28869028",
-        "osm_version": 12,
-        "osm_timestamp": "2024-07-04T14:10:06Z",
-        "coordinate_method": "osm_overpass_center",
-        "coordinate_status": "osm_matched",
-        "source_checked_at": "2026-10-28T09:24:41Z"
+        "description": "متنزه شهير ومجدد في قلب الشعلان والصالحية بأحواضه المائية ونوافيره الجميلة."
       }
     },
     {
@@ -1091,8 +775,7 @@
         "category_slug": "tourism",
         "icon": "map-pin",
         "color": "#c8a76a",
-        "description": "ساحة أنيقة في حي أبو رمانة الدبلوماسي تقاطع شارعي الجلاء والمهدي بن بركة.",
-        "coordinate_status": "unverified_unchanged"
+        "description": "ساحة أنيقة في حي أبو رمانة الدبلوماسي تقاطع شارعي الجلاء والمهدي بن بركة."
       }
     },
     {
@@ -1100,8 +783,8 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          36.2828369,
-          33.5210988
+          36.2828,
+          33.5211
         ]
       },
       "properties": {
@@ -1113,16 +796,7 @@
         "category_slug": "tourism",
         "icon": "map-pin",
         "color": "#c8a76a",
-        "description": "مركز حي الروضة الراقي بنوافيره الهادئة ومحيطه السكني والدبلوماسي المتميز.",
-        "coordinate_source": "OpenStreetMap",
-        "osm_type": "way",
-        "osm_id": 30763416,
-        "osm_url": "https://www.openstreetmap.org/way/30763416",
-        "osm_version": 4,
-        "osm_timestamp": "2024-06-04T12:01:45Z",
-        "coordinate_method": "osm_overpass_center",
-        "coordinate_status": "osm_matched",
-        "source_checked_at": "2026-10-28T09:24:41Z"
+        "description": "مركز حي الروضة الراقي بنوافيره الهادئة ومحيطه السكني والدبلوماسي المتميز."
       }
     },
     {
@@ -1130,8 +804,8 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          36.2945492,
-          33.5346377
+          36.2961,
+          33.5348
         ]
       },
       "properties": {
@@ -1143,16 +817,7 @@
         "category_slug": "tourism",
         "icon": "map-pin",
         "color": "#c8a76a",
-        "description": "ساحة شهيرة ومفصل مروري في ركن الدين تصعد نحو جبل قاسيون والمدارس الشرعية التاريخية.",
-        "coordinate_source": "OpenStreetMap",
-        "osm_type": "node",
-        "osm_id": 10023963022,
-        "osm_url": "https://www.openstreetmap.org/node/10023963022",
-        "osm_version": 2,
-        "osm_timestamp": "2026-10-04T06:54:12Z",
-        "coordinate_method": "osm_node",
-        "coordinate_status": "osm_matched",
-        "source_checked_at": "2026-10-28T09:24:41Z"
+        "description": "ساحة شهيرة ومفصل مروري في ركن الدين تصعد نحو جبل قاسيون والمدارس الشرعية التاريخية."
       }
     },
     {
@@ -1160,8 +825,8 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          36.2679653,
-          33.5224865
+          36.268,
+          33.5225
         ]
       },
       "properties": {
@@ -1173,16 +838,7 @@
         "category_slug": "public-services",
         "icon": "sparkles",
         "color": "#059669",
-        "description": "حديقة هادئة على مجرى فروع بردى في محيط الربوة والشارع السياحي القديم.",
-        "coordinate_source": "OpenStreetMap",
-        "osm_type": "way",
-        "osm_id": 108748037,
-        "osm_url": "https://www.openstreetmap.org/way/108748037",
-        "osm_version": 6,
-        "osm_timestamp": "2024-12-30T13:23:16Z",
-        "coordinate_method": "osm_overpass_center",
-        "coordinate_status": "osm_matched",
-        "source_checked_at": "2026-10-28T09:24:41Z"
+        "description": "حديقة هادئة على مجرى فروع بردى في محيط الربوة والشارع السياحي القديم."
       }
     },
     {
@@ -1190,8 +846,8 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          36.3202542,
-          33.530652
+          36.3203,
+          33.5307
         ]
       },
       "properties": {
@@ -1203,16 +859,7 @@
         "category_slug": "public-services",
         "icon": "sparkles",
         "color": "#059669",
-        "description": "حديقة عامة رحبة تخدم سكان العباسيين والتجارة وشارع فارس الخوري.",
-        "coordinate_source": "OpenStreetMap",
-        "osm_type": "way",
-        "osm_id": 105463086,
-        "osm_url": "https://www.openstreetmap.org/way/105463086",
-        "osm_version": 4,
-        "osm_timestamp": "2022-08-25T19:05:58Z",
-        "coordinate_method": "osm_overpass_center",
-        "coordinate_status": "osm_matched",
-        "source_checked_at": "2026-10-28T09:24:41Z"
+        "description": "حديقة عامة رحبة تخدم سكان العباسيين والتجارة وشارع فارس الخوري."
       }
     },
     {
@@ -1233,13 +880,8 @@
         "category_slug": "public-services",
         "icon": "sparkles",
         "color": "#059669",
-        "description": "حديقة بيئية نموذجية في أوتوستراد المزة تطل على الفيلات الغربية وتوفر مسارات مشي مشجرة.",
-        "coordinate_status": "unverified_unchanged"
+        "description": "حديقة بيئية نموذجية في أوتوستراد المزة تطل على الفيلات الغربية وتوفر مسارات مشي مشجرة."
       }
     }
-  ],
-  "source": "OpenStreetMap contributors; see per-feature coordinate_status for unmatched legacy points",
-  "license": "https://opendatacommons.org/licenses/odbl/1-0/",
-  "attribution": "© OpenStreetMap contributors",
-  "osm_data_timestamp": "2026-10-28T09:24:41Z"
+  ]
 }

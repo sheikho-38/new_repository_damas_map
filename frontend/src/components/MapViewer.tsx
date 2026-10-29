@@ -86,6 +86,10 @@ export default function MapViewer({
   const [selectedSubcategory, setSelectedSubcategory] = useState<string | null>(null);
   const selectedSubcategoryRef = useRef<string | null>(null);
   selectedSubcategoryRef.current = selectedSubcategory;
+  const [selectedSector, setSelectedSector] = useState<string | null>(null);
+  const selectedSectorRef = useRef<string | null>(null);
+  selectedSectorRef.current = selectedSector;
+  const [availableSectors, setAvailableSectors] = useState<Array<{ slug: string; label: string }>>([]);
 
   // 2. حالة طبقة التقسيمات الإدارية والتسلسل الهرمي الذكي (البلديات والأحياء)
   const [showAdminAreas, setShowAdminAreas] = useState(false);
@@ -416,6 +420,10 @@ export default function MapViewer({
         source.setData(geojson);
         if (selectedPlaceRef.current) {
           const filter = ['==', ['to-number', ['get', 'id']], Number(selectedPlaceRef.current.id)];
+          map.setFilter('places-poi-circles', filter);
+          map.setFilter('places-poi-labels', filter);
+        } else if (selectedSectorRef.current) {
+          const filter = ['==', ['get', 'sector'], selectedSectorRef.current];
           map.setFilter('places-poi-circles', filter);
           map.setFilter('places-poi-labels', filter);
         } else if (selectedSubcategoryRef.current) {
@@ -942,7 +950,7 @@ export default function MapViewer({
             getAssetUrl('/vector-tiles/{z}/{x}/{y}.pbf'),
           ];
         }
-        style.glyphs = getAssetUrl('/fonts/{fontstack}/{range}.pbf?v=2');
+        style.glyphs = `${getApiBaseUrl()}/fonts/{fontstack}/{range}.pbf?v=2`;
         style.sprite = getAssetUrl('/sprites/ofm');
 
         const map = new maplibregl.Map({
@@ -1566,7 +1574,7 @@ export default function MapViewer({
     if (map && map.isStyleLoaded()) {
       refreshPoiLayer(map, selectedCategories);
     }
-  }, [selectedCategories, refreshPoiLayer]);
+  }, [selectedCategories, selectedSubcategory, selectedSector, refreshPoiLayer]);
 
   // فلترة المعالم فورياً حسب التصنيف الفرعي المختار دون وميض أو تأخير
   useEffect(() => {
@@ -1589,20 +1597,55 @@ export default function MapViewer({
       map.setFilter('places-poi-circles', null);
       if (map.getLayer('places-poi-labels')) map.setFilter('places-poi-labels', null);
     }
-  }, [selectedSubcategory]);
+  }, [selectedSubcategory, selectedSector]);
+
+  useEffect(() => {
+    if (!selectedSubcategory) {
+      setAvailableSectors([]);
+      return;
+    }
+
+    const controller = new AbortController();
+    const category = selectedCategories[0];
+    const query = new URLSearchParams({ subcategory: selectedSubcategory });
+    if (category) query.set('category', category);
+    fetch(`${getApiBaseUrl()}/places/sectors/?${query.toString()}`, {
+      signal: controller.signal,
+    })
+      .then((res) => {
+        if (!res.ok) throw new Error(`Sector request failed: ${res.status}`);
+        return res.json();
+      })
+      .then((data) => {
+        setAvailableSectors(Array.isArray(data.results) && data.results.length > 0 ? data.results : []);
+      })
+      .catch((err) => {
+        if (err.name !== 'AbortError') console.warn('Sector fetch notice:', err);
+        setAvailableSectors([]);
+      });
+
+    return () => controller.abort();
+  }, [selectedSubcategory, selectedCategories]);
 
   const handleSelectCommandCategory = (slug: string | null) => {
     if (slug === null) {
       setSelectedCategories([]);
       setSelectedSubcategory(null);
+      setSelectedSector(null);
     } else {
       setSelectedCategories([slug]);
       setSelectedSubcategory(null);
+      setSelectedSector(null);
     }
   };
 
   const handleSelectCommandSubcategory = (subSlug: string | null) => {
     setSelectedSubcategory(subSlug);
+    setSelectedSector(null);
+  };
+
+  const handleSelectCommandSector = (sectorSlug: string | null) => {
+    setSelectedSector(sectorSlug);
   };
 
   // إعادة تمركز الخريطة إلى كامل دمشق
@@ -1953,8 +1996,11 @@ export default function MapViewer({
             categories={categories}
             selectedCategorySlug={selectedCategories[0] || null}
             selectedSubcategorySlug={selectedSubcategory}
+            selectedSectorSlug={selectedSector}
+            sectors={availableSectors}
             onSelectCategory={handleSelectCommandCategory}
             onSelectSubcategory={handleSelectCommandSubcategory}
+            onSelectSector={handleSelectCommandSector}
           />
         </div>
 

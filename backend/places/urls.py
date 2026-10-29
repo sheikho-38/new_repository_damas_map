@@ -12,6 +12,7 @@ urlpatterns = [
     
     # نقاط الأماكن والمنشآت للطبقات (GeoJSON)
     path('places/geojson/', views.list_places_geojson, name='places_geojson'),
+    path('places/sectors/', views.list_place_sectors, name='place_sectors'),
     
     # تفاصيل منشأة محددة (Market Card)
     path('places/<int:place_id>/', views.get_place_detail, name='place_detail'),

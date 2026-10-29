@@ -161,7 +161,9 @@ class SubCategory(models.Model):
         """
         ترجع لون التصنيف الفرعي إذا وُجد، وإلا ترجع لون التصنيف الرئيسي كقيمة افتراضية
         """
-        return self.color or (self.category.color if self.category else "#064239")
+        subcategory_color = getattr(self, 'color', None)
+        category_color = getattr(self.category, 'color', None) if self.category else None
+        return subcategory_color or category_color or "#064239"
 
 #! جدول الاماكن
 #!Done

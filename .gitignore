@@ -30,6 +30,5 @@ Thumbs.db
 docs/
 
 # اشياء متغيرة حسب كل لابتوب
-backend/config/__pycahche__/settings.py
-backend/places/tile_views.py
+# backend/config/__pycahche__/settings.py
 dashboard/package-lock.json

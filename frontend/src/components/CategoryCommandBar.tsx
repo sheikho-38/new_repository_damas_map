@@ -22,16 +22,22 @@ interface CategoryCommandBarProps {
   categories: CategoryInfo[];
   selectedCategorySlug: string | null;
   selectedSubcategorySlug: string | null;
+  selectedSectorSlug: string | null;
+  sectors: Array<{ slug: string; label: string }>;
   onSelectCategory: (slug: string | null) => void;
   onSelectSubcategory: (subSlug: string | null) => void;
+  onSelectSector: (sectorSlug: string | null) => void;
 }
 
 export default function CategoryCommandBar({
   categories,
   selectedCategorySlug,
   selectedSubcategorySlug,
+  selectedSectorSlug,
+  sectors,
   onSelectCategory,
   onSelectSubcategory,
+  onSelectSector,
 }: CategoryCommandBarProps) {
   const displayCategories = categories;
   const activeCategory = categories.find((c) => c.slug === selectedCategorySlug);
@@ -92,7 +98,42 @@ export default function CategoryCommandBar({
             dir="rtl"
           >
             <div className="flex items-center gap-1.5 sm:gap-2 px-1 min-w-max justify-start py-0.5">
-              <button
+              {selectedSubcategorySlug && sectors.length > 0 ? (
+                <>
+                  <button
+                    type="button"
+                    onClick={() => onSelectSector(null)}
+                    aria-pressed={selectedSectorSlug === null}
+                    className={`shrink-0 h-9 sm:h-10 px-3 sm:px-3.5 rounded-xl text-xs font-bold transition-all shadow-xs cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
+                      selectedSectorSlug === null
+                        ? 'bg-[#064239] text-[#f7f4ed] ring-2 ring-[#c8a76a] scale-[1.02]'
+                        : 'bg-[#fdfbf7]/95 dark:bg-zinc-900/95 text-zinc-700 dark:text-zinc-200 border border-[#064239]/15 hover:bg-[#edebe0] hover:text-[#064239]'
+                    }`}
+                  >
+                    {selectedSectorSlug === null && <Check className="w-3.5 h-3.5 text-[#ecc988]" />}
+                    <span>كل القطاعات</span>
+                  </button>
+                  {sectors.map((sector) => {
+                    const isSectorSelected = selectedSectorSlug === sector.slug;
+                    return (
+                      <button
+                        key={sector.slug}
+                        type="button"
+                        aria-pressed={isSectorSelected}
+                        onClick={() => onSelectSector(isSectorSelected ? null : sector.slug)}
+                        className={`shrink-0 h-9 sm:h-10 px-3 sm:px-3.5 rounded-xl text-xs font-bold transition-all shadow-xs cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
+                          isSectorSelected
+                            ? 'bg-[#064239] text-[#f7f4ed] ring-2 ring-[#c8a76a] scale-[1.02]'
+                            : 'bg-[#fdfbf7]/95 dark:bg-zinc-900/95 text-zinc-700 dark:text-zinc-200 border border-[#064239]/15 hover:bg-[#edebe0] hover:text-[#064239]'
+                        }`}
+                      >
+                        {isSectorSelected && <Check className="w-3.5 h-3.5 text-[#ecc988]" />}
+                        <span>{sector.label}</span>
+                      </button>
+                    );
+                  })}
+                </>
+              ) : <button
                 type="button"
                 onClick={() => onSelectSubcategory(null)}
                 aria-pressed={selectedSubcategorySlug === null}
@@ -104,8 +145,8 @@ export default function CategoryCommandBar({
               >
                 {selectedSubcategorySlug === null && <Check className="w-3.5 h-3.5 text-[#ecc988]" />}
                 <span>الكل</span>
-              </button>
-              {activeCategory.subcategories && activeCategory.subcategories.map((sub: SubcategoryInfo) => {
+              </button>}
+              {(!selectedSubcategorySlug || sectors.length === 0) && activeCategory.subcategories && activeCategory.subcategories.map((sub: SubcategoryInfo) => {
                 const isSubSelected = selectedSubcategorySlug === sub.slug;
                 return (
                   <button

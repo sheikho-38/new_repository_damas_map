@@ -15,6 +15,10 @@ from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+PROJECT_ROOT = BASE_DIR.parent
+
+MBTILES_PATH = PROJECT_ROOT / 'brouter' / 'damascus_2026.mbtiles'
+FONT_PATH = PROJECT_ROOT / 'frontend' / 'public' / 'fonts'
 
 
 # Quick-start development settings - unsuitable for production
