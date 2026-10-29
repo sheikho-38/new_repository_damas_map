@@ -1,7 +1,6 @@
 from django.urls import path
 from . import views
 from . import tile_views
-from . import dashboard_views
 urlpatterns = [
    
     path('streets/geojson/', views.list_streets_geojson, name='streets_geojson'),
