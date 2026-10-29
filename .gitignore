@@ -29,4 +29,7 @@ frontend/out/
 Thumbs.db
 docs/
 
-# BRouter runs from the official Docker image; these copied local binaries are not used.
+# اشياء متغيرة حسب كل لابتوب
+backend\config\settings.py
+backend\places\tile_views.py
+dashboard/package-lock.json

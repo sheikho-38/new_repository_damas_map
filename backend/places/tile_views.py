@@ -9,7 +9,7 @@ from django.views.decorators.cache import cache_control
 
 
 MBTILES_PATH = Path(
-    r"D:\v1_mobile_dleel\assets\damascus.mbtiles"
+    r"C:\Users\MSI\Desktop\draft\maps\damascus_2026.mbtiles"
 )
 FONTS_PATH = Path(r"D:\tareeq\assets\fonts\Noto Sans Bold")
 
@@ -30,12 +30,11 @@ def get_damascus_tile(request, z, x, y):
         ) as db:
             row = db.execute(
                 """
-                SELECT images.tile_data
-                FROM map
-                JOIN images ON images.tile_id = map.tile_id
-                WHERE map.zoom_level = ?
-                  AND map.tile_column = ?
-                  AND map.tile_row = ?
+                SELECT tile_data
+                FROM tiles
+                WHERE zoom_level = ?
+                  AND tile_column = ?
+                  AND tile_row = ?
                 """,
                 (z, x, tms_y),
             ).fetchone()

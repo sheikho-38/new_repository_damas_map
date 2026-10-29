@@ -100,7 +100,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': os.environ.get('DB_NAME', 'damascus_guide_db'),
         'USER': os.environ.get('DB_USER', 'postgres'),
-        'PASSWORD': os.environ.get('DB_PASSWORD', 'postgres'),
+        'PASSWORD': os.environ.get('DB_PASSWORD', '12345678'),
         'HOST': os.environ.get('DB_HOST', 'localhost'),
         'PORT': os.environ.get('DB_PORT', '5432'),
     }
@@ -164,8 +164,14 @@ CORS_ALLOW_ALL_ORIGINS = (
     os.environ.get('DJANGO_CORS_ALLOW_ALL', 'False') == 'True'
 )
 CORS_ALLOWED_ORIGINS = [
-    'http://localhost:3000',
-    'http://127.0.0.1:3000',
+    h.strip()
+    for h in os.environ.get(
+        'DJANGO_CORS_ALLOWED_ORIGINS',
+        'http://localhost:3000,http://127.0.0.1:3000,http://localhost:5173,http://127.0.0.1:5173',
+    ).split(',')
+    if h.strip()
+]
+CORS_ALLOWED_ORIGINS += [
     'https://landmarx.dev',
     'http://landmarx.dev',
     'https://www.landmarx.dev',
@@ -180,8 +186,12 @@ CORS_ALLOW_CREDENTIALS = True
 # believes every request is plain HTTP and CSRF/cookie security breaks.
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 CSRF_TRUSTED_ORIGINS = [
-    'https://landmarx.dev',
-    'https://www.landmarx.dev',
+    h.strip()
+    for h in os.environ.get(
+        'DJANGO_CSRF_TRUSTED_ORIGINS',
+        'https://landmarx.dev,https://www.landmarx.dev,http://localhost:5173,http://127.0.0.1:5173,http://localhost:3000,http://127.0.0.1:3000',
+    ).split(',')
+    if h.strip()
 ]
 SECURE_CONTENT_TYPE_NOSNIFF = True
 SECURE_REFERRER_POLICY = 'strict-origin-when-cross-origin'
