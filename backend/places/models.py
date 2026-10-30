@@ -347,7 +347,7 @@ class Place(models.Model):
             admin_name,
             cat_name,
             self.location_text
-        )
+        )[:self._meta.get_field('search_text').max_length]
 
         super().save(*args, **kwargs)
 

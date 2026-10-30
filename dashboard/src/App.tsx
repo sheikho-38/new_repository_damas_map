@@ -1,17 +1,31 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import './App.css'
+import './places.css'
+import './submission.css'
+import PlaceSubmissionPage from './pages/PlaceSubmissionPage'
+import PlacesExplorerPage from './pages/PlacesExplorerPage'
+import HomePage from './pages/HomePage'
 import Sidebar from './components/Sidebar'
 import DashboardPage from './pages/DashboardPage'
 import RoutesListPage from './pages/RoutesListPage'
 import RoutesMapPage from './pages/RoutesMapPage'
 import type { Page } from './types'
 
+const paths: Record<Page, string> = { home: '/', dashboard: '/admin', routes: '/admin/routes', 'routes-map': '/admin/routes/map', 'routes-new': '/admin/routes/new', places: '/admin/places', 'places-new': '/admin/places/new' }
+const currentPage = (): Page => (Object.entries(paths).find(([, path]) => path === (window.location.pathname.replace(/\/$/, '') || '/'))?.[0] as Page) ?? 'dashboard'
 function App() {
-  const [page, setPage] = useState<Page>('dashboard')
+  const [page, setPage] = useState<Page>(currentPage)
+  const [savedId, setSavedId] = useState<number>()
+  const navigate = (next: Page) => { window.history.pushState({}, '', paths[next]); setPage(next) }
+  useEffect(() => { const pop = () => { setPage(currentPage()); setSavedId(undefined) }; window.addEventListener('popstate', pop); return () => window.removeEventListener('popstate', pop) }, [])
+
+  if (window.location.pathname.replace(/\/$/, '') === '/places/new') return <PlaceSubmissionPage />
+  if (page === 'places-new') return <PlaceSubmissionPage />
+  if (page === 'home') return <HomePage onNavigate={navigate} />
 
   return (
     <div dir="rtl" className="dashboard">
-      <Sidebar active={page} onNavigate={setPage} />
+      <Sidebar active={page} onNavigate={navigate} />
 
       <div className="dashboard-main">
         <header className="dashboard-header">
@@ -33,7 +47,8 @@ function App() {
         <main className="dashboard-content">
           {page === 'dashboard' && <DashboardPage />}
           {page === 'routes' && <RoutesListPage />}
-          {page === 'routes-map' && <RoutesMapPage />}
+          {(page === 'routes-map' || page === 'routes-new') && <RoutesMapPage startAdding={page === 'routes-new'} />}
+          {page === 'places' && <PlacesExplorerPage savedId={savedId} onAdd={() => navigate('places-new')} />}
         </main>
       </div>
     </div>

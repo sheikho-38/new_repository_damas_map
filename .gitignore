@@ -1,4 +1,5 @@
 # Virtual Environment
+.venv/
 backend/venv*/
 venv*/
 *.pyc

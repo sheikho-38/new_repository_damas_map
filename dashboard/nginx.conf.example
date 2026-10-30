@@ -1,0 +1,30 @@
+# Dedicated dashboard virtual host. Build with VITE_API_URL=/api.
+# Add your normal TLS certificate configuration and replace all example paths.
+server {
+    listen 443 ssl;
+    server_name dashboard.example.com;
+    root /srv/damascus/dashboard/dist;
+    index index.html;
+
+    location /api/ {
+        proxy_pass http://127.0.0.1:8000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+
+    # Django session login; the rest of /admin belongs to the React dashboard.
+    location = /admin/login/ {
+        proxy_pass http://127.0.0.1:8000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+
+    location /static/ {
+        alias /srv/damascus/backend/staticfiles/;
+    }
+
+    # Required for refresh/deep links such as /admin/places/new.
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
+}

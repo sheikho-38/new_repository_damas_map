@@ -7,8 +7,9 @@ import { useRoutesMap } from '../hooks/useRoutesMap'
 import { setSourceData } from '../map/setup'
 import type { MapRoute } from '../types'
 
-export default function RoutesMapPage() {
+export default function RoutesMapPage({ startAdding = false }: { startAdding?: boolean }) {
   const mapRef = useRef<maplibregl.Map | null>(null)
+  const addStartedRef = useRef(false)
   const [routes, setRoutes] = useState<MapRoute[]>([])
 
   const loadRoutes = useCallback(async () => {
@@ -17,7 +18,14 @@ export default function RoutesMapPage() {
 
   const editor = useRouteEditor(mapRef, loadRoutes)
   const { mapEl, ready } = useRoutesMap(mapRef, editor.onMapClick)
-  const { setError } = editor
+  const { setError, startNew } = editor
+
+  useEffect(() => {
+    if (startAdding && !addStartedRef.current) {
+      addStartedRef.current = true
+      startNew()
+    }
+  }, [startAdding, startNew])
 
   // تحميل الخطوط أول ما تفتح الصفحة
   useEffect(() => {

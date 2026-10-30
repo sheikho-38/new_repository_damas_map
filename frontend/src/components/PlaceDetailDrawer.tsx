@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useSyncExternalStore } from 'react';
+import { openingHoursForDay, subscribeToLocalDay, WEEKDAYS } from '@/lib/opening-hours';
 import { 
   X, 
   MapPin, 
@@ -103,60 +104,6 @@ const DEFAULT_PLACEHOLDERS: Record<string, string> = {
   default: 'https://upload.wikimedia.org/wikipedia/commons/d/d5/Umayyad_Mosque%2C_Damascus.jpg',
 };
 
-function translateHoursString(raw: string): string {
-  let s = raw.trim();
-  if (s === '24/7' || s.toLowerCase() === '24 hours') {
-    return 'مفتوح على مدار 24 ساعة (طيلة أيام الأسبوع)';
-  }
-  const dayMap: Record<string, string> = {
-    'Mo-Su': 'طيلة أيام الأسبوع',
-    'Sa-Th': 'من السبت إلى الخميس',
-    'Su-Th': 'من الأحد إلى الخميس',
-    'Mo-Sa': 'من الإثنين إلى السبت',
-    'Mo-Fr': 'من الإثنين إلى الجمعة',
-    'Sa-Fr': 'طيلة أيام الأسبوع',
-    'Sa': 'السبت', 'Su': 'الأحد', 'Mo': 'الإثنين', 'Tu': 'الثلاثاء',
-    'We': 'الأربعاء', 'Th': 'الخميس', 'Fr': 'الجمعة',
-  };
-  for (const [en, ar] of Object.entries(dayMap)) {
-    s = s.replace(new RegExp(`\\b${en}\\b`, 'g'), ar);
-  }
-  s = s.replace(/(\d{1,2}):(\d{2})\s*-\s*(\d{1,2}):(\d{2})/g, (_, h1, m1, h2, m2) => {
-    const parseHour = (h: string, m: string) => {
-      const num = parseInt(h, 10);
-      const period = num >= 12 ? 'مساءً' : 'صباحاً';
-      const formattedNum = num > 12 ? num - 12 : num === 0 ? 12 : num;
-      const minStr = m === '00' ? '' : `:${m}`;
-      return `${formattedNum}${minStr} ${period}`;
-    };
-    return `من ${parseHour(h1, m1)} حتى ${parseHour(h2, m2)}`;
-  });
-  return s;
-}
-
-function formatOpeningHours(hours: any): string | null {
-  if (!hours) return null;
-  if (typeof hours === 'string') {
-    const trimmed = hours.trim();
-    return trimmed && trimmed !== '{}' ? translateHoursString(trimmed) : null;
-  }
-  if (typeof hours === 'object') {
-    if (Object.keys(hours).length === 0) return null;
-    if (hours.description && typeof hours.description === 'string' && hours.description.trim()) {
-      return hours.description.trim();
-    }
-    if (hours.regular && typeof hours.regular === 'string' && hours.regular.trim()) {
-      return translateHoursString(hours.regular.trim());
-    }
-    if (hours.hours && typeof hours.hours === 'string' && hours.hours.trim()) {
-      return translateHoursString(hours.hours.trim());
-    }
-    const values = Object.values(hours).filter(v => typeof v === 'string' && (v as string).trim().length > 0) as string[];
-    return values.length > 0 ? values.map(translateHoursString).join(' | ') : null;
-  }
-  return null;
-}
-
 function getEmbedVideoUrl(url: string): string | null {
   if (!url) return null;
   const ytMatch = url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
@@ -205,6 +152,7 @@ export default function PlaceDetailDrawer({
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
   const [isScrolled, setIsScrolled] = useState(false);
   const [isShareOpen, setIsShareOpen] = useState(false);
+  const localDay = useSyncExternalStore<number | null>(subscribeToLocalDay, () => new Date().getDay(), () => null);
 
   const mediaCount = place?.media && place.media.length > 0 ? place.media.length : 1;
 
@@ -284,7 +232,7 @@ export default function PlaceDetailDrawer({
 
   const formattedAddress = formatCleanAddress(place.location, place.title);
   const specificStreet = formattedAddress;
-  const formattedHours = formatOpeningHours(place.contact?.opening_hours);
+  const formattedHours = localDay === null ? null : openingHoursForDay(place.contact?.opening_hours, localDay);
   const hasValidCoords = Boolean(
     place.location?.latitude &&
     place.location?.longitude &&
@@ -541,7 +489,7 @@ export default function PlaceDetailDrawer({
               <div className="flex items-center gap-2 text-xs pt-2 border-t border-black/5 dark:border-white/5">
                 <Clock className="w-4 h-4 text-[#064239] dark:text-emerald-400 shrink-0" />
                 <div className="flex items-center gap-1.5 flex-wrap">
-                  <span className="font-bold text-emerald-700 dark:text-emerald-400">أوقات الدوام:</span>
+                  <span className="font-bold text-emerald-700 dark:text-emerald-400">دوام اليوم ({WEEKDAYS[localDay ?? 0]}):</span>
                   <span className="text-zinc-600 dark:text-zinc-300 text-[11px]">
                     {formattedHours}
                   </span>

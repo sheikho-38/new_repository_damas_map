@@ -8,6 +8,7 @@ import CategoryCommandBar from './CategoryCommandBar';
 import type { CategoryInfo } from './LayersPanel';
 import PlaceDetailDrawer, { PlaceDetailData } from './PlaceDetailDrawer';
 import { createPlacePreview } from '@/lib/place-preview';
+import { watchPlaces } from '@/lib/places-refresh';
 import { useDatabaseMapData } from '@/lib/database-map-style';
 import UserLocationButton from './UserLocationButton';
 import { PLATFORM_CATEGORIES, mergePlatformCategories } from '@/lib/platform-categories';
@@ -71,6 +72,7 @@ export default function MapViewer({
 }: MapViewerProps) {
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<any>(null);
+  const poiRequestRef = useRef<AbortController | null>(null);
   const [loading, setLoading] = useState(true);
   const [activeTheme, setActiveTheme] = useState<ThemeKey>('governorate');
   const [isThemeMenuOpen, setIsThemeMenuOpen] = useState(false);
@@ -402,6 +404,31 @@ export default function MapViewer({
       source = map.getSource('places-poi-source');
     }
 
+    // Abort older category/viewport requests so late responses never replace newer data.
+    poiRequestRef.current?.abort();
+    const controller = new AbortController();
+    poiRequestRef.current = controller;
+    const selectedId = selectedPlaceRef.current?.id;
+    if (selectedId) {
+      try {
+        const detail = await fetch(`${getApiBaseUrl()}/places/${selectedId}/`, { signal: controller.signal, cache: 'no-store' });
+        if (controller.signal.aborted) return;
+        if (selectedPlaceRef.current?.id === selectedId) {
+          if (detail.status === 404) closePlace();
+          else if (detail.ok) {
+            const updated = await detail.json();
+            if (controller.signal.aborted) return;
+            if (selectedPlaceRef.current?.id === selectedId && JSON.stringify(updated) !== JSON.stringify(selectedPlaceRef.current)) {
+              if (updated.location.latitude !== selectedPlaceRef.current.location.latitude || updated.location.longitude !== selectedPlaceRef.current.location.longitude) focusedPlaceRef.current = null;
+              setSelectedPlace(updated);
+            }
+          }
+        }
+      } catch (error) {
+        if (controller.signal.aborted) return;
+        console.warn('Place detail refresh failed:', error);
+      }
+    }
     // إذا لم يكن هناك أي تصنيف محدد، نفرغ المصدر بصمت دون أي وميض
     if (!catSlugs || catSlugs.length === 0) {
       if (source) {
@@ -412,10 +439,13 @@ export default function MapViewer({
 
     // جلب نقاط التصنيفات المحددة فقط عند الطلب
     try {
-      const slugsParam = catSlugs.join(',');
-      const res = await fetch(`${getApiBaseUrl()}/places/geojson/?categories=${slugsParam}&limit=2500`);
+      const bounds = map.getBounds();
+      const query = new URLSearchParams({ categories: catSlugs.join(','), limit: '5000', bbox: [Math.max(-180, bounds.getWest()), Math.max(-90, bounds.getSouth()), Math.min(180, bounds.getEast()), Math.min(90, bounds.getNorth())].join(',') });
+      if (selectedSubcategoryRef.current) query.set('subcategories', selectedSubcategoryRef.current);
+      const res = await fetch(`${getApiBaseUrl()}/places/geojson/?${query}`, { signal: controller.signal, cache: 'no-store' });
       if (!res.ok) return;
       const geojson = await res.json();
+      if (controller.signal.aborted || mapInstanceRef.current !== map) return;
       if (source) {
         source.setData(geojson);
         if (selectedPlaceRef.current) {
@@ -436,9 +466,26 @@ export default function MapViewer({
         }
       }
     } catch (e) {
-      console.warn('Error refreshing POI layers:', e);
+      if (!controller.signal.aborted) console.warn('Error refreshing POI layers:', e);
     }
-  }, []);
+  }, [closePlace]);
+
+  useEffect(() => {
+    const stop = watchPlaces(async () => {
+      const map = mapInstanceRef.current;
+      if (map?.isStyleLoaded() && (selectedCategoriesRef.current.length || selectedPlaceRef.current)) await refreshPoiLayer(map, selectedCategoriesRef.current);
+    });
+    return () => { stop(); poiRequestRef.current?.abort(); };
+  }, [refreshPoiLayer]);
+
+  useEffect(() => {
+    if (loading) return;
+    const map = mapInstanceRef.current;
+    if (!map) return;
+    const moved = () => { if (selectedCategoriesRef.current.length) void refreshPoiLayer(map, selectedCategoriesRef.current); };
+    map.on('moveend', moved);
+    return () => map.off('moveend', moved);
+  }, [loading, refreshPoiLayer]);
 
   // عرض مسار الخط المختار حصراً ومحطاته بدقة (Option B - Zero Clutter)
   const renderSelectedTransitRoute = useCallback((map: any, line: TransitLine | null) => {

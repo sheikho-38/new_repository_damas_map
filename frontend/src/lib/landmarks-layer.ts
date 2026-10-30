@@ -22,12 +22,49 @@ export interface LandmarkSelectPayload {
   description?: string;
 }
 
+// Rasterize small vector badges once; no remote images or font-dependent symbols.
+function registerLandmarkIcons(map: any): void {
+  const icons = {
+    monument: { color: '#064239', path: 'M5 10L12 5L19 10Z M7 12V18 M12 12V18 M17 12V18 M5 20H19' },
+    square: { color: '#c8a76a', path: 'M5 5H19V19H5Z M9 9H15V15H9Z M12 5V9 M12 15V19 M5 12H9 M15 12H19' },
+    park: { color: '#059669', path: 'M12 4L6 11H9L5 16H19L15 11H18Z M12 16V21' },
+  };
+  for (const [type, icon] of Object.entries(icons)) {
+    if (map.hasImage(`landmark-${type}`)) continue;
+    const canvas = document.createElement('canvas');
+    canvas.width = canvas.height = 64;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) continue;
+    ctx.scale(2, 2);
+    ctx.fillStyle = icon.color;
+    ctx.strokeStyle = '#ffffff';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.arc(16, 16, 14, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.stroke();
+    ctx.translate(4, 4);
+    ctx.lineWidth = 1.6;
+    ctx.lineCap = ctx.lineJoin = 'round';
+    ctx.stroke(new Path2D(icon.path));
+    map.addImage(`landmark-${type}`, ctx.getImageData(0, 0, 64, 64), { pixelRatio: 2 });
+  }
+}
+
+const landmarkIconLayout = {
+  'icon-image': ['match', ['get', 'type'], 'park', 'landmark-park', 'square', 'landmark-square', 'landmark-monument'],
+  'icon-size': ['interpolate', ['linear'], ['zoom'], 11, 0.7, 17, 1],
+  'icon-allow-overlap': false,
+  'icon-padding': 2,
+};
+
 export function setupLandmarkLayers(
   map: any,
   getAssetUrl: (path: string) => string,
   onSelectLandmark: (item: LandmarkSelectPayload) => void
 ): void {
   if (!map || map.getSource('damascus-permanent-landmarks')) return;
+  registerLandmarkIcons(map);
 
   // 1. إضافة مصدر بيانات المعالم الدائمة
   map.addSource('damascus-permanent-landmarks', {
@@ -42,27 +79,11 @@ export function setupLandmarkLayers(
   // -------------------------------------------------------------------------
   map.addLayer({
     id: 'landmarks-tier1-badge',
-    type: 'circle',
+    type: 'symbol',
     source: 'damascus-permanent-landmarks',
     filter: ['==', ['get', 'tier'], 1],
     minzoom: 11.0,
-    paint: {
-      'circle-radius': [
-        'interpolate', ['linear'], ['zoom'],
-        11, 4.5,
-        14, 6.0,
-        17, 7.5
-      ],
-      'circle-color': [
-        'case',
-        ['==', ['get', 'type'], 'square'], '#c8a76a', // ذهبي دمشقي عتيق للساحات
-        ['==', ['get', 'type'], 'park'], '#059669',   // ياسميني أخضر للحدائق
-        '#064239'                                     // أخضر سيادي للمعالم التاريخية
-      ],
-      'circle-stroke-width': 2.0,
-      'circle-stroke-color': '#ffffff',
-      'circle-opacity': 0.95,
-    },
+    layout: landmarkIconLayout,
   });
 
   map.addLayer({
@@ -81,7 +102,7 @@ export function setupLandmarkLayers(
         16, 14.0
       ],
       'text-variable-anchor': ['top', 'bottom', 'left', 'right', 'top-left', 'top-right'],
-      'text-radial-offset': 0.8,
+      'text-radial-offset': 1.3,
       'text-justify': 'auto',
       'text-max-width': 8.5,
       'text-allow-overlap': false,
@@ -106,27 +127,11 @@ export function setupLandmarkLayers(
   // -------------------------------------------------------------------------
   map.addLayer({
     id: 'landmarks-tier2-badge',
-    type: 'circle',
+    type: 'symbol',
     source: 'damascus-permanent-landmarks',
     filter: ['==', ['get', 'tier'], 2],
     minzoom: 12.8,
-    paint: {
-      'circle-radius': [
-        'interpolate', ['linear'], ['zoom'],
-        13, 4.0,
-        15, 5.5,
-        17, 6.5
-      ],
-      'circle-color': [
-        'case',
-        ['==', ['get', 'type'], 'square'], '#c8a76a',
-        ['==', ['get', 'type'], 'park'], '#059669',
-        '#064239'
-      ],
-      'circle-stroke-width': 1.8,
-      'circle-stroke-color': '#ffffff',
-      'circle-opacity': 0.95,
-    },
+    layout: landmarkIconLayout,
   });
 
   map.addLayer({
@@ -145,7 +150,7 @@ export function setupLandmarkLayers(
         17, 13.5
       ],
       'text-variable-anchor': ['top', 'bottom', 'left', 'right', 'top-left', 'top-right'],
-      'text-radial-offset': 0.75,
+      'text-radial-offset': 1.3,
       'text-justify': 'auto',
       'text-max-width': 8.0,
       'text-allow-overlap': false,
@@ -170,26 +175,11 @@ export function setupLandmarkLayers(
   // -------------------------------------------------------------------------
   map.addLayer({
     id: 'landmarks-tier3-badge',
-    type: 'circle',
+    type: 'symbol',
     source: 'damascus-permanent-landmarks',
     filter: ['==', ['get', 'tier'], 3],
     minzoom: 14.2,
-    paint: {
-      'circle-radius': [
-        'interpolate', ['linear'], ['zoom'],
-        14.5, 3.8,
-        17, 5.0
-      ],
-      'circle-color': [
-        'case',
-        ['==', ['get', 'type'], 'square'], '#c8a76a',
-        ['==', ['get', 'type'], 'park'], '#059669',
-        '#064239'
-      ],
-      'circle-stroke-width': 1.5,
-      'circle-stroke-color': '#ffffff',
-      'circle-opacity': 0.9,
-    },
+    layout: landmarkIconLayout,
   });
 
   map.addLayer({
@@ -207,7 +197,7 @@ export function setupLandmarkLayers(
         17, 12.0
       ],
       'text-variable-anchor': ['top', 'bottom', 'left', 'right'],
-      'text-radial-offset': 0.7,
+      'text-radial-offset': 1.3,
       'text-justify': 'auto',
       'text-max-width': 8.0,
       'text-allow-overlap': false,

@@ -3,6 +3,7 @@ import json
 import re
 from django.http import JsonResponse, Http404
 from django.views.decorators.http import require_GET
+from django.views.decorators.cache import never_cache
 from django.db.models import Q
 from .models import (
     AdminArea, Street, Category, SubCategory, Place, PlaceMedia, Notification,
@@ -10,6 +11,8 @@ from .models import (
 )
 from .contacts import serialize_contact, sector_label
 from .text_utils import normalize_arabic, generate_search_variants
+from .management_api import filtered_places
+from rest_framework.exceptions import ValidationError
 
 
 def haversine_distance_km(lat1, lon1, lat2, lon2):
@@ -165,6 +168,7 @@ PERMANENT_LANDMARK_IDS = {
 
 
 @require_GET
+@never_cache
 def list_places_geojson(request):
     """
     إرجاع نقاط الأماكن والمنشآت بصيغة GeoJSON لطبقات الخريطة النشطة
@@ -176,7 +180,6 @@ def list_places_geojson(request):
     """
     cat_param = request.GET.get('categories')
     subcat_param = request.GET.get('subcategories')
-    admin_id = request.GET.get('admin_area_id')
     include_permanent = request.GET.get('include_permanent', '0') == '1'
     try:
         limit = int(request.GET.get('limit', 1500))
@@ -202,11 +205,13 @@ def list_places_geojson(request):
         if sub_slugs:
             queryset = queryset.filter(sub_category__slug__in=sub_slugs)
 
-    if admin_id:
-        try:
-            queryset = queryset.filter(admin_area_id=int(admin_id))
-        except ValueError:
-            pass
+    try:
+        # Public callers cannot override publication visibility.
+        params = request.GET.copy()
+        params.pop('is_visible', None)
+        queryset = filtered_places(params, queryset)
+    except ValidationError as exc:
+        return JsonResponse(exc.detail, status=400)
 
     queryset = queryset[:limit]
 
@@ -251,12 +256,13 @@ def list_places_geojson(request):
 
 
 @require_GET
+@never_cache
 def get_place_detail(request, place_id):
     """
     إرجاع التفاصيل الكاملة لمكان محدد لعرضها في بطاقة المنشأة (Market Card)
     """
     try:
-        p = Place.objects.select_related('sub_category__category', 'admin_area__parent').prefetch_related('media', 'communication_info').get(id=place_id)
+        p = Place.objects.select_related('sub_category__category', 'admin_area__parent').prefetch_related('media', 'communication_info').get(id=place_id, is_visible=True)
     except Place.DoesNotExist:
         raise Http404("المكان غير موجود")
 

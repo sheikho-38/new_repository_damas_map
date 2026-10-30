@@ -213,3 +213,8 @@ REST_FRAMEWORK = {
     ],
 }
 
+# Invitation links authorize creation only, without a Django staff account.
+PLACES_FORM_LINK_MAX_AGE = int(os.environ.get('PLACES_FORM_LINK_MAX_AGE', str(30 * 24 * 60 * 60)))
+PLACES_FORM_LINK_VERSION = os.environ.get('PLACES_FORM_LINK_VERSION', '1')
+PLACES_SUBMISSION_AUTO_PUBLISH = os.environ.get('PLACES_SUBMISSION_AUTO_PUBLISH', 'True').lower() == 'true'
+

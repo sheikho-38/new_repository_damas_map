@@ -1,4 +1,4 @@
-export type Page = 'dashboard' | 'routes' | 'routes-map'
+export type Page = 'home' | 'dashboard' | 'routes' | 'routes-map' | 'routes-new' | 'places' | 'places-new'
 
 // [longitude, latitude]
 export type LngLat = [number, number]
