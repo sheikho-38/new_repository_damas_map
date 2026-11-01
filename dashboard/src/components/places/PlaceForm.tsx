@@ -3,6 +3,8 @@ import type { Metadata, Place, PlaceInput } from '../../types/places'
 import { placesApi } from '../../services/placesApi'
 import PlacesMap from './PlacesMap'
 import OpeningHoursEditor from './OpeningHoursEditor'
+import MediaFilePicker from './MediaFilePicker'
+import { lookupAdminArea } from '../../services/adminAreaLookup'
 
 type Field = HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
 const contactMessage = (type: string, value: string) => {
