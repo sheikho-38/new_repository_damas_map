@@ -31,12 +31,21 @@ describe('media file selection', () => {
 
   it('adds valid files from the file chooser and reports invalid selections', async () => {
     const change = vi.fn()
-    render(<MediaFilePicker files={[]} onChange={change} />)
+    render(<MediaFilePicker files={[]} onChange={change} onCoverChange={vi.fn()} />)
     const input = screen.getByLabelText('اختيار الصور والفيديو')
     fireEvent.change(input, { target: { files: [file('place.png', 1024)] } })
-    expect(change).toHaveBeenCalledWith([expect.objectContaining({ name: 'place.png' })])
+    expect(change).toHaveBeenCalledWith([{ file: expect.objectContaining({ name: 'place.png' }), is_cover: false }])
     fireEvent.change(input, { target: { files: [file('place.gif', 1024)] } })
     expect(await screen.findByRole('alert')).toBeTruthy()
     expect(change).toHaveBeenCalledTimes(1)
+  })
+
+  it('lets the user mark a selected image as the cover', () => {
+    const image = file('cover.png', 1024)
+    const change = vi.fn()
+    const cover = vi.fn()
+    render(<MediaFilePicker files={[{ file: image, is_cover: false }]} onChange={change} onCoverChange={cover} />)
+    fireEvent.click(screen.getByLabelText('تعيين cover.png كصورة غلاف'))
+    expect(cover).toHaveBeenCalledWith(0)
   })
 })

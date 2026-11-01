@@ -101,6 +101,30 @@ describe('places workflows', () => {
     expect(save).not.toHaveBeenCalled()
   })
 
+  it('uploads the selected image and saves its cover flag with the place', async () => {
+    const savedMedia = { file_url: 'http://localhost/media/cover.png', media_type: 'image', caption: '', is_cover: true }
+    const uploadMedia = vi.fn().mockResolvedValue([savedMedia])
+    const save = vi.fn().mockResolvedValue({ ...place, media: [savedMedia] })
+    render(<PlaceForm metadata={metadata} initial={place} uploadMedia={uploadMedia} savePlace={save} onSaved={vi.fn()} />)
+    const file = new File(['image'], 'cover.png', { type: 'image/png' })
+    await act(async () => fireEvent.change(screen.getByLabelText('اختيار الصور والفيديو'), { target: { files: [file] } }))
+    fireEvent.click(screen.getByLabelText('تعيين cover.png كصورة غلاف'))
+    await act(async () => fireEvent.submit(screen.getByRole('button', { name: 'حفظ المكان' }).closest('form')!))
+    expect(uploadMedia).toHaveBeenCalledWith([{ file, is_cover: true }])
+    expect(save).toHaveBeenCalledWith(expect.objectContaining({ media: [savedMedia] }), place.id)
+  })
+
+  it('marks only the selected image as cover when existing images are available', () => {
+    const first = { file_url: 'https://example.com/one.jpg', media_type: 'image', caption: 'الأولى', is_cover: true }
+    const second = { file_url: 'https://example.com/two.jpg', media_type: 'image', caption: 'الثانية', is_cover: false }
+    const initial = { ...place, media: [first, second] }
+    const view = render(<PlaceForm metadata={metadata} initial={initial} onSaved={vi.fn()} />)
+    fireEvent.click(screen.getByLabelText('تعيين الوسيط 2 كصورة غلاف'))
+    expect((screen.getByLabelText('تعيين الوسيط 1 كصورة غلاف') as HTMLInputElement).checked).toBe(false)
+    expect((screen.getByLabelText('تعيين الوسيط 2 كصورة غلاف') as HTMLInputElement).checked).toBe(true)
+    view.unmount()
+  })
+
   it('announces saving and prevents duplicate submissions until the request finishes', async () => {
     let resolve!: (value: Place) => void
     const save = vi.fn(() => new Promise<Place>(done => { resolve = done }))

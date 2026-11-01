@@ -25,6 +25,6 @@ export default function PlaceSubmissionPage() {
     {error ? <section className="places-panel"><p role="alert" className="places-error">{error}</p><button onClick={() => { setError(''); setAttempt(a => a + 1) }}>إعادة المحاولة</button></section>
       : !metadata ? <p role="status">جارٍ تحميل النموذج…</p>
       : saved ? <section className="places-panel submission-success" role="status"><span className="success-check" aria-hidden="true">✓</span><h2>تم حفظ المكان بنجاح</h2><p>{saved.title_ar}</p><p>{saved.is_visible ? 'سيظهر على الخريطة العامة خلال نحو 15 ثانية عند اختيار فئته.' : 'تم إرسال المكان للمراجعة قبل ظهوره على الخريطة.'}</p><p>رقم المكان: {saved.id} — يمكنك الآن إضافة المكان التالي.</p><button onClick={() => setSaved(null)}>إضافة مكان آخر</button></section>
-      : <><p className="submission-policy">{metadata.auto_publish ? 'سيُنشر المكان على الخريطة بعد الحفظ.' : 'سيُراجع المكان قبل نشره على الخريطة.'}</p><PlaceForm metadata={{ ...metadata, csrf_token: '' }} submission savePlace={api.save} onSaved={setSaved} /></>}
+      : <><p className="submission-policy">{metadata.auto_publish ? 'سيُنشر المكان على الخريطة بعد الحفظ.' : 'سيُراجع المكان قبل نشره على الخريطة.'}</p><PlaceForm metadata={{ ...metadata, csrf_token: '' }} submission savePlace={api.save} uploadMedia={api.uploadMedia} onSaved={setSaved} /></>}
   </main>
 }

@@ -3,12 +3,15 @@ from . import views
 from . import tile_views
 from . import management_api
 from . import submission_api
+from . import media_upload_api
 from . import geo_lookup
 
 urlpatterns = [
+    path('place-submissions/media/', media_upload_api.SubmissionMediaUpload.as_view()),
     path('place-submissions/metadata/', submission_api.SubmissionMetadata.as_view()),
     path('place-submissions/', submission_api.SubmitPlace.as_view()),
     path('admin/places/metadata/', management_api.metadata),
+    path('admin/places/media/', media_upload_api.AdminMediaUpload.as_view()),
     path('admin/places/geojson/', management_api.map_places),
     path('admin/places/', management_api.PlaceList.as_view()),
     path('admin/places/<int:pk>/', management_api.PlaceDetail.as_view()),

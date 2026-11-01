@@ -10,6 +10,7 @@ export type Place = {
   media: { file_url: string; media_type: string; caption: string; is_cover: boolean }[]
 }
 export type PlaceInput = Omit<Place, 'id'>
+export type LocalMediaFile = { file: File; is_cover: boolean }
 export type Metadata = {
   csrf_token: string
   categories: { id: number; name_ar: string; subcategories: { id: number; name_ar: string }[] }[]

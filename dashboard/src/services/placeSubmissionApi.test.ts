@@ -22,3 +22,17 @@ it('explains rate limits without asking for a login', async () => {
   vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ ok: false, status: 429 }))
   await expect(createSubmissionApi().metadata(new AbortController().signal)).rejects.toThrow('الحد المؤقت')
 })
+
+it('uploads media as multipart data and returns the stored image metadata', async () => {
+  const result = { file_url: 'http://api.test/media/place_media/a.jpg', media_type: 'image', caption: '', is_cover: true }
+  const fetchMock = vi.fn().mockResolvedValue({ ok: true, json: async () => result })
+  vi.stubGlobal('fetch', fetchMock)
+  const file = new File(['image'], 'cover.jpg', { type: 'image/jpeg' })
+  await expect(createSubmissionApi().uploadMedia([{ file, is_cover: true }])).resolves.toEqual([result])
+  const [url, init] = fetchMock.mock.calls[0]
+  expect(url).toContain('/place-submissions/media/')
+  expect(init.credentials).toBe('omit')
+  expect(init.headers['Content-Type']).toBeUndefined()
+  expect(init.body.get('file')).toBe(file)
+  expect(init.body.get('is_cover')).toBe('true')
+})

@@ -26,6 +26,11 @@ class MediaSerializer(serializers.ModelSerializer):
         model = PlaceMedia
         fields = ['file_url', 'media_type', 'caption', 'is_cover']
 
+    def validate(self, attrs):
+        if attrs.get('is_cover') and attrs.get('media_type', 'image') != 'image':
+            raise serializers.ValidationError({'is_cover': 'يمكن اختيار صورة فقط كغلاف.'})
+        return attrs
+
 
 class PlaceSerializer(serializers.ModelSerializer):
     sub_category_id = serializers.PrimaryKeyRelatedField(source='sub_category', queryset=SubCategory.objects.all())
@@ -54,6 +59,11 @@ class PlaceSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError(errors)
         for row in rows:
             row['value'] = row['value'].strip()
+        return rows
+
+    def validate_media(self, rows):
+        if sum(bool(row.get('is_cover')) for row in rows) > 1:
+            raise serializers.ValidationError('يمكن اختيار صورة واحدة فقط كغلاف.')
         return rows
 
     def validate(self, attrs):

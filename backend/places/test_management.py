@@ -17,7 +17,7 @@ class PlacesManagementTests(TestCase):
     def setUp(self):
         self.client = APIClient()
         self.client.force_login(self.staff)
-        self.payload = {'title_ar': 'مشفى اختبار', 'sub_category_id': self.sub.id, 'admin_area_id': self.area.id, 'latitude': 33.51, 'longitude': 36.29, 'communication_info': [{'type': 'phone', 'value': '0111234567'}], 'media': [{'file_url': 'https://example.org/photo.jpg', 'media_type': 'image'}], 'opening_hours': {'السبت': '09:00–17:00'}}
+        self.payload = {'title_ar': 'مشفى اختبار', 'sub_category_id': self.sub.id, 'admin_area_id': self.area.id, 'latitude': 33.51, 'longitude': 36.29, 'communication_info': [{'type': 'phone', 'value': '1234567'}], 'media': [{'file_url': 'https://example.org/photo.jpg', 'media_type': 'image'}], 'opening_hours': {'السبت': '09:00–17:00'}}
 
     def create(self, **overrides):
         response = self.client.post('/api/admin/places/', {**self.payload, **overrides}, format='json')

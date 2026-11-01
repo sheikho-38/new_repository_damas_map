@@ -15,8 +15,10 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
+from django.conf import settings
 from django.urls import path, include
 from django.http import JsonResponse
+from django.views.static import serve
 
 def health_check(request):
     return JsonResponse({
@@ -25,9 +27,14 @@ def health_check(request):
         "message": "Django Backend is up and running!"
     })
 
+
+def uploaded_media(request, path):
+    return serve(request, path, document_root=settings.MEDIA_ROOT)
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/health/', health_check, name='health_check'),
+    path('media/<path:path>', uploaded_media),
     path('api/', include('places.urls')),
     path('api/', include('buses.urls')),
 ]

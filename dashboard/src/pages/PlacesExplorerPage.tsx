@@ -43,7 +43,7 @@ export default function PlacesExplorerPage({ onAdd, savedId }: { onAdd: () => vo
   }
   if (metadataError) return <p role="alert">{metadataError} <a href={`${API_URL.replace(/\/api\/?$/, '')}/admin/login/`} target="_blank" rel="noreferrer">تسجيل الدخول</a> ثم أعد تحميل الصفحة.</p>
   if (!metadata) return <p>جارٍ تحميل بيانات الإدارة…</p>
-  if (editing && selected) return <PlaceForm key={selected.id} metadata={metadata} initial={selected} onCancel={() => setEditing(false)} onSaved={p => { setSelected(p); setEditing(false); setRevision(r => r + 1); setNotice('تم حفظ التعديلات') }} />
+  if (editing && selected) return <PlaceForm key={selected.id} metadata={metadata} initial={selected} uploadMedia={placesApi.uploadMedia} onCancel={() => setEditing(false)} onSaved={p => { setSelected(p); setEditing(false); setRevision(r => r + 1); setNotice('تم حفظ التعديلات') }} />
   return <section className="places-explorer">
     <div className="places-row"><h2>استكشاف الأماكن</h2><button className="places-primary" onClick={onAdd}>إضافة مكان</button></div>
     {notice && <p role="status">{notice}</p>}
