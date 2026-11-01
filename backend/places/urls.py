@@ -3,6 +3,8 @@ from . import views
 from . import tile_views
 from . import management_api
 from . import submission_api
+from . import geo_lookup
+
 urlpatterns = [
     path('place-submissions/metadata/', submission_api.SubmissionMetadata.as_view()),
     path('place-submissions/', submission_api.SubmitPlace.as_view()),
@@ -12,6 +14,7 @@ urlpatterns = [
     path('admin/places/<int:pk>/', management_api.PlaceDetail.as_view()),
    
     path('streets/geojson/', views.list_streets_geojson, name='streets_geojson'),
+    path('admin-areas/lookup/', geo_lookup.lookup_admin_area),
     # التقسيمات الإدارية المعتمدة
     path('admin-areas/', views.list_admin_areas_geojson, name='admin_areas_geojson'),
     

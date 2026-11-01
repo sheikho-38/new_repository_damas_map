@@ -11,7 +11,7 @@ from rest_framework.permissions import IsAdminUser
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 from .models import Place, Category, SubCategory, AdminArea, CommunicationInfo, PlaceMedia
-
+from .validators import validate_contact_value
 
 class ContactSerializer(serializers.ModelSerializer):
     class Meta:
@@ -42,6 +42,19 @@ class PlaceSerializer(serializers.ModelSerializer):
         model = Place
         fields = ['id', 'title_ar', 'title_en', 'description', 'sector', 'latitude', 'longitude', 'location_text', 'opening_hours', 'is_visible', 'is_verified', 'sub_category_id', 'admin_area_id', 'category_id', 'category_name', 'sub_category_name', 'admin_area_name', 'communication_info', 'media', 'created_at', 'updated_at']
         read_only_fields = ['id', 'created_at', 'updated_at']
+
+    def validate_communication_info(self, rows):
+        errors = {}
+        for row in rows:
+            try:
+                validate_contact_value(row['type'], row['value'])
+            except DjangoValidationError as exc:
+                errors.setdefault(row['type'], []).extend(exc.messages)
+        if errors:
+            raise serializers.ValidationError(errors)
+        for row in rows:
+            row['value'] = row['value'].strip()
+        return rows
 
     def validate(self, attrs):
         for field in ('latitude', 'longitude'):
