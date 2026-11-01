@@ -1,8 +1,9 @@
-import { useRef, useState, type FormEvent } from 'react'
+import { useEffect, useRef, useState, type FormEvent } from 'react'
 import type { Metadata, Place, PlaceInput } from '../../types/places'
 import { placesApi } from '../../services/placesApi'
 import PlacesMap from './PlacesMap'
 import OpeningHoursEditor from './OpeningHoursEditor'
+import { lookupAdminArea } from '../../services/adminAreaLookup'
 
 type Field = HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
 const isField = (el: EventTarget): el is Field => el instanceof HTMLInputElement || el instanceof HTMLSelectElement || el instanceof HTMLTextAreaElement
@@ -20,6 +21,20 @@ export default function PlaceForm({ metadata, initial, onSaved, onCancel, savePl
   const hint = (name: string) => errors[name] && <small className="field-error" id={`${name}-error`}>{errors[name]}</small>
   const set = <K extends keyof PlaceInput>(key: K, value: PlaceInput[K]) => setForm(old => ({ ...old, [key]: value }))
   const validCoordinates = Number.isFinite(form.latitude) && Number.isFinite(form.longitude) && Math.abs(form.latitude) <= 90 && Math.abs(form.longitude) <= 180
+  const lastLookup = useRef(initial ? `${initial.latitude},${initial.longitude}` : '')
+  useEffect(() => {
+    if (!validCoordinates) return
+    const key = `${form.latitude},${form.longitude}`
+    if (key === lastLookup.current) return
+    const controller = new AbortController()
+    const timer = setTimeout(() => {
+      lastLookup.current = key
+      lookupAdminArea(form.latitude, form.longitude, controller.signal)
+        .then(area => { if (!controller.signal.aborted) setForm(old => ({ ...old, admin_area_id: area?.id ?? null })) })
+        .catch(() => { /* نترك القيمة الحالية إذا فشل الطلب */ })
+    }, 500)
+    return () => { clearTimeout(timer); controller.abort() }
+  }, [form.latitude, form.longitude, validCoordinates])
   const submit = async (event: FormEvent) => {
     event.preventDefault()
     if (saving.current) return
