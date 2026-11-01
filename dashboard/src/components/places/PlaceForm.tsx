@@ -3,18 +3,35 @@ import type { Metadata, Place, PlaceInput } from '../../types/places'
 import { placesApi } from '../../services/placesApi'
 import PlacesMap from './PlacesMap'
 import OpeningHoursEditor from './OpeningHoursEditor'
+import MediaFilePicker from './MediaFilePicker'
 
 type Field = HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+const contactMessage = (type: string, value: string) => {
+  if (!value) return ''
+  if (type === 'phone') return /^[0-9]{7}$/.test(value) ? '' : 'أدخل رقم هاتف من 7 أرقام.'
+  if (type === 'mobile' || type === 'whatsapp') return /^09[0-9]{8}$/.test(value) ? '' : 'أدخل 10 أرقام تبدأ بـ 09.'
+  if (type === 'email') return /^[a-z0-9.!#$%&'*+/=?^_`{|}~-]+@gmail\.com$/i.test(value) ? '' : 'أدخل بريدًا إلكترونيًا صحيحًا ينتهي بـ @gmail.com.'
+  const domain = ({ facebook: 'facebook.com', instagram: 'instagram.com', telegram: 't.me' } as Record<string, string>)[type]
+  if (type !== 'website' && !domain) return ''
+  try {
+    const url = new URL(value)
+    if (/^https?:\/\/[^\s/\\]/i.test(value) && !/[\s\\]/.test(value) && url.hostname && !url.username && !url.password
+      && (domain ? url.protocol === 'https:' && url.hostname === domain && !url.port : ['http:', 'https:'].includes(url.protocol))) return ''
+  } catch { /* Invalid URLs use the field-specific message below. */ }
+  return domain ? `أدخل رابطًا صحيحًا يبدأ بـ https://${domain}.` : 'أدخل رابطًا صحيحًا يبدأ بـ http:// أو https://.'
+}
 const isField = (el: EventTarget): el is Field => el instanceof HTMLInputElement || el instanceof HTMLSelectElement || el instanceof HTMLTextAreaElement
 const fieldMessage = (field: Field) => field.required && !field.value.trim() ? 'هذا الحقل مطلوب.'
+  : field.dataset.contactType ? contactMessage(field.dataset.contactType, field.value)
   : field.validity.typeMismatch ? 'أدخل رابطًا صحيحًا يبدأ بـ https://.'
   : !field.validity.valid ? 'أدخل قيمة صحيحة ضمن النطاق الموضح.' : ''
-export default function PlaceForm({ metadata, initial, onSaved, onCancel, savePlace = placesApi.save, submission = false }: { metadata: Metadata; initial?: Place; onSaved: (place: Place) => void; onCancel?: () => void; savePlace?: (data: PlaceInput, id?: number) => Promise<Place>; submission?: boolean }) {
+export default function PlaceForm({ metadata, initial, onSaved, onCancel, savePlace = placesApi.save, uploadMedia, submission = false }: { metadata: Metadata; initial?: Place; onSaved: (place: Place) => void; onCancel?: () => void; savePlace?: (data: PlaceInput, id?: number) => Promise<Place>; uploadMedia?: (files: File[]) => Promise<PlaceInput['media']>; submission?: boolean }) {
   const [form, setForm] = useState<PlaceInput>(initial ?? { title_ar: '', title_en: '', description: '', sector: 'Public', latitude: NaN, longitude: NaN, location_text: '', opening_hours: {}, is_visible: true, is_verified: false, sub_category_id: 0, admin_area_id: null, communication_info: [], media: [] })
   const [category, setCategory] = useState(initial?.category_id?.toString() ?? '')
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState('')
   const [errors, setErrors] = useState<Record<string, string>>({})
+  const [localMedia, setLocalMedia] = useState<File[]>([])
   const saving = useRef(false)
   const field = (name: string, label: string) => ({ name, 'aria-label': label, 'aria-invalid': Boolean(errors[name]), 'aria-describedby': errors[name] ? `${name}-error` : undefined })
   const hint = (name: string) => errors[name] && <small className="field-error" id={`${name}-error`}>{errors[name]}</small>
@@ -31,9 +48,16 @@ export default function PlaceForm({ metadata, initial, onSaved, onCancel, savePl
       invalid[0].closest('details')?.setAttribute('open', '')
       invalid[0].focus(); return
     }
+    if (localMedia.length && !uploadMedia) {
+      setError('تم اختيار الملفات والتحقق منها، لكن خدمة رفع الملفات غير مربوطة بعد. لن تُحفظ الملفات قبل ربطها.')
+      return
+    }
     saving.current = true
     setBusy(true); setError('')
-    try { onSaved(await savePlace(form, initial?.id)) }
+    try {
+      const uploadedMedia = localMedia.length ? await uploadMedia!(localMedia) : []
+      onSaved(await savePlace({ ...form, media: [...form.media, ...uploadedMedia] }, initial?.id))
+    }
     catch (e) {
       let message = e instanceof Error ? e.message : 'تعذر الاتصال بالخادم.'
       try { const details = JSON.parse(message); message = Object.values(details).flat().join(' · ') } catch { /* Plain-text errors already have a readable message. */ }
@@ -64,8 +88,8 @@ export default function PlaceForm({ metadata, initial, onSaved, onCancel, savePl
         <div className="places-row coordinate-fields">{(['latitude', 'longitude'] as const).map((key, i) => <label key={key}>{i === 0 ? 'خط العرض *' : 'خط الطول *'}<input {...field(key, i === 0 ? 'خط العرض' : 'خط الطول')} required type="number" step="any" min={i === 0 ? -90 : -180} max={i === 0 ? 90 : 180} placeholder={i === 0 ? '33.513800' : '36.291300'} dir="ltr" value={Number.isFinite(form[key]) ? form[key] : ''} onChange={e => set(key, e.target.value === '' ? NaN : Number(e.target.value))} />{hint(key)}</label>)}</div>
         <h3 className="form-section-title"><span>3</span> تفاصيل إضافية <small>اختيارية</small></h3>
         <OpeningHoursEditor value={form.opening_hours} onChange={hours => set('opening_hours', hours)} />
-        <details><summary>وسائل التواصل</summary><p>أضف وسيلة متوفرة، أو اترك هذا القسم فارغًا. احذف السطر إذا لم تتوفر قيمته.</p>{form.communication_info.map((row, index) => <div className="places-row" key={index}><select aria-label="نوع التواصل" value={row.type} onChange={e => set('communication_info', form.communication_info.map((r, i) => i === index ? { ...r, type: e.target.value } : r))}>{metadata.contact_types.map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select><input {...field(`contact_${index}`, 'قيمة التواصل')} required maxLength={200} value={row.value} onChange={e => set('communication_info', form.communication_info.map((r, i) => i === index ? { ...r, value: e.target.value } : r))} />{hint(`contact_${index}`)}<button type="button" onClick={() => set('communication_info', form.communication_info.filter((_, i) => i !== index))}>حذف</button></div>)}<button type="button" onClick={() => set('communication_info', [...form.communication_info, { type: 'phone', value: '' }])}>إضافة وسيلة تواصل</button></details>
-        <details><summary>الصور والوسائط</summary><p>ألصق رابط صورة أو ملف منشور على الإنترنت. يمكنك تخطي هذا القسم.</p>{form.media.map((row, index) => <div key={index}><label>رابط الملف *<input {...field(`media_${index}`, 'رابط الملف')} required type="url" maxLength={500} placeholder="https://example.com/photo.jpg" value={row.file_url} onChange={e => set('media', form.media.map((r, i) => i === index ? { ...r, file_url: e.target.value } : r))} />{hint(`media_${index}`)}</label><label>العنوان<input maxLength={255} value={row.caption} onChange={e => set('media', form.media.map((r, i) => i === index ? { ...r, caption: e.target.value } : r))} /></label><label>النوع<select value={row.media_type} onChange={e => set('media', form.media.map((r, i) => i === index ? { ...r, media_type: e.target.value } : r))}><option value="image">صورة</option><option value="document">مستند</option><option value="video">فيديو</option></select></label><label className="places-check"><input type="checkbox" checked={row.is_cover} onChange={e => set('media', form.media.map((r, i) => i === index ? { ...r, is_cover: e.target.checked } : r))} />صورة الغلاف</label><button type="button" onClick={() => set('media', form.media.filter((_, i) => i !== index))}>حذف الوسيط</button></div>)}<button type="button" onClick={() => set('media', [...form.media, { file_url: '', caption: '', media_type: 'image', is_cover: false }])}>إضافة وسيط</button></details>
+        <details><summary>وسائل التواصل</summary><p>أضف وسيلة متوفرة، أو اترك هذا القسم فارغًا. احذف السطر إذا لم تتوفر قيمته.</p>{form.communication_info.map((row, index) => <div className="places-row" key={index}><select aria-label="نوع التواصل" value={row.type} onChange={e => { set('communication_info', form.communication_info.map((r, i) => i === index ? { ...r, type: e.target.value } : r)); setErrors(old => ({ ...old, [`contact_${index}`]: row.value.trim() ? contactMessage(e.target.value, row.value) : 'هذا الحقل مطلوب.' })) }}>{metadata.contact_types.map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select><input {...field(`contact_${index}`, 'قيمة التواصل')} data-contact-type={row.type} required maxLength={200} value={row.value} onChange={e => set('communication_info', form.communication_info.map((r, i) => i === index ? { ...r, value: e.target.value } : r))} />{hint(`contact_${index}`)}<button type="button" onClick={() => set('communication_info', form.communication_info.filter((_, i) => i !== index))}>حذف</button></div>)}<button type="button" onClick={() => set('communication_info', [...form.communication_info, { type: 'phone', value: '' }])}>إضافة وسيلة تواصل</button></details>
+        <details><summary>الصور والفيديو</summary><p className="media-section-intro">أضف صورًا أو فيديو للمكان. اسحب الملفات إلى المساحة أو اخترها من جهازك.</p><MediaFilePicker files={localMedia} onChange={setLocalMedia} />{!uploadMedia && <small className="media-backend-note">سيُفعّل إرسال الملفات عند ربط خدمة الرفع.</small>}{form.media.length > 0 && <div className="media-existing"><strong>الوسائط المحفوظة</strong>{form.media.map((row, index) => <div className="media-existing-row" key={`${row.file_url}-${index}`}><a href={row.file_url} target="_blank" rel="noreferrer">{row.caption || row.file_url}</a><button type="button" onClick={() => set('media', form.media.filter((_, i) => i !== index))}>إزالة</button></div>)}</div>}</details>
         {!submission && <>
         <label className="places-check"><input type="checkbox" checked={form.is_visible} onChange={e => set('is_visible', e.target.checked)} />ظاهر على الخريطة العامة</label>
         <label className="places-check"><input type="checkbox" checked={form.is_verified} onChange={e => set('is_verified', e.target.checked)} />تم التحقق من معلومات المكان</label>

@@ -42,6 +42,41 @@ const event = { lngLat: { lng: 36.31, lat: 33.53 }, point: [0, 0] }
 afterEach(() => { cleanup(); mocks.maps.length = 0; mocks.markers.length = 0; vi.restoreAllMocks() })
 
 describe('places workflows', () => {
+  it.each([
+    ['phone', '1234567', ['123456', '12345678', '123a567']],
+    ['mobile', '0912345678', ['0812345678', '091234567', '09123456789']],
+    ['whatsapp', '0998765432', ['+963998765432', '099876543', '09abcdefgh']],
+    ['email', 'place@gmail.com', ['place@yahoo.com', '@gmail.com', 'place @gmail.com', 'place@gmail.com.evil']],
+    ['website', 'http://example.com', ['example.com', 'ftp://example.com', 'https://', 'https:///example.com']],
+    ['website', 'https://example.com/path?q=1', ['https://exa mple.com']],
+    ['facebook', 'https://facebook.com/place', ['http://facebook.com/place', 'https://facebook.com.evil/place', 'https://facebook.com@evil.com']],
+    ['instagram', 'https://instagram.com/place', ['https://facebook.com/place', 'https://instagram.com.evil']],
+    ['telegram', 'https://t.me/place', ['http://t.me/place', 'https://t.me.evil/place']],
+  ])('validates %s contacts before saving', async (type, valid, invalid) => {
+    const save = vi.fn().mockResolvedValue(place)
+    render(<PlaceForm metadata={{ ...metadata, contact_types: [[type, type]] }} initial={{ ...place, communication_info: [{ type, value: '' }] }} savePlace={save} onSaved={vi.fn()} />)
+    const input = screen.getByLabelText('قيمة التواصل')
+    const form = screen.getByRole('button', { name: 'حفظ المكان' }).closest('form')!
+    for (const value of invalid) {
+      fireEvent.change(input, { target: { value } })
+      fireEvent.submit(form)
+      expect(input.getAttribute('aria-invalid')).toBe('true')
+      expect(save).not.toHaveBeenCalled()
+    }
+    fireEvent.change(input, { target: { value: valid } })
+    expect(input.getAttribute('aria-invalid')).toBe('false')
+    await act(async () => { fireEvent.submit(form) })
+    expect(save).toHaveBeenCalledWith(expect.objectContaining({ communication_info: [{ type, value: valid }] }), place.id)
+  })
+
+  it('revalidates the contact value when its type changes', () => {
+    render(<PlaceForm metadata={{ ...metadata, contact_types: [['phone', 'هاتف'], ['mobile', 'موبايل']] }} initial={{ ...place, communication_info: [{ type: 'phone', value: '1234567' }] }} onSaved={vi.fn()} />)
+    fireEvent.change(screen.getByLabelText('نوع التواصل'), { target: { value: 'mobile' } })
+    expect(screen.getByLabelText('قيمة التواصل').getAttribute('aria-invalid')).toBe('true')
+    fireEvent.change(screen.getByLabelText('نوع التواصل'), { target: { value: 'phone' } })
+    expect(screen.getByLabelText('قيمة التواصل').getAttribute('aria-invalid')).toBe('false')
+  })
+
   it('shows required-field hints on blur, clears them after correction, and focuses the first missing field', () => {
     const save = vi.fn()
     render(<PlaceForm metadata={metadata} savePlace={save} onSaved={vi.fn()} />)
