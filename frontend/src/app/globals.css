@@ -277,7 +277,7 @@ html, body {
 }
 .map-place-card {
   --map-card-top: max(92px, calc(env(safe-area-inset-top, 0px) + 82px));
-  --map-card-bottom: max(76px, calc(env(safe-area-inset-bottom, 0px) + 52px));
+  --map-card-bottom: max(128px, calc(env(safe-area-inset-bottom, 0px) + 104px));
   position: absolute;
   top: var(--map-card-top);
   left: 16px;
@@ -286,7 +286,7 @@ html, body {
   width: 380px;
   max-width: calc(100% - 32px);
   height: auto;
-  max-height: calc(100% - var(--map-card-top) - var(--map-card-bottom));
+  max-height: min(62dvh, calc(100% - var(--map-card-top) - var(--map-card-bottom)));
   border-radius: 24px;
 }
 .map-header-breadcrumb { top: max(104px, calc(env(safe-area-inset-top, 0px) + 92px)); }
@@ -297,12 +297,11 @@ html, body {
 @media (max-width: 639px) {
   .map-place-card {
     --map-card-top: max(72px, calc(env(safe-area-inset-top, 0px) + 64px));
-    --map-card-bottom: max(64px, calc(env(safe-area-inset-bottom, 0px) + 48px));
+    --map-card-bottom: max(96px, calc(env(safe-area-inset-bottom, 0px) + 72px));
     top: var(--map-card-top);
     left: 12px;
     width: 320px;
     max-width: calc(100% - 32px);
-    max-height: calc(100% - var(--map-card-top) - var(--map-card-bottom));
     border-radius: 20px;
   }
   .map-topbar {

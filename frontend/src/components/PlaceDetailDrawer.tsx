@@ -232,7 +232,10 @@ export default function PlaceDetailDrawer({
 
   const formattedAddress = formatCleanAddress(place.location, place.title);
   const specificStreet = formattedAddress;
-  const formattedHours = localDay === null ? null : openingHoursForDay(place.contact?.opening_hours, localDay);
+  const hours: unknown = place.contact?.opening_hours;
+  const hasHours = typeof hours === 'string' ? Boolean(hours.trim()) :
+    !!hours && typeof hours === 'object' && Object.entries(hours).some(([key, value]) => key !== 'description' && typeof value === 'string' && Boolean(value.trim()));
+  const formattedHours = localDay === null || !hasHours ? null : openingHoursForDay(hours, localDay);
   const hasValidCoords = Boolean(
     place.location?.latitude &&
     place.location?.longitude &&
@@ -300,7 +303,7 @@ export default function PlaceDetailDrawer({
         {/* حاوية التمرير الموحدة للبطاقة بأكملها (Unified Scroll Container) */}
         <div 
           onScroll={(e) => setIsScrolled(e.currentTarget.scrollTop > 100)}
-          className="overflow-y-auto flex-1 overscroll-contain"
+          className="min-h-0 overflow-y-auto flex-1 overscroll-contain"
         >
           {/* 1. صورة الغلاف أو الفيديو - قابلة للنقر والفتح بالكامل */}
           <div 
@@ -330,7 +333,9 @@ export default function PlaceDetailDrawer({
               src={displayImage} 
               alt={place.title} 
               className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-              loading="lazy"
+              loading="eager"
+              fetchPriority="high"
+              decoding="async"
             />
           )}
 
@@ -383,7 +388,6 @@ export default function PlaceDetailDrawer({
                 onClick={(e) => {
                   e.stopPropagation();
                   setActiveMediaIndex(idx);
-                  setLightboxIndex(idx);
                 }}
                 className={`relative w-12 h-10 rounded-lg overflow-hidden border-2 transition-all shrink-0 cursor-pointer ${
                   activeMediaIndex === idx ? 'border-[#c8a76a] scale-105 shadow-md' : 'border-transparent opacity-70 hover:opacity-100'
@@ -394,6 +398,8 @@ export default function PlaceDetailDrawer({
                   src={m.type === 'video' ? (getVideoThumbnail(m.url) || DEFAULT_PLACEHOLDERS[place.category.slug] || DEFAULT_PLACEHOLDERS.default) : m.url}
                   alt=""
                   className="w-full h-full object-cover"
+                  loading="lazy"
+                  decoding="async"
                 />
                 {m.type === 'video' && (
                   <div className="absolute inset-0 bg-black/40 flex items-center justify-center">

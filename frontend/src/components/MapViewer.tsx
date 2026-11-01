@@ -17,6 +17,7 @@ import TransitDrawer, { TransitLine, TransitStop } from './TransitDrawer';
 import { getApiBaseUrl, getAssetUrl, getAssetPath } from '@/lib/api-config';
 import { getFeatureBounds, getChildNeighborhoods } from '@/lib/geo-utils';
 import { setupLandmarkLayers, LandmarkSelectPayload } from '@/lib/landmarks-layer';
+import { getPoiPinImageId, getSubcategoryPinIcon, registerPoiPinIcons } from '@/lib/poi-marker-icons';
 import { 
   Palette, 
   ChevronDown, 
@@ -191,7 +192,7 @@ export default function MapViewer({
     const map = mapInstanceRef.current;
     if (!map || !map.isStyleLoaded()) return;
 
-    const circleLayer = map.getLayer('places-poi-circles');
+    const pinLayer = map.getLayer('places-poi-pins');
     const labelLayer = map.getLayer('places-poi-labels');
 
     if (selectedPlace && selectedPlace.location) {
@@ -222,7 +223,12 @@ export default function MapViewer({
         const currentData = (source as any)._data;
         if (currentData && Array.isArray(currentData.features)) {
           const exists = currentData.features.some((f: any) => Number(f.properties?.id) === Number(selectedPlace.id));
-          if (!exists) {
+          const subcategory = categories.find(c => c.slug === selectedPlace.category?.slug)?.subcategories
+            ?.find(s => s.name_ar === selectedPlace.sub_category?.name_ar);
+          const subcategoryIcon = getSubcategoryPinIcon(subcategory?.slug, selectedPlace.sub_category?.icon, selectedPlace.category?.icon);
+          const pinId = getPoiPinImageId(subcategoryIcon);
+          if (!exists || (selectedPlace.sub_category?.name_ar && currentData.features.some((f: any) =>
+            Number(f.properties?.id) === Number(selectedPlace.id) && f.properties?.poi_pin !== pinId))) {
             const newFeature = {
               type: 'Feature',
               id: selectedPlace.id,
@@ -234,12 +240,16 @@ export default function MapViewer({
                 id: selectedPlace.id,
                 title: selectedPlace.title,
                 category_slug: selectedPlace.category?.slug || '',
+                sub_category_icon: subcategoryIcon,
+                poi_pin: pinId,
               },
             };
-            source.setData({
-              type: 'FeatureCollection',
-              features: [newFeature, ...currentData.features],
-            });
+            void registerPoiPinIcons(map, [subcategoryIcon]).then(() => {
+              if (mapInstanceRef.current !== map || selectedPlaceRef.current !== selectedPlace) return;
+              const latest = (map.getSource('places-poi-source') as any)?._data;
+              if (!latest) return;
+              map.getSource('places-poi-source').setData({ type: 'FeatureCollection', features: [newFeature, ...latest.features.filter((feature: any) => Number(feature.properties?.id) !== Number(selectedPlace.id))] });
+            }).catch(error => console.warn('Could not render place marker icon:', error));
           }
         }
       }
@@ -247,16 +257,16 @@ export default function MapViewer({
       // إخفاء كافة المعالم الأخرى وإبقاء المعلم المختار فقط
       const placeId = Number(selectedPlace.id);
       const filter = ['==', ['to-number', ['get', 'id']], placeId];
-      if (circleLayer) map.setFilter('places-poi-circles', filter);
+      if (pinLayer) map.setFilter('places-poi-pins', filter);
       if (labelLayer) map.setFilter('places-poi-labels', filter);
     } else {
       // عند إغلاق بطاقة المعلم: إعادة إظهار كافة المعالم التابعة للتصنيفات النشطة
       placeCameraRef.current = null;
       focusedPlaceRef.current = null;
-      if (circleLayer) map.setFilter('places-poi-circles', null);
+      if (pinLayer) map.setFilter('places-poi-pins', null);
       if (labelLayer) map.setFilter('places-poi-labels', null);
     }
-  }, [selectedPlace]);
+  }, [selectedPlace, categories]);
 
   // 5. حالة لوحة التوجيه والوصول (Multi-modal Routing - Step 5)
   const [routingDestination, setRoutingDestination] = useState<{
@@ -302,24 +312,25 @@ export default function MapViewer({
         cluster: false,
       });
 
-      // دوائر النقاط الملونة
+      // دبابيس الأماكن بأيقونة التصنيف الفرعي
       map.addLayer({
-        id: 'places-poi-circles',
-        type: 'circle',
+        id: 'places-poi-pins',
+        type: 'symbol',
         source: 'places-poi-source',
-        paint: {
-          'circle-color': '#064239',
-          'circle-radius': [
+        layout: {
+          'icon-image': ['get', 'poi_pin'],
+          'icon-size': [
             'interpolate',
             ['linear'],
             ['zoom'],
-            11, 4,
-            14, 6.5,
-            17, 9
+            11, 0.72,
+            14, 0.9,
+            17, 1,
           ],
-          'circle-stroke-width': 2,
-          'circle-stroke-color': '#ffffff',
-          'circle-opacity': 0.95,
+          'icon-anchor': 'bottom',
+          'icon-allow-overlap': true,
+          'icon-ignore-placement': true,
+          'icon-padding': 1,
         },
       });
 
@@ -385,13 +396,13 @@ export default function MapViewer({
         }
       };
 
-      map.on('click', 'places-poi-circles', handlePoiClick);
+      map.on('click', 'places-poi-pins', handlePoiClick);
       map.on('click', 'places-poi-labels', handlePoiClick);
 
-      map.on('mouseenter', 'places-poi-circles', () => {
+      map.on('mouseenter', 'places-poi-pins', () => {
         map.getCanvas().style.cursor = 'pointer';
       });
-      map.on('mouseleave', 'places-poi-circles', () => {
+      map.on('mouseleave', 'places-poi-pins', () => {
         map.getCanvas().style.cursor = '';
       });
       map.on('mouseenter', 'places-poi-labels', () => {
@@ -447,21 +458,28 @@ export default function MapViewer({
       const geojson = await res.json();
       if (controller.signal.aborted || mapInstanceRef.current !== map) return;
       if (source) {
+        const iconNames = geojson.features.map((feature: any) => getSubcategoryPinIcon(feature.properties?.sub_category_slug, feature.properties?.sub_category_icon, feature.properties?.category_icon));
+        await registerPoiPinIcons(map, iconNames);
+        if (controller.signal.aborted || mapInstanceRef.current !== map) return;
+        geojson.features = geojson.features.map((feature: any) => ({
+          ...feature,
+          properties: { ...feature.properties, poi_pin: getPoiPinImageId(getSubcategoryPinIcon(feature.properties?.sub_category_slug, feature.properties?.sub_category_icon, feature.properties?.category_icon)) },
+        }));
         source.setData(geojson);
         if (selectedPlaceRef.current) {
           const filter = ['==', ['to-number', ['get', 'id']], Number(selectedPlaceRef.current.id)];
-          map.setFilter('places-poi-circles', filter);
+          map.setFilter('places-poi-pins', filter);
           map.setFilter('places-poi-labels', filter);
         } else if (selectedSectorRef.current) {
           const filter = ['==', ['get', 'sector'], selectedSectorRef.current];
-          map.setFilter('places-poi-circles', filter);
+          map.setFilter('places-poi-pins', filter);
           map.setFilter('places-poi-labels', filter);
         } else if (selectedSubcategoryRef.current) {
           const filter = ['==', ['get', 'sub_category_slug'], selectedSubcategoryRef.current];
-          map.setFilter('places-poi-circles', filter);
+          map.setFilter('places-poi-pins', filter);
           map.setFilter('places-poi-labels', filter);
         } else {
-          map.setFilter('places-poi-circles', null);
+          map.setFilter('places-poi-pins', null);
           map.setFilter('places-poi-labels', null);
         }
       }
@@ -1325,7 +1343,7 @@ export default function MapViewer({
               (e.originalEvent as any)._handledByLayer = true;
             }
 
-            const poiLayers = ['places-poi-circles', 'places-poi-labels'].filter((id) => Boolean(map.getLayer(id)));
+            const poiLayers = ['places-poi-pins', 'places-poi-labels'].filter((id) => Boolean(map.getLayer(id)));
             const poiHits = poiLayers.length > 0 ? map.queryRenderedFeatures(e.point, { layers: poiLayers }) : [];
             if (poiHits && poiHits.length > 0) return;
 
@@ -1415,9 +1433,8 @@ export default function MapViewer({
             if (e.originalEvent && (e.originalEvent as any)._handledByLayer) return;
 
             // التحقق إن كانت النقرة على تسمية حي أو بلدية أو معلم POI
-            const interactiveLayers = ['admin-neighborhoods-label', 'places-poi-circles', 'places-poi-labels',
-              'landmarks-tier1-badge', 'landmarks-tier1-label', 'landmarks-tier2-badge',
-              'landmarks-tier2-label', 'landmarks-tier3-badge', 'landmarks-tier3-label'];
+            const interactiveLayers = ['admin-neighborhoods-label', 'places-poi-pins', 'places-poi-labels',
+              'landmarks-tier1-label', 'landmarks-tier2-label', 'landmarks-tier3-label'];
             if (showAdminAreasRef.current) {
               interactiveLayers.push('admin-municipalities-fill', 'admin-neighborhoods-fill');
             }
@@ -1627,21 +1644,21 @@ export default function MapViewer({
   useEffect(() => {
     const map = mapInstanceRef.current;
     if (!map || !map.isStyleLoaded()) return;
-    if (!map.getLayer('places-poi-circles')) return;
+    if (!map.getLayer('places-poi-pins')) return;
 
     if (selectedPlaceRef.current) {
       const filter = ['==', ['to-number', ['get', 'id']], Number(selectedPlaceRef.current.id)];
-      map.setFilter('places-poi-circles', filter);
+      map.setFilter('places-poi-pins', filter);
       if (map.getLayer('places-poi-labels')) map.setFilter('places-poi-labels', filter);
       return;
     }
 
     if (selectedSubcategory) {
       const filter = ['==', ['get', 'sub_category_slug'], selectedSubcategory];
-      map.setFilter('places-poi-circles', filter);
+      map.setFilter('places-poi-pins', filter);
       if (map.getLayer('places-poi-labels')) map.setFilter('places-poi-labels', filter);
     } else {
-      map.setFilter('places-poi-circles', null);
+      map.setFilter('places-poi-pins', null);
       if (map.getLayer('places-poi-labels')) map.setFilter('places-poi-labels', null);
     }
   }, [selectedSubcategory, selectedSector]);
@@ -1683,6 +1700,14 @@ export default function MapViewer({
       setSelectedCategories([slug]);
       setSelectedSubcategory(null);
       setSelectedSector(null);
+      setSelectedPlace(null);
+      placeCameraRef.current = null;
+      focusedPlaceRef.current = null;
+      mapInstanceRef.current?.fitBounds(DAMASCUS_BOUNDS, {
+        padding: { top: 60, bottom: 60, left: 60, right: 60 },
+        duration: 1200,
+        maxZoom: 11.6,
+      });
     }
   };
 
@@ -2350,10 +2375,10 @@ export default function MapViewer({
         </div>
       </div>
 
-      {/* 5. بطاقة معلومات المنطقة الإدارية المختارة (عند النقر على أي حي أو بلدية - أسفل اليسار كبطاقة عائمة) */}
+      {/* 5. بطاقة معلومات المنطقة الإدارية المختارة (عند النقر على أي حي أو بلدية - وسط اليسار كبطاقة عائمة) */}
       {selectedArea && !selectedPlace && !routingDestination && (
         <div 
-          className="fixed sm:absolute bottom-4 sm:bottom-6 inset-x-3 sm:inset-x-auto sm:left-4 z-20 sm:w-84 bg-[#fdfbf7]/95 dark:bg-zinc-900/95 backdrop-blur-md rounded-3xl p-4 sm:p-5 shadow-2xl border border-[#064239]/20 dark:border-white/10 animate-in fade-in slide-in-from-bottom-4 duration-200 pb-safe"
+          className="fixed sm:absolute top-1/2 -translate-y-1/2 inset-x-3 sm:inset-x-auto sm:left-4 z-20 sm:w-84 max-h-[80vh] overflow-y-auto bg-[#fdfbf7]/95 dark:bg-zinc-900/95 backdrop-blur-md rounded-3xl p-4 sm:p-5 shadow-2xl border border-[#064239]/20 dark:border-white/10 animate-in fade-in duration-200 pb-safe"
           dir="rtl"
         >
           <div className="flex items-start justify-between gap-3 border-b border-black/5 dark:border-white/5 pb-3 mb-3.5">

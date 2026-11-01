@@ -40,6 +40,7 @@ export default function CategoryCommandBar({
   onSelectSector,
 }: CategoryCommandBarProps) {
   const displayCategories = categories;
+  const uniqueSectors = Array.from(new Map(sectors.map((sector) => [sector.slug, sector])).values());
   const activeCategory = categories.find((c) => c.slug === selectedCategorySlug);
   const subScrollRef = useRef<HTMLDivElement>(null);
   const mainScrollRef = useRef<HTMLDivElement>(null);
@@ -98,7 +99,7 @@ export default function CategoryCommandBar({
             dir="rtl"
           >
             <div className="flex items-center gap-1.5 sm:gap-2 px-1 min-w-max justify-start py-0.5">
-              {selectedSubcategorySlug && sectors.length > 0 ? (
+              {selectedSubcategorySlug && uniqueSectors.length > 0 ? (
                 <>
                   <button
                     type="button"
@@ -113,7 +114,7 @@ export default function CategoryCommandBar({
                     {selectedSectorSlug === null && <Check className="w-3.5 h-3.5 text-[#ecc988]" />}
                     <span>كل القطاعات</span>
                   </button>
-                  {sectors.map((sector) => {
+                  {uniqueSectors.map((sector) => {
                     const isSectorSelected = selectedSectorSlug === sector.slug;
                     return (
                       <button
@@ -146,7 +147,7 @@ export default function CategoryCommandBar({
                 {selectedSubcategorySlug === null && <Check className="w-3.5 h-3.5 text-[#ecc988]" />}
                 <span>الكل</span>
               </button>}
-              {(!selectedSubcategorySlug || sectors.length === 0) && activeCategory.subcategories && activeCategory.subcategories.map((sub: SubcategoryInfo) => {
+              {(!selectedSubcategorySlug || uniqueSectors.length === 0) && activeCategory.subcategories && activeCategory.subcategories.map((sub: SubcategoryInfo) => {
                 const isSubSelected = selectedSubcategorySlug === sub.slug;
                 return (
                   <button

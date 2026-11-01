@@ -22,49 +22,12 @@ export interface LandmarkSelectPayload {
   description?: string;
 }
 
-// Rasterize small vector badges once; no remote images or font-dependent symbols.
-function registerLandmarkIcons(map: any): void {
-  const icons = {
-    monument: { color: '#064239', path: 'M5 10L12 5L19 10Z M7 12V18 M12 12V18 M17 12V18 M5 20H19' },
-    square: { color: '#c8a76a', path: 'M5 5H19V19H5Z M9 9H15V15H9Z M12 5V9 M12 15V19 M5 12H9 M15 12H19' },
-    park: { color: '#059669', path: 'M12 4L6 11H9L5 16H19L15 11H18Z M12 16V21' },
-  };
-  for (const [type, icon] of Object.entries(icons)) {
-    if (map.hasImage(`landmark-${type}`)) continue;
-    const canvas = document.createElement('canvas');
-    canvas.width = canvas.height = 64;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) continue;
-    ctx.scale(2, 2);
-    ctx.fillStyle = icon.color;
-    ctx.strokeStyle = '#ffffff';
-    ctx.lineWidth = 2;
-    ctx.beginPath();
-    ctx.arc(16, 16, 14, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.stroke();
-    ctx.translate(4, 4);
-    ctx.lineWidth = 1.6;
-    ctx.lineCap = ctx.lineJoin = 'round';
-    ctx.stroke(new Path2D(icon.path));
-    map.addImage(`landmark-${type}`, ctx.getImageData(0, 0, 64, 64), { pixelRatio: 2 });
-  }
-}
-
-const landmarkIconLayout = {
-  'icon-image': ['match', ['get', 'type'], 'park', 'landmark-park', 'square', 'landmark-square', 'landmark-monument'],
-  'icon-size': ['interpolate', ['linear'], ['zoom'], 11, 0.7, 17, 1],
-  'icon-allow-overlap': false,
-  'icon-padding': 2,
-};
-
 export function setupLandmarkLayers(
   map: any,
   getAssetUrl: (path: string) => string,
   onSelectLandmark: (item: LandmarkSelectPayload) => void
 ): void {
   if (!map || map.getSource('damascus-permanent-landmarks')) return;
-  registerLandmarkIcons(map);
 
   // 1. إضافة مصدر بيانات المعالم الدائمة
   map.addSource('damascus-permanent-landmarks', {
@@ -77,15 +40,6 @@ export function setupLandmarkLayers(
   // -------------------------------------------------------------------------
   // المستوى الأول (Tier 1): زووم 11.0+ (9 معالم كبرى تكشف جغرافيا دمشق بالكامل)
   // -------------------------------------------------------------------------
-  map.addLayer({
-    id: 'landmarks-tier1-badge',
-    type: 'symbol',
-    source: 'damascus-permanent-landmarks',
-    filter: ['==', ['get', 'tier'], 1],
-    minzoom: 11.0,
-    layout: landmarkIconLayout,
-  });
-
   map.addLayer({
     id: 'landmarks-tier1-label',
     type: 'symbol',
@@ -126,15 +80,6 @@ export function setupLandmarkLayers(
   // المستوى الثاني (Tier 2): زووم 12.8+ (الساحات والمحاور والصروح الثقافية والخدمية)
   // -------------------------------------------------------------------------
   map.addLayer({
-    id: 'landmarks-tier2-badge',
-    type: 'symbol',
-    source: 'damascus-permanent-landmarks',
-    filter: ['==', ['get', 'tier'], 2],
-    minzoom: 12.8,
-    layout: landmarkIconLayout,
-  });
-
-  map.addLayer({
     id: 'landmarks-tier2-label',
     type: 'symbol',
     source: 'damascus-permanent-landmarks',
@@ -174,15 +119,6 @@ export function setupLandmarkLayers(
   // المستوى الثالث (Tier 3): زووم 14.2+ (الساحات والحدائق المحلية للأحياء)
   // -------------------------------------------------------------------------
   map.addLayer({
-    id: 'landmarks-tier3-badge',
-    type: 'symbol',
-    source: 'damascus-permanent-landmarks',
-    filter: ['==', ['get', 'tier'], 3],
-    minzoom: 14.2,
-    layout: landmarkIconLayout,
-  });
-
-  map.addLayer({
     id: 'landmarks-tier3-label',
     type: 'symbol',
     source: 'damascus-permanent-landmarks',
@@ -221,9 +157,9 @@ export function setupLandmarkLayers(
   // تفاعل النقر والتحويم (Interactive Pointer & Selection)
   // -------------------------------------------------------------------------
   const landmarkLayerIds = [
-    'landmarks-tier1-badge', 'landmarks-tier1-label',
-    'landmarks-tier2-badge', 'landmarks-tier2-label',
-    'landmarks-tier3-badge', 'landmarks-tier3-label'
+    'landmarks-tier1-label',
+    'landmarks-tier2-label',
+    'landmarks-tier3-label'
   ];
 
   landmarkLayerIds.forEach((layerId) => {

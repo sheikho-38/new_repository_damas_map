@@ -210,16 +210,27 @@ test('POI Focus & Isolation: MapViewer zooms to chosen POI and hides all other m
   const mapViewerPath = path.join(frontendRoot, 'src/components/MapViewer.tsx');
   const mapViewerSrc = fs.readFileSync(mapViewerPath, 'utf8');
 
-  // Verify filter isolation logic for circles and labels
-  assert.ok(mapViewerSrc.includes("map.setFilter('places-poi-circles', filter)"), 'Must filter POI circles to selected place');
+  // Verify filter isolation logic for pins and labels
+  assert.ok(mapViewerSrc.includes("map.setFilter('places-poi-pins', filter)"), 'Must filter POI pins to selected place');
   assert.ok(mapViewerSrc.includes("map.setFilter('places-poi-labels', filter)"), 'Must filter POI labels to selected place');
 
   // Verify filter reset logic when place is closed
-  assert.ok(mapViewerSrc.includes("map.setFilter('places-poi-circles', null)"), 'Must reset POI circles filter when closed');
+  assert.ok(mapViewerSrc.includes("map.setFilter('places-poi-pins', null)"), 'Must reset POI pins filter when closed');
   assert.ok(mapViewerSrc.includes("map.setFilter('places-poi-labels', null)"), 'Must reset POI labels filter when closed');
 
   // Verify smooth flyTo zoom
   assert.ok(mapViewerSrc.includes('zoom: 17.5'), 'Must zoom to 17.5 when focusing on selected POI');
+});
+
+test('POI Pin Icons: MapLibre uses Phosphor subcategory icons inside pin markers', () => {
+  const mapViewerSrc = fs.readFileSync(path.join(frontendRoot, 'src/components/MapViewer.tsx'), 'utf8');
+  const markerSrc = fs.readFileSync(path.join(frontendRoot, 'src/lib/poi-marker-icons.ts'), 'utf8');
+  assert.ok(mapViewerSrc.includes("type: 'symbol'"), 'POIs must render as map symbols');
+  assert.ok(mapViewerSrc.includes("'icon-image': ['get', 'poi_pin']"), 'POIs must use their subcategory pin image');
+  assert.ok(mapViewerSrc.includes("feature.properties?.sub_category_icon"), 'POI data must use the subcategory icon');
+  assert.ok(markerSrc.includes("fill=\"#c8a76a\""), 'POI pin must have a gold fill');
+  assert.ok(markerSrc.includes('@phosphor-icons/react/ssr'), 'POI icons must use Phosphor');
+  assert.ok(markerSrc.includes("fill=\"#064239\""), 'Phosphor glyph must be green');
 });
 
 // 9. Test Single POI Category Selection Enforcement & Radio Semantics
@@ -393,7 +404,6 @@ test('Permanent Damascus Waypoints & Landmarks: Data Integrity & 3-Tier Cartogra
   assert.ok(fs.existsSync(layerLibPath), 'landmarks-layer.ts must exist');
   const libSrc = fs.readFileSync(layerLibPath, 'utf8');
   assert.ok(libSrc.includes('setupLandmarkLayers'), 'setupLandmarkLayers must be exported');
-  assert.ok(libSrc.includes('landmarks-tier1-badge'), 'Tier 1 badge layer must be defined');
   assert.ok(libSrc.includes('landmarks-tier1-label'), 'Tier 1 label layer must be defined');
   assert.ok(libSrc.includes('text-halo-color'), 'Text halo casing must be present for legibility');
 
