@@ -61,6 +61,7 @@ export default function RootLayout({
     <html
       lang="ar"
       dir="rtl"
+      suppressHydrationWarning
       className={`${qomra.variable} h-full w-full antialiased`}
     >
       <body className="h-full w-full overflow-hidden flex flex-col select-none touch-manipulation">

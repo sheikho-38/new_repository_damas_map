@@ -323,9 +323,9 @@ export default function MapViewer({
             'interpolate',
             ['linear'],
             ['zoom'],
-            11, 0.72,
-            14, 0.9,
-            17, 1,
+            11, 0.62,
+            14, 0.8,
+            17, 0.9,
           ],
           'icon-anchor': 'bottom',
           'icon-allow-overlap': true,
@@ -339,17 +339,16 @@ export default function MapViewer({
         id: 'places-poi-labels',
         type: 'symbol',
         source: 'places-poi-source',
-        minzoom: 14.0,
         layout: {
           'text-field': ['get', 'title'],
           'text-font': ['Klokantech Noto Sans Regular'],
-          'text-size': 11.5,
-          'text-offset': [0, 1.2],
+          'text-size': 13.5,
+          'text-offset': [0, -0.25],
           'text-anchor': 'top',
           'text-allow-overlap': false,
         },
         paint: {
-          'text-color': '#064239',
+          'text-color': '#000000',
           'text-halo-color': '#ffffff',
           'text-halo-width': 2.0,
         },
@@ -1693,6 +1692,7 @@ export default function MapViewer({
 
   const handleSelectCommandCategory = (slug: string | null) => {
     if (slug === null) {
+      if (selectedPlaceRef.current) closePlace();
       setSelectedCategories([]);
       setSelectedSubcategory(null);
       setSelectedSector(null);
@@ -1712,6 +1712,7 @@ export default function MapViewer({
   };
 
   const handleSelectCommandSubcategory = (subSlug: string | null) => {
+    if (subSlug === null && selectedPlaceRef.current) closePlace();
     setSelectedSubcategory(subSlug);
     setSelectedSector(null);
   };

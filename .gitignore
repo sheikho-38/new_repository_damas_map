@@ -32,4 +32,5 @@ docs/
 
 # اشياء متغيرة حسب كل لابتوب
 # backend/config/__pycahche__/settings.py
+backend/config/
 dashboard/package-lock.json
