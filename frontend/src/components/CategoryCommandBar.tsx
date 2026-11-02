@@ -73,8 +73,11 @@ export default function CategoryCommandBar({
             <button
               type="button"
               onClick={() => {
-                onSelectCategory(null);
-                onSelectSubcategory(null);
+                if (selectedSubcategorySlug) {
+                  onSelectSubcategory(null);
+                } else {
+                  onSelectCategory(null);
+                }
               }}
               className="shrink-0 w-9 h-9 sm:w-10 sm:h-10 rounded-xl text-[#c8a76a] hover:bg-[#c8a76a]/10 flex items-center justify-center cursor-pointer active:scale-95 transition-all focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#c8a76a]"
               title="العودة لعرض كافة الفئات"
