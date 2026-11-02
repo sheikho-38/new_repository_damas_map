@@ -48,7 +48,13 @@ python manage.py seed_admin_areas & python manage.py seed_categories & python ma
 
 # استيراد الحدود والتقسيمات الإدارية الرسمية لدمشق (16 بلدية و 98 حي)
 python manage.py seed_admin_areas
-
+python manage.py seed_rubble_dump_sites   
+python manage.py seed_industry_facilities  
+python manage.py seed_education_directorate
+python manage.py seed_citizen_service_centers
+python manage.py seed_social_affairs_institutes
+python manage.py seed_health_facilities_2026_affairs_institutes
+python manage.py seed_damascus_service_departments
 # إنشاء حساب المدير (لإدارة التصنيفات والمنشآت من لوحة التحكم /admin/)
 python manage.py createsuperuser
 
