@@ -1,0 +1,112 @@
+[
+  {
+    "source_row": 2,
+    "name": "مديرية التربية والتعليم بدمشق",
+    "map_url": "https://maps.app.goo.gl/BJeVEwGR1SSQwJxr6",
+    "coordinates": [
+      33.5196374,
+      36.3048175
+    ],
+    "contact": "4411068/7/5/ / 3313993 / 4520439",
+    "services": "تقديم الخدمات للمعلمين والطلاب لكافة المراحل التعليمية"
+  },
+  {
+    "source_row": 5,
+    "name": "دائرة الامتحانات العامة",
+    "map_url": "https://maps.app.goo.gl/rFjjKEUWR3awHhDP8",
+    "coordinates": [
+      33.5052399,
+      36.25653
+    ],
+    "contact": "6640308",
+    "services": "تنظيم البينات والخدمات الامتحانية ومعادلة الشهادات من خارج القطر"
+  },
+  {
+    "source_row": 6,
+    "name": "دائرة الصحة المدرسية",
+    "map_url": "https://maps.app.goo.gl/3GCHmoFk6VhSj5vP8",
+    "coordinates": [
+      33.520619,
+      36.287041
+    ],
+    "contact": "3330070",
+    "services": "الوقاية الصحية والخدمات الصحبة"
+  },
+  {
+    "source_row": 7,
+    "name": "دائرة أبنية التعليم",
+    "map_url": "https://maps.app.goo.gl/EqvrNXoNTERUDqAp8",
+    "coordinates": [
+      33.525209,
+      36.286988
+    ],
+    "contact": "3345995",
+    "services": "كل ما يتعلق بالأبنية وصيانتها وملكيتها"
+  },
+  {
+    "source_row": 8,
+    "name": "دائرة التأهيل والتدريب التروي",
+    "map_url": "https://maps.app.goo.gl/ddEXwyVcg4nZkMdZ6",
+    "coordinates": [
+      33.5507107,
+      36.3156053
+    ],
+    "contact": "5137099",
+    "services": "تقديم تدريبات للمعلمين والإداريين بالتعاون مع الوزارت الأخرى والمنظمات"
+  },
+  {
+    "source_row": 9,
+    "name": "دائرة تنمية الطفولة المبكرة / الأقليمي",
+    "map_url": "https://maps.app.goo.gl/xBMJd1uRsHXPSuqq8",
+    "coordinates": [
+      33.4941363,
+      36.2501753
+    ],
+    "contact": "",
+    "services": "روضة أطفال مع شعبة أبحاث ودراسات الطفولة المبكرة ورياض الأطفال"
+  },
+  {
+    "source_row": 10,
+    "name": "دائرة التخطيط والإحصاء",
+    "map_url": "https://maps.app.goo.gl/sW3mftHzYj5WuMxt6",
+    "coordinates": [
+      33.524756,
+      36.29925
+    ],
+    "contact": "4437668",
+    "services": "اعداد الإحصائيات وتقديم بيانات إحصائية تتعلق بالدراسات ضمن المدراس والدوائر"
+  },
+  {
+    "source_row": 11,
+    "name": "دائرة الشؤؤون المالية / شعبة الأصول",
+    "map_url": "https://maps.app.goo.gl/sW3mftHzYj5WuMxt6",
+    "coordinates": [
+      33.524756,
+      36.29925
+    ],
+    "contact": "4470246/7",
+    "services": "كل مايتعلق بالأثاث الثابت في مديرية التربية"
+  },
+  {
+    "source_row": 12,
+    "name": "دائرة الحماية والأنشطة / شعبة المسرح المدرسي",
+    "map_url": "https://maps.app.goo.gl/dZcF6siDYPj4NZ3J9",
+    "coordinates": [
+      33.5209626,
+      36.2843172
+    ],
+    "contact": "3314889",
+    "services": "كل مايتعلق بأنشطة المسرح المدرسي والتدريبات"
+  },
+  {
+    "source_row": 13,
+    "name": "دائرة الحماية والأنشطة / شعبة الأنشطة الرياضية",
+    "map_url": "https://maps.app.goo.gl/xEm1BoqGnQ8uahsm9",
+    "coordinates": [
+      33.5039219,
+      36.2892485
+    ],
+    "contact": "2261320",
+    "services": "كل مايتعلق بالأنشطة الرياضية والتدريبات"
+  }
+]

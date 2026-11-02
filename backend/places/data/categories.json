@@ -197,6 +197,11 @@
         "name_en": "Colleges"
       },
       {
+        "slug": "institutes",
+        "name_ar": "معاهد",
+        "name_en": "Institutes"
+      },
+      {
         "slug": "kindegartens",
         "name_ar": "روضات",
         "name_en": "Kindergartens"

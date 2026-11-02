@@ -169,9 +169,9 @@ class SubCategory(models.Model):
 #!Done
 # حدود الإحداثيات المسموحة
 LAT_MIN = 33.40
-LAT_MAX = 33.62
+LAT_MAX = 33.63
 LON_MIN = 36.14
-LON_MAX = 36.42
+LON_MAX = 36.44
 
 
 class Place(models.Model):
