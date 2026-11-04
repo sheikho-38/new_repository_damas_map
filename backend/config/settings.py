@@ -96,7 +96,7 @@ WSGI_APPLICATION = 'config.wsgi.application'
 
 import os
 
-USE_POSTGRES = os.environ.get('USE_POSTGRES', 'false').lower() in ('true', '1', 'yes')
+USE_POSTGRES = os.environ.get('USE_POSTGRES', 'true').lower() in ('true', '1', 'yes')
 
 if USE_POSTGRES:
     DATABASES = {

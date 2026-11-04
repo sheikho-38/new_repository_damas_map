@@ -152,7 +152,7 @@ const subcategoryIcons: Record<string, string> = {
   "health-centers": "heart-pulse",
   pharmacies: "pill",
   "cultural-centers": "palette",
-  institues: "book-open",
+  institutes: "book",
   directorate: "scroll-text",
   "cultural-center": "palette",
   "training-institute": "book-open",
