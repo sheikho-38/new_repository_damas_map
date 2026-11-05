@@ -34,7 +34,7 @@ export const FIGMA_TOKENS = {
   textSdMuted: '#5a7a74',
 };
 
-export type ThemeKey = 'green-deep' | 'gold' | 'green-medium' | 'stone' | 'classic' | 'governorate';
+export type ThemeKey = 'classic' | 'governorate';
 
 export interface ThemeConfig {
   id: ThemeKey;
@@ -83,106 +83,10 @@ export const THEMES: Record<ThemeKey, ThemeConfig> = {
       halo: FIGMA_TOKENS.white,
     },
   },
-  // 1. الخيار الأول: الأخضر الدمشقي الفاحم (#064239)
-  'green-deep': {
-    id: 'green-deep',
-    label: '🌿 الأخضر الفاحم (#064239)',
-    badgeBg: '#064239',
-    badgeText: '#ffffff',
-    dotColor: '#3a6962',
-    colors: {
-      motorway: FIGMA_TOKENS.green,
-      motorwayCasing: FIGMA_TOKENS.greenDeep,
-      primary: FIGMA_TOKENS.green,
-      primaryCasing: FIGMA_TOKENS.greenDark,
-      secondary: FIGMA_TOKENS.greenMedium,
-      secondaryCasing: FIGMA_TOKENS.greenDarkAlt,
-      minor: FIGMA_TOKENS.white,
-      minorCasing: 'rgba(6, 66, 57, 0.28)',
-      background: FIGMA_TOKENS.cream,
-      building: FIGMA_TOKENS.creamCultural,
-      buildingOutline: 'rgba(6, 66, 57, 0.12)',
-      text: FIGMA_TOKENS.textDark,
-      halo: FIGMA_TOKENS.white,
-    },
-  },
-
-  // 2. الخيار الثاني: الذهب الدمشقي الأصيل (#c8a76a)
-  gold: {
-    id: 'gold',
-    label: '✨ الذهب الدمشقي (#c8a76a)',
-    badgeBg: '#c8a76a',
-    badgeText: '#064239',
-    dotColor: '#b8912e',
-    colors: {
-      motorway: FIGMA_TOKENS.gold,
-      motorwayCasing: FIGMA_TOKENS.goldDark,
-      primary: FIGMA_TOKENS.goldSand,
-      primaryCasing: FIGMA_TOKENS.goldDark,
-      secondary: FIGMA_TOKENS.goldLight,
-      secondaryCasing: FIGMA_TOKENS.goldMuted,
-      minor: FIGMA_TOKENS.white,
-      minorCasing: FIGMA_TOKENS.goldPale,
-      background: FIGMA_TOKENS.cardBg,
-      building: FIGMA_TOKENS.creamSoft,
-      buildingOutline: 'rgba(184, 145, 46, 0.25)',
-      text: '#4a3b1a',
-      halo: FIGMA_TOKENS.white,
-    },
-  },
-
-  // 3. الخيار الثالث: الأخضر المتناسق المريح (#3a6962)
-  'green-medium': {
-    id: 'green-medium',
-    label: '🍃 الأخضر المتناسق (#3a6962)',
-    badgeBg: '#3a6962',
-    badgeText: '#ffffff',
-    dotColor: '#74c69d',
-    colors: {
-      motorway: FIGMA_TOKENS.greenMedium,
-      motorwayCasing: FIGMA_TOKENS.green,
-      primary: FIGMA_TOKENS.greenMedium,
-      primaryCasing: FIGMA_TOKENS.greenDark,
-      secondary: FIGMA_TOKENS.textSdMuted,
-      secondaryCasing: FIGMA_TOKENS.greenMedium,
-      minor: FIGMA_TOKENS.white,
-      minorCasing: 'rgba(58, 105, 98, 0.3)',
-      background: FIGMA_TOKENS.paper,
-      building: FIGMA_TOKENS.cardBgSoft,
-      buildingOutline: 'rgba(58, 105, 98, 0.15)',
-      text: FIGMA_TOKENS.textDark,
-      halo: FIGMA_TOKENS.white,
-    },
-  },
-
-  // 4. الخيار الرابع: الحجر الدمشقي الأصيل (#edebe0)
-  stone: {
-    id: 'stone',
-    label: '🪨 الحجر الدمشقي (#edebe0)',
-    badgeBg: '#edebe0',
-    badgeText: '#4a4738',
-    dotColor: '#edebe0',
-    colors: {
-      motorway: '#7a6a42',
-      motorwayCasing: '#5a4d2e',
-      primary: '#8c7a50',
-      primaryCasing: '#6b5c35',
-      secondary: '#a89870',
-      secondaryCasing: '#8a7a55',
-      minor: '#ffffff',
-      minorCasing: 'rgba(74, 71, 56, 0.2)',
-      background: '#edebe0',
-      building: '#dedad0',
-      buildingOutline: 'rgba(74, 71, 56, 0.18)',
-      text: '#3a3626',
-      halo: '#f5f4ee',
-    },
-  },
-
-  // 5. الخيار الخامس: النمط الحيادي الأصلي (Neutral OSM)
+  // الهوية الحيادية
   classic: {
     id: 'classic',
-    label: 'النمط الحيادي الأصلي',
+    label: 'الهوية الحيادية',
     badgeBg: '#334155',
     badgeText: '#ffffff',
     dotColor: '#94a3b8',

@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState, useCallback, useMemo } from 'react';
 import 'maplibre-gl/dist/maplibre-gl.css';
+import type { MapLayerMouseEvent } from 'maplibre-gl';
 import { ThemeKey, THEMES, applyThemeToMap } from '@/lib/map-themes';
 import DamasceneSearchBar, { SearchResultItem } from './DamasceneSearchBar';
 import CategoryCommandBar from './CategoryCommandBar';
@@ -33,6 +34,7 @@ import {
   Coins,
   Bus,
   MapPin,
+  ArrowLeft,
   Layers,
   Route,
   X,
@@ -74,8 +76,9 @@ export default function MapViewer({
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<any>(null);
   const poiRequestRef = useRef<AbortController | null>(null);
+  const clearPoiHoverRef = useRef(() => {});
   const [loading, setLoading] = useState(true);
-  const [activeTheme, setActiveTheme] = useState<ThemeKey>('governorate');
+  const [activeTheme, setActiveTheme] = useState<ThemeKey>('classic');
   const [isThemeMenuOpen, setIsThemeMenuOpen] = useState(false);
   const [isThreeDNoticeOpen, setIsThreeDNoticeOpen] = useState(false);
   const [mapViewMode, setMapViewMode] = useState<'2d' | '3d'>('2d');
@@ -95,7 +98,7 @@ export default function MapViewer({
   const [availableSectors, setAvailableSectors] = useState<Array<{ slug: string; label: string }>>([]);
 
   // 2. حالة طبقة التقسيمات الإدارية والتسلسل الهرمي الذكي (البلديات والأحياء)
-  const [showAdminAreas, setShowAdminAreas] = useState(false);
+  const [showAdminAreas, setShowAdminAreas] = useState(true);
   const showAdminAreasRef = useRef(showAdminAreas);
   showAdminAreasRef.current = showAdminAreas;
   const [selectedArea, setSelectedArea] = useState<AdminAreaProperties | null>(null);
@@ -119,6 +122,21 @@ export default function MapViewer({
   const maplibreglRef = useRef<any>(null);
   const handleSelectLandmarkRef = useRef<(item: LandmarkSelectPayload) => void>(() => {});
 
+  const clearAdminSelection = useCallback(() => {
+    const map = mapInstanceRef.current;
+    for (const ref of [selectedMunIdRef, selectedNeighIdRef, hoveredMunIdRef, hoveredNeighIdRef]) {
+      if (ref.current !== null && map?.getSource('admin-boundaries')) {
+        map.setFeatureState({ source: 'admin-boundaries', id: ref.current }, { selected: false, hover: false });
+      }
+      ref.current = null;
+    }
+    if (map) map.getCanvas().style.cursor = '';
+    setSelectedMunicipality(null);
+    setSelectedNeighborhood(null);
+    setSelectedArea(null);
+    setHoveredAdminArea(null);
+  }, []);
+
   // استخراج قائمة الأحياء التابعة للبلدية المختارة
   const childNeighborhoods = useMemo(() => {
     if (!selectedMunicipality || adminFeatures.length === 0) return [];
@@ -141,8 +159,19 @@ export default function MapViewer({
           if (source && 'setData' in source) source.setData(data);
         }
       })
-      .catch((err) => {
-        if (err.name !== 'AbortError') console.error('Failed to load admin GeoJSON:', err);
+      .catch(async (err) => {
+        if (err.name === 'AbortError') return;
+        try {
+          const response = await fetch(getAssetUrl('/data/damascus_admin_areas.geojson'), { signal: controller.signal });
+          if (!response.ok) throw new Error(`Admin GeoJSON fallback failed: ${response.status}`);
+          const data = await response.json();
+          adminGeoJsonRef.current = data;
+          if (Array.isArray(data.features)) setAdminFeatures(data.features);
+          const source = mapInstanceRef.current?.getSource('admin-boundaries');
+          if (source && 'setData' in source) source.setData(data);
+        } catch (fallbackError) {
+          if ((fallbackError as Error).name !== 'AbortError') console.error('Failed to load admin GeoJSON:', fallbackError);
+        }
       });
     return () => controller.abort();
   }, []);
@@ -180,6 +209,7 @@ export default function MapViewer({
     const camera = placeCameraRef.current;
     placeCameraRef.current = null;
     focusedPlaceRef.current = null;
+    selectedPlaceRef.current = null;
     setSelectedPlace(null);
     if (camera && mapInstanceRef.current) {
       mapInstanceRef.current.stop();
@@ -190,7 +220,7 @@ export default function MapViewer({
   // عند اختيار معلم (POI): التقريب التلقائي عليه وإخفاء كافة المعالم الأخرى، واستعادتها عند الإغلاق
   useEffect(() => {
     const map = mapInstanceRef.current;
-    if (!map || !map.isStyleLoaded()) return;
+    if (!map?.getSource('places-poi-source')) return;
 
     const pinLayer = map.getLayer('places-poi-pins');
     const labelLayer = map.getLayer('places-poi-labels');
@@ -266,7 +296,7 @@ export default function MapViewer({
       if (pinLayer) map.setFilter('places-poi-pins', null);
       if (labelLayer) map.setFilter('places-poi-labels', null);
     }
-  }, [selectedPlace, categories]);
+  }, [loading, selectedPlace, categories]);
 
   // 5. حالة لوحة التوجيه والوصول (Multi-modal Routing - Step 5)
   const [routingDestination, setRoutingDestination] = useState<{
@@ -300,7 +330,7 @@ export default function MapViewer({
 
   // تحديث نقاط الـ POIs على الخريطة عند الطلب حصراً بدون أي وميض
   const refreshPoiLayer = useCallback(async (map: any, catSlugs: string[]) => {
-    if (!map || !map.isStyleLoaded()) return;
+    if (!map?.getSource('admin-boundaries')) return;
 
     let source = map.getSource('places-poi-source');
 
@@ -317,15 +347,16 @@ export default function MapViewer({
         id: 'places-poi-pins',
         type: 'symbol',
         source: 'places-poi-source',
+        minzoom: 0,
         layout: {
           'icon-image': ['get', 'poi_pin'],
           'icon-size': [
             'interpolate',
             ['linear'],
             ['zoom'],
-            11, 0.62,
-            14, 0.8,
-            17, 0.9,
+            11, 0.434,
+            14, 0.56,
+            17, 0.63,
           ],
           'icon-anchor': 'bottom',
           'icon-allow-overlap': true,
@@ -334,11 +365,23 @@ export default function MapViewer({
         },
       });
 
+      map.addLayer({
+        id: 'places-poi-pin-hover', type: 'symbol', source: 'places-poi-source',
+        minzoom: 0,
+        filter: ['==', ['get', 'id'], -1],
+        layout: {
+          'icon-image': ['concat', ['get', 'poi_pin'], '-hover'],
+          'icon-size': ['interpolate', ['linear'], ['zoom'], 11, 0.434, 14, 0.56, 17, 0.63],
+          'icon-anchor': 'bottom', 'icon-allow-overlap': true, 'icon-ignore-placement': true,
+        },
+      });
+
       // تسميات الأماكن باللغة العربية
       map.addLayer({
         id: 'places-poi-labels',
         type: 'symbol',
         source: 'places-poi-source',
+        minzoom: 0,
         layout: {
           'text-field': ['get', 'title'],
           'text-font': ['Klokantech Noto Sans Regular'],
@@ -354,28 +397,26 @@ export default function MapViewer({
         },
       });
 
+      const poiPopup = new maplibreglRef.current.Popup({ closeButton: false, closeOnClick: false, anchor: 'bottom', offset: 48 });
+      let hoveredPoiId: number | null = null;
+      const clearPoiHover = () => {
+        if (hoveredPoiId !== null) map.setFilter('places-poi-pin-hover', ['==', ['get', 'id'], -1]);
+        hoveredPoiId = null;
+        poiPopup.remove();
+      };
+
+      clearPoiHoverRef.current = clearPoiHover;
+      map.on('movestart', clearPoiHover);
+
       // حدث النقر على المنشأة أو تسميتها
       const handlePoiClick = async (e: any) => {
+        clearPoiHover();
         if (e.originalEvent) {
           (e.originalEvent as any)._handledByLayer = true;
         }
 
-        // إزالة إطار حدود الحي ومضلعه وبطاقته فوراً عند النقر على أي معلم POI
-        if (selectedNeighIdRef.current !== null) {
-          map.setFeatureState({ source: 'admin-boundaries', id: selectedNeighIdRef.current }, { selected: false });
-          selectedNeighIdRef.current = null;
-        }
-        if (map.getLayer('admin-neighborhoods-fill')) {
-          map.setLayoutProperty('admin-neighborhoods-fill', 'visibility', 'none');
-        }
-        if (map.getLayer('admin-neighborhoods-line')) {
-          map.setLayoutProperty('admin-neighborhoods-line', 'visibility', 'none');
-        }
-        if (map.getLayer('admin-neighborhoods-shadow')) {
-          map.setLayoutProperty('admin-neighborhoods-shadow', 'visibility', 'none');
-        }
-
         if (e.features && e.features[0]) {
+          clearAdminSelection();
           const placeId = e.features[0].properties.id;
           const preview = createPlacePreview(e.features[0].properties, e.features[0].geometry.coordinates);
           setSelectedPlace(preview);
@@ -398,10 +439,32 @@ export default function MapViewer({
       map.on('click', 'places-poi-pins', handlePoiClick);
       map.on('click', 'places-poi-labels', handlePoiClick);
 
+      map.on('mousemove', 'places-poi-pins', (e: MapLayerMouseEvent) => {
+        const feature = e.features?.[0];
+        if (!feature || feature.geometry.type !== 'Point') return;
+        const id = Number(feature.properties.id);
+        if (hoveredPoiId === id) return;
+        clearPoiHover();
+        hoveredPoiId = id;
+        map.setFilter('places-poi-pin-hover', ['==', ['get', 'id'], id]);
+        const tooltip = document.createElement('div');
+        tooltip.dir = 'rtl';
+        tooltip.className = 'text-center text-xs';
+        const title = document.createElement('strong');
+        title.className = 'block text-[#064239]';
+        title.textContent = feature.properties.title;
+        const category = document.createElement('span');
+        category.className = 'text-[#846628]';
+        category.textContent = feature.properties.sub_category_name || feature.properties.category_name || '';
+        tooltip.append(title, category);
+        poiPopup.setLngLat(feature.geometry.coordinates).setDOMContent(tooltip).addTo(map);
+      });
+
       map.on('mouseenter', 'places-poi-pins', () => {
         map.getCanvas().style.cursor = 'pointer';
       });
       map.on('mouseleave', 'places-poi-pins', () => {
+        clearPoiHover();
         map.getCanvas().style.cursor = '';
       });
       map.on('mouseenter', 'places-poi-labels', () => {
@@ -418,6 +481,11 @@ export default function MapViewer({
     poiRequestRef.current?.abort();
     const controller = new AbortController();
     poiRequestRef.current = controller;
+    if (!catSlugs.length && !selectedPlaceRef.current) {
+      clearPoiHoverRef.current();
+      source?.setData({ type: 'FeatureCollection', features: [] });
+      return;
+    }
     const selectedId = selectedPlaceRef.current?.id;
     if (selectedId) {
       try {
@@ -439,13 +507,7 @@ export default function MapViewer({
         console.warn('Place detail refresh failed:', error);
       }
     }
-    // إذا لم يكن هناك أي تصنيف محدد، نفرغ المصدر بصمت دون أي وميض
-    if (!catSlugs || catSlugs.length === 0) {
-      if (source) {
-        source.setData({ type: 'FeatureCollection', features: [] });
-      }
-      return;
-    }
+    if (!catSlugs.length) return;
 
     // جلب نقاط التصنيفات المحددة فقط عند الطلب
     try {
@@ -485,7 +547,7 @@ export default function MapViewer({
     } catch (e) {
       if (!controller.signal.aborted) console.warn('Error refreshing POI layers:', e);
     }
-  }, [closePlace]);
+  }, [closePlace, clearAdminSelection]);
 
   useEffect(() => {
     const stop = watchPlaces(async () => {
@@ -635,37 +697,17 @@ export default function MapViewer({
             ? { top: 90, bottom: 90, left: 360, right: 90 }
             : { top: 80, bottom: 180, left: 24, right: 24 },
           duration: 1200,
-          maxZoom: 15.5,
+          maxZoom: 12.4,
         });
       }
     }
 
-    if (map.getLayer('admin-municipalities-fill')) {
-      if (map.getLayer('admin-municipalities-shadow')) map.setFilter('admin-municipalities-shadow', ['==', ['get', 'id'], props.id]);
-      map.setFilter('admin-municipalities-fill', ['==', ['get', 'id'], props.id]);
-      map.setFilter('admin-municipalities-line', ['==', ['get', 'id'], props.id]);
-      if (map.getLayer('admin-municipalities-label')) map.setLayoutProperty('admin-municipalities-label', 'visibility', 'none');
-    }
-    if (map.getLayer('admin-neighborhoods-fill')) {
-      const neighFilter = ['all', ['==', ['get', 'level'], 10], ['==', ['get', 'parent_id'], props.id]];
-      ['admin-neighborhoods-shadow', 'admin-neighborhoods-fill', 'admin-neighborhoods-line', 'admin-neighborhoods-label'].forEach((id) => {
-        if (map.getLayer(id)) {
-          map.setFilter(id, neighFilter);
-          map.setLayoutProperty(id, 'visibility', 'visible');
-        }
-      });
-    }
   }, []);
 
-  // اختيار حي سكني معين (Level 10): تقريب الخريطة عليه وإخفاء المضلعات لتفادي حجب الرؤية مع الإبقاء على الأسماء وطبقة النقر
+  // اختيار حي وتقريبه ضمن مجال ظهور حدود الأحياء.
   const handleSelectNeighborhood = useCallback((props: AdminAreaProperties, feature?: any) => {
     const map = mapInstanceRef.current;
     if (!map) return;
-
-    // عند النقر على أي حي: تعطيل طبقة التقسيمات الإدارية تلقائياً لمنع حجب الرؤية والتركيز على الحي
-    if (showAdminAreasRef.current) {
-      setShowAdminAreas(false);
-    }
 
     if (selectedNeighIdRef.current !== null && selectedNeighIdRef.current !== props.id) {
       map.setFeatureState({ source: 'admin-boundaries', id: selectedNeighIdRef.current }, { selected: false });
@@ -689,38 +731,6 @@ export default function MapViewer({
     setSelectedPlace(null);
     setRoutingDestination(null);
 
-    // إبراز كامل مضلع الحي المختار بصبغة لونية راقية متناسقة مع الهوية وإطار حدود ذهبي واضح
-    const neighId = Number(props.id);
-    if (map.getLayer('admin-neighborhoods-fill')) {
-      map.setLayoutProperty('admin-neighborhoods-fill', 'visibility', 'visible');
-      map.setFilter('admin-neighborhoods-fill', ['==', ['to-number', ['get', 'id']], neighId]);
-    }
-    if (map.getLayer('admin-neighborhoods-line')) {
-      map.setLayoutProperty('admin-neighborhoods-line', 'visibility', 'visible');
-      map.setFilter('admin-neighborhoods-line', ['==', ['to-number', ['get', 'id']], neighId]);
-    }
-    if (map.getLayer('admin-neighborhoods-shadow')) {
-      map.setLayoutProperty('admin-neighborhoods-shadow', 'visibility', 'visible');
-      map.setFilter('admin-neighborhoods-shadow', ['==', ['to-number', ['get', 'id']], neighId]);
-    }
-
-    // إخفاء مضلعات البلديات وطبقة النقر لكامل المساحة
-    const polygonVisualLayers = [
-      'admin-municipalities-shadow',
-      'admin-municipalities-fill',
-      'admin-municipalities-line',
-      'admin-municipalities-label',
-      'admin-neighborhoods-hit',
-    ];
-    polygonVisualLayers.forEach((id) => {
-      if (map.getLayer(id)) map.setLayoutProperty(id, 'visibility', 'none');
-    });
-
-    if (map.getLayer('admin-neighborhoods-label')) {
-      map.setLayoutProperty('admin-neighborhoods-label', 'visibility', 'visible');
-      map.setFilter('admin-neighborhoods-label', ['==', ['get', 'level'], 10]);
-    }
-
     const feat = feature || (adminGeoJsonRef.current?.features?.find((f: any) => Number(f.properties?.id) === Number(props.id)));
     if (feat) {
       const bounds = getFeatureBounds(feat);
@@ -731,248 +741,32 @@ export default function MapViewer({
             ? { top: 90, bottom: 90, left: 360, right: 90 }
             : { top: 80, bottom: 180, left: 24, right: 24 },
           duration: 1000,
-          maxZoom: 17,
+          maxZoom: 13.9,
         });
       }
     }
   }, [adminFeatures]);
 
-  // العودة من استعراض حي إلى استعراض البلدية الحاضنة مع إعادة إظهار مضلعاتها
   const handleResetToMunicipality = useCallback(() => {
-    if (!selectedMunicipality) return;
-    const map = mapInstanceRef.current;
-    if (map && selectedNeighIdRef.current !== null) {
-      map.setFeatureState({ source: 'admin-boundaries', id: selectedNeighIdRef.current }, { selected: false });
-      selectedNeighIdRef.current = null;
-    }
+    if (selectedMunicipality) handleSelectMunicipality(selectedMunicipality);
+  }, [selectedMunicipality, handleSelectMunicipality]);
 
-    setShowAdminAreas(true);
-    setSelectedNeighborhood(null);
-    setSelectedArea(selectedMunicipality);
-
-    if (map) {
-      // إعادة إظهار مضلع البلدية وأحيائها التابعة
-      ['admin-municipalities-shadow', 'admin-municipalities-fill', 'admin-municipalities-line'].forEach((id) => {
-        if (map.getLayer(id)) {
-          map.setLayoutProperty(id, 'visibility', 'visible');
-          map.setFilter(id, ['==', ['get', 'id'], selectedMunicipality.id]);
-        }
-      });
-      if (map.getLayer('admin-municipalities-label')) {
-        map.setLayoutProperty('admin-municipalities-label', 'visibility', 'none');
-      }
-
-      const neighFilter = ['all', ['==', ['get', 'level'], 10], ['==', ['get', 'parent_id'], selectedMunicipality.id]];
-      ['admin-neighborhoods-shadow', 'admin-neighborhoods-fill', 'admin-neighborhoods-line'].forEach((id) => {
-        if (map.getLayer(id)) {
-          map.setLayoutProperty(id, 'visibility', 'visible');
-          map.setFilter(id, neighFilter);
-        }
-      });
-      if (map.getLayer('admin-neighborhoods-label')) {
-        map.setLayoutProperty('admin-neighborhoods-label', 'visibility', 'visible');
-        map.setFilter('admin-neighborhoods-label', ['==', ['get', 'level'], 10]);
-      }
-      if (map.getLayer('admin-neighborhoods-hit')) {
-        map.setLayoutProperty('admin-neighborhoods-hit', 'visibility', 'visible');
-        map.setFilter('admin-neighborhoods-hit', ['==', ['get', 'level'], 10]);
-      }
-
-      const feat = adminGeoJsonRef.current?.features?.find((f: any) => Number(f.properties?.id) === Number(selectedMunicipality.id));
-      if (feat) {
-        const bounds = getFeatureBounds(feat);
-        if (bounds) {
-          const isDesktop = typeof window !== 'undefined' && window.innerWidth >= 640;
-          map.fitBounds(bounds, {
-            padding: isDesktop
-              ? { top: 90, bottom: 90, left: 360, right: 90 }
-              : { top: 80, bottom: 180, left: 24, right: 24 },
-            duration: 1000,
-            maxZoom: 15.5,
-          });
-        }
-      }
-    }
-  }, [selectedMunicipality]);
-
-  // العودة لعرض كافة بلديات دمشق الـ 16 وإخفاء مضلعات الأحياء مع ملاءمة كامل حدود دمشق
   const handleResetToAllMunicipalities = useCallback(() => {
-    const map = mapInstanceRef.current;
-    if (map) {
-      if (selectedMunIdRef.current !== null) {
-        map.setFeatureState({ source: 'admin-boundaries', id: selectedMunIdRef.current }, { selected: false });
-        selectedMunIdRef.current = null;
-      }
-      if (selectedNeighIdRef.current !== null) {
-        map.setFeatureState({ source: 'admin-boundaries', id: selectedNeighIdRef.current }, { selected: false });
-        selectedNeighIdRef.current = null;
-      }
+    clearAdminSelection();
+    setShowAdminAreas(true);
+    mapInstanceRef.current?.fitBounds(DAMASCUS_BOUNDS, {
+      padding: { top: 60, bottom: 60, left: 60, right: 60 }, duration: 1000, maxZoom: 11.6,
+    });
+  }, [clearAdminSelection]);
 
-      const munLayers = ['admin-municipalities-shadow', 'admin-municipalities-fill', 'admin-municipalities-line', 'admin-municipalities-label'];
-      const neighAllLayers = [
-        'admin-neighborhoods-shadow', 'admin-neighborhoods-fill', 'admin-neighborhoods-line',
-        'admin-neighborhoods-label', 'admin-neighborhoods-hit'
-      ];
+  const handleCloseAdminAreaCard = handleResetToAllMunicipalities;
 
-      munLayers.forEach((id) => {
-        if (map.getLayer(id)) {
-          map.setLayoutProperty(id, 'visibility', 'visible');
-          map.setFilter(id, ['==', ['get', 'level'], 9]);
-        }
-      });
-      neighAllLayers.forEach((id) => {
-        if (map.getLayer(id)) map.setLayoutProperty(id, 'visibility', 'none');
-      });
-
-      map.fitBounds(DAMASCUS_BOUNDS, {
-        padding: { top: 60, bottom: 60, left: 60, right: 60 },
-        duration: 1200,
-        maxZoom: 11.6,
-      });
-    }
-
-    setSelectedMunicipality(null);
-    setSelectedNeighborhood(null);
-    setSelectedArea(null);
-  }, []);
-
-  // إغلاق بطاقة المنطقة الإدارية المختارة
-  const handleCloseAdminAreaCard = useCallback(() => {
-    setSelectedMunicipality(null);
-    setSelectedNeighborhood(null);
-    setSelectedArea(null);
-    setHoveredAdminArea(null);
-
-    const map = mapInstanceRef.current;
-    if (map) {
-      if (selectedMunIdRef.current !== null) {
-        map.setFeatureState({ source: 'admin-boundaries', id: selectedMunIdRef.current }, { selected: false });
-        selectedMunIdRef.current = null;
-      }
-      if (selectedNeighIdRef.current !== null) {
-        map.setFeatureState({ source: 'admin-boundaries', id: selectedNeighIdRef.current }, { selected: false });
-        selectedNeighIdRef.current = null;
-      }
-      if (hoveredMunIdRef.current !== null) {
-        map.setFeatureState({ source: 'admin-boundaries', id: hoveredMunIdRef.current }, { hover: false });
-        hoveredMunIdRef.current = null;
-      }
-      if (hoveredNeighIdRef.current !== null) {
-        map.setFeatureState({ source: 'admin-boundaries', id: hoveredNeighIdRef.current }, { hover: false });
-        hoveredNeighIdRef.current = null;
-      }
-      map.getCanvas().style.cursor = '';
-
-      // إخفاء إطار حدود الحي المختار والصبغة اللونية فوراً
-      if (map.getLayer('admin-neighborhoods-fill')) {
-        map.setLayoutProperty('admin-neighborhoods-fill', 'visibility', 'none');
-      }
-      if (map.getLayer('admin-neighborhoods-line')) {
-        map.setLayoutProperty('admin-neighborhoods-line', 'visibility', 'none');
-      }
-      if (map.getLayer('admin-neighborhoods-shadow')) {
-        map.setLayoutProperty('admin-neighborhoods-shadow', 'visibility', 'none');
-      }
-
-      // إبقاء أسماء الأحياء ظاهرة على الخريطة
-      if (map.getLayer('admin-neighborhoods-label')) {
-        map.setLayoutProperty('admin-neighborhoods-label', 'visibility', 'visible');
-        map.setFilter('admin-neighborhoods-label', ['==', ['get', 'level'], 10]);
-      }
-
-      // إذا كانت التقسيمات الإدارية مفعّلة، نعيد إظهار بلديات دمشق الـ 16
-      if (showAdminAreasRef.current) {
-        const munLayers = ['admin-municipalities-shadow', 'admin-municipalities-fill', 'admin-municipalities-line', 'admin-municipalities-label'];
-        const neighVisualLayers = ['admin-neighborhoods-shadow', 'admin-neighborhoods-fill', 'admin-neighborhoods-line'];
-
-        munLayers.forEach((id) => {
-          if (map.getLayer(id)) {
-            map.setLayoutProperty(id, 'visibility', 'visible');
-            map.setFilter(id, ['==', ['get', 'level'], 9]);
-          }
-        });
-        neighVisualLayers.forEach((id) => {
-          if (map.getLayer(id)) map.setLayoutProperty(id, 'visibility', 'none');
-        });
-      }
-    }
-  }, []);
-
-  // تفعيل/إلغاء تفعيل التقسيمات الإدارية: عند النقر، التراجع للخلف لكامل دمشق وإبرازها بالكامل أو إخفائها فوراً
   const handleToggleAdminAreas = useCallback(() => {
-    const nextState = !showAdminAreas;
-    setShowAdminAreas(nextState);
-
-    const map = mapInstanceRef.current;
-    if (map) {
-      if (selectedMunIdRef.current !== null) {
-        map.setFeatureState({ source: 'admin-boundaries', id: selectedMunIdRef.current }, { selected: false });
-        selectedMunIdRef.current = null;
-      }
-      if (selectedNeighIdRef.current !== null) {
-        map.setFeatureState({ source: 'admin-boundaries', id: selectedNeighIdRef.current }, { selected: false });
-        selectedNeighIdRef.current = null;
-      }
-      if (hoveredMunIdRef.current !== null) {
-        map.setFeatureState({ source: 'admin-boundaries', id: hoveredMunIdRef.current }, { hover: false });
-        hoveredMunIdRef.current = null;
-      }
-      if (hoveredNeighIdRef.current !== null) {
-        map.setFeatureState({ source: 'admin-boundaries', id: hoveredNeighIdRef.current }, { hover: false });
-        hoveredNeighIdRef.current = null;
-      }
-      map.getCanvas().style.cursor = '';
-    }
-
-    setSelectedMunicipality(null);
-    setSelectedNeighborhood(null);
-    setSelectedArea(null);
-    setHoveredAdminArea(null);
-
-    if (nextState) {
-      if (map) {
-        map.fitBounds(DAMASCUS_BOUNDS, {
-          padding: { top: 60, bottom: 60, left: 60, right: 60 },
-          duration: 1200,
-          maxZoom: 11.6,
-        });
-
-        const munLayers = ['admin-municipalities-shadow', 'admin-municipalities-fill', 'admin-municipalities-line', 'admin-municipalities-label'];
-        const neighAllLayers = [
-          'admin-neighborhoods-shadow', 'admin-neighborhoods-fill', 'admin-neighborhoods-line',
-          'admin-neighborhoods-label', 'admin-neighborhoods-hit'
-        ];
-
-        munLayers.forEach((id) => {
-          if (map.getLayer(id)) {
-            map.setLayoutProperty(id, 'visibility', 'visible');
-            map.setFilter(id, ['==', ['get', 'level'], 9]);
-          }
-        });
-        neighAllLayers.forEach((id) => {
-          if (map.getLayer(id)) map.setLayoutProperty(id, 'visibility', 'none');
-        });
-      }
-    } else {
-      if (map) {
-        const macroAdminLayers = [
-          'admin-municipalities-shadow', 'admin-municipalities-fill', 'admin-municipalities-line', 'admin-municipalities-label',
-          'admin-neighborhoods-shadow', 'admin-neighborhoods-fill', 'admin-neighborhoods-line',
-        ];
-        macroAdminLayers.forEach((id) => {
-          if (map.getLayer(id)) map.setLayoutProperty(id, 'visibility', 'none');
-        });
-
-        // إبقاء أسماء الأحياء وطبقة النقر ظاهرة دائماً حتى لو عُطّلت التقسيمات
-        ['admin-neighborhoods-label', 'admin-neighborhoods-hit'].forEach((id) => {
-          if (map.getLayer(id)) {
-            map.setLayoutProperty(id, 'visibility', 'visible');
-            map.setFilter(id, ['==', ['get', 'level'], 10]);
-          }
-        });
-      }
-    }
-  }, [showAdminAreas]);
+    if (selectedCategoriesRef.current.length) return;
+    clearAdminSelection();
+    if (showAdminAreas) setShowAdminAreas(false);
+    else handleResetToAllMunicipalities();
+  }, [showAdminAreas, clearAdminSelection, handleResetToAllMunicipalities]);
 
   // إعداد وتشغيل الخريطة المتجهة لمرة واحدة فقط عند التركيب (Strictly Once on Mount)
   useEffect(() => {
@@ -1060,6 +854,7 @@ export default function MapViewer({
             id: 'admin-municipalities-shadow',
             type: 'line',
             source: 'admin-boundaries',
+            maxzoom: 12.5,
             filter: ['==', ['get', 'level'], 9],
             layout: {
               visibility: 'none',
@@ -1092,6 +887,7 @@ export default function MapViewer({
             id: 'admin-municipalities-fill',
             type: 'fill',
             source: 'admin-boundaries',
+            maxzoom: 12.5,
             filter: ['==', ['get', 'level'], 9],
             layout: {
               visibility: 'none',
@@ -1119,6 +915,7 @@ export default function MapViewer({
             id: 'admin-municipalities-line',
             type: 'line',
             source: 'admin-boundaries',
+            maxzoom: 12.5,
             filter: ['==', ['get', 'level'], 9],
             layout: {
               visibility: 'none',
@@ -1150,7 +947,7 @@ export default function MapViewer({
             type: 'symbol',
             source: 'admin-boundaries',
             filter: ['==', ['get', 'level'], 9],
-            maxzoom: 14.5,
+            maxzoom: 12.5,
             layout: {
               visibility: 'none',
               'text-field': ['get', 'name_ar'],
@@ -1174,6 +971,8 @@ export default function MapViewer({
             id: 'admin-neighborhoods-shadow',
             type: 'line',
             source: 'admin-boundaries',
+            minzoom: 12.5,
+            maxzoom: 14,
             filter: ['==', ['get', 'id'], -1],
             layout: {
               visibility: 'none',
@@ -1196,6 +995,8 @@ export default function MapViewer({
             id: 'admin-neighborhoods-fill',
             type: 'fill',
             source: 'admin-boundaries',
+            minzoom: 12.5,
+            maxzoom: 14,
             filter: ['==', ['get', 'id'], -1],
             layout: {
               visibility: 'none',
@@ -1225,6 +1026,8 @@ export default function MapViewer({
             id: 'admin-neighborhoods-line',
             type: 'line',
             source: 'admin-boundaries',
+            minzoom: 12.5,
+            maxzoom: 14,
             filter: ['==', ['get', 'id'], -1],
             layout: {
               visibility: 'none',
@@ -1253,6 +1056,7 @@ export default function MapViewer({
             type: 'fill',
             source: 'admin-boundaries',
             minzoom: 12.5,
+            maxzoom: 14,
             filter: ['==', ['get', 'level'], 10],
             layout: {
               visibility: 'none',
@@ -1268,7 +1072,8 @@ export default function MapViewer({
             id: 'admin-neighborhoods-label',
             type: 'symbol',
             source: 'admin-boundaries',
-            minzoom: 12.0,
+            minzoom: 12.5,
+            maxzoom: 14,
             filter: ['==', ['get', 'level'], 10],
             layout: {
               visibility: 'visible',
@@ -1291,9 +1096,15 @@ export default function MapViewer({
             },
           });
 
+          map.addLayer({
+            id: 'admin-selection-hit', type: 'fill', source: 'admin-boundaries',
+            filter: ['==', ['get', 'id'], -1],
+            layout: { visibility: 'none' }, paint: { 'fill-opacity': 0 },
+          });
+
           // أحداث التفاعل مع البلديات (Hover & Click)
           map.on('mousemove', 'admin-municipalities-fill', (e) => {
-            if (!showAdminAreasRef.current) return;
+            if (!showAdminAreasRef.current || selectedCategoriesRef.current.length) return;
             if (e.features && e.features[0]) {
               const feat = e.features[0];
               const id = Number(feat.id);
@@ -1327,7 +1138,8 @@ export default function MapViewer({
           });
 
           map.on('click', 'admin-municipalities-fill', (e) => {
-            if (!showAdminAreasRef.current) return;
+            if (!showAdminAreasRef.current || selectedCategoriesRef.current.length) return;
+            if (e.originalEvent) (e.originalEvent as any)._handledByLayer = true;
             setHoveredAdminArea(null);
             if (e.features && e.features[0]) {
               const feat = e.features[0];
@@ -1338,6 +1150,7 @@ export default function MapViewer({
 
           // أحداث التفاعل والنقر على الأحياء
           const handleNeighClick = (e: any) => {
+            if (!showAdminAreasRef.current || selectedCategoriesRef.current.length || e.originalEvent?._handledByLayer) return;
             if (e.originalEvent) {
               (e.originalEvent as any)._handledByLayer = true;
             }
@@ -1349,12 +1162,17 @@ export default function MapViewer({
             setHoveredAdminArea(null);
             if (e.features && e.features[0]) {
               const feat = e.features[0];
+              if (selectedNeighIdRef.current !== null && Number(feat.properties.id) !== Number(selectedNeighIdRef.current)) {
+                handleResetToAllMunicipalities();
+                return;
+              }
               const props = feat.properties as AdminAreaProperties;
               handleSelectNeighborhood(props, feat);
             }
           };
 
           const handleNeighMove = (e: any) => {
+            if (selectedCategoriesRef.current.length) return;
             if (e.features && e.features[0]) {
               const isLabel = e.features[0].layer?.id === 'admin-neighborhoods-label';
               if (showAdminAreasRef.current || isLabel) {
@@ -1396,40 +1214,20 @@ export default function MapViewer({
           map.on('mousemove', 'admin-neighborhoods-label', handleNeighMove);
           map.on('mouseleave', 'admin-neighborhoods-label', handleNeighLeave);
 
-          // النقر على مضلع الحي
-          map.on('click', 'admin-neighborhoods-fill', (e: any) => {
-            if (e.originalEvent && (e.originalEvent as any)._handledByLayer) return;
-            if (e.originalEvent) {
-              (e.originalEvent as any)._handledByLayer = true;
-            }
+          map.on('click', 'admin-neighborhoods-hit', handleNeighClick);
+          map.on('mousemove', 'admin-neighborhoods-hit', handleNeighMove);
+          map.on('mouseleave', 'admin-neighborhoods-hit', handleNeighLeave);
 
-            if (showAdminAreasRef.current) {
-              handleNeighClick(e);
-            } else {
-              // عند عدم تفعيل التقسيمات: النقر على أي نقطة داخل الحي (على المضلع) يزيل الصبغة والإطار فوراً
-              if (selectedNeighIdRef.current !== null) {
-                map.setFeatureState({ source: 'admin-boundaries', id: selectedNeighIdRef.current }, { selected: false });
-                selectedNeighIdRef.current = null;
-              }
-              if (map.getLayer('admin-neighborhoods-fill')) {
-                map.setLayoutProperty('admin-neighborhoods-fill', 'visibility', 'none');
-              }
-              if (map.getLayer('admin-neighborhoods-line')) {
-                map.setLayoutProperty('admin-neighborhoods-line', 'visibility', 'none');
-              }
-              if (map.getLayer('admin-neighborhoods-shadow')) {
-                map.setLayoutProperty('admin-neighborhoods-shadow', 'visibility', 'none');
-              }
-              setSelectedNeighborhood(null);
-              setSelectedArea(null);
-            }
-          });
-          map.on('mousemove', 'admin-neighborhoods-fill', handleNeighMove);
-          map.on('mouseleave', 'admin-neighborhoods-fill', handleNeighLeave);
-
-          // النقر على الخريطة أو أي نقطة داخل/خارج الحي يزيل التحديد والصبغة والإطار المتوهج فوراً
           map.on('click', (e: any) => {
             if (e.originalEvent && (e.originalEvent as any)._handledByLayer) return;
+
+            if (selectedMunIdRef.current !== null || selectedNeighIdRef.current !== null) {
+              const insideSelectedArea = map.queryRenderedFeatures(e.point, { layers: ['admin-selection-hit'] }).length > 0;
+              if (!insideSelectedArea) {
+                handleResetToAllMunicipalities();
+                return;
+              }
+            }
 
             // التحقق إن كانت النقرة على تسمية حي أو بلدية أو معلم POI
             const interactiveLayers = ['admin-neighborhoods-label', 'places-poi-pins', 'places-poi-labels',
@@ -1442,41 +1240,26 @@ export default function MapViewer({
             if (hits && hits.length > 0) return;
             if (selectedPlaceRef.current) closePlace();
 
-            // إزالة مضلع الحي وحدوده وبطاقته فوراً عند النقر على أي نقطة على الخريطة
-            if (selectedNeighIdRef.current !== null) {
-              map.setFeatureState({ source: 'admin-boundaries', id: selectedNeighIdRef.current }, { selected: false });
-              selectedNeighIdRef.current = null;
-            }
-            if (map.getLayer('admin-neighborhoods-fill')) {
-              map.setLayoutProperty('admin-neighborhoods-fill', 'visibility', 'none');
-            }
-            if (map.getLayer('admin-neighborhoods-line')) {
-              map.setLayoutProperty('admin-neighborhoods-line', 'visibility', 'none');
-            }
-            if (map.getLayer('admin-neighborhoods-shadow')) {
-              map.setLayoutProperty('admin-neighborhoods-shadow', 'visibility', 'none');
-            }
-
-            setSelectedNeighborhood(null);
-            setSelectedArea(null);
           });
         };
 
         // استدعاء التهيئة لمرة واحدة بدقة وتفادي أي وميض
         let isReadyFired = false;
-        let safetyTimer: any = null;
 
         const onReady = () => {
           if (!isMounted || isReadyFired) return;
           isReadyFired = true;
-          if (safetyTimer) clearTimeout(safetyTimer);
 
-          applyThemeToMap(map, 'governorate');
+          applyThemeToMap(map, 'classic');
           setupAdminLayers();
-          if (map.getLayer('admin-neighborhoods-label')) {
-            map.setLayoutProperty('admin-neighborhoods-label', 'visibility', 'visible');
-            map.setFilter('admin-neighborhoods-label', ['==', ['get', 'level'], 10]);
-          }
+          map.on('movestart', () => {
+            for (const ref of [hoveredMunIdRef, hoveredNeighIdRef]) {
+              if (ref.current !== null) map.setFeatureState({ source: 'admin-boundaries', id: ref.current }, { hover: false });
+              ref.current = null;
+            }
+            setHoveredAdminArea(null);
+            map.getCanvas().style.cursor = '';
+          });
           setupLandmarkLayers(map, getAssetUrl, (item) => handleSelectLandmarkRef.current?.(item));
           refreshPoiLayer(map, selectedCategoriesRef.current);
           setLoading(false);
@@ -1489,9 +1272,8 @@ export default function MapViewer({
           });
         };
 
+        map.once('style.load', onReady);
         map.once('load', onReady);
-        map.once('idle', onReady);
-        safetyTimer = setTimeout(onReady, 1200);
 
         mapInstanceRef.current = map;
       } catch (err) {
@@ -1520,108 +1302,51 @@ export default function MapViewer({
   // التحكم بظهور وفلترة طبقات التقسيمات الإدارية الذكية وفق التسلسل الهرمي
   useEffect(() => {
     const map = mapInstanceRef.current;
-    if (!map || !map.isStyleLoaded()) return;
+    if (!map?.getSource('admin-boundaries')) return;
 
-    const munLayers = ['admin-municipalities-shadow', 'admin-municipalities-fill', 'admin-municipalities-line', 'admin-municipalities-label'];
-    const neighVisualLayers = ['admin-neighborhoods-shadow', 'admin-neighborhoods-fill', 'admin-neighborhoods-line'];
-    const neighInteractiveLayers = ['admin-neighborhoods-label', 'admin-neighborhoods-hit'];
-
-    if (!showAdminAreas) {
-      // 1. التقسيمات الإدارية معطلة: إخفاء مضلعات وظلال البلديات وطبقة النقر لكامل المساحة
-      ['admin-municipalities-shadow', 'admin-municipalities-fill', 'admin-municipalities-line', 'admin-municipalities-label', 'admin-neighborhoods-hit'].forEach((id) => {
-        if (map.getLayer(id)) map.setLayoutProperty(id, 'visibility', 'none');
-      });
-
-      // إبقاء أسماء الأحياء ظاهرة (تظهر عند التقريب بفضل minzoom: 12.5)
-      if (map.getLayer('admin-neighborhoods-label')) {
-        map.setLayoutProperty('admin-neighborhoods-label', 'visibility', 'visible');
-        map.setFilter('admin-neighborhoods-label', ['==', ['get', 'level'], 10]);
+    const municipalityLayers = ['admin-municipalities-shadow', 'admin-municipalities-fill', 'admin-municipalities-line', 'admin-municipalities-label'];
+    const neighborhoodLayers = ['admin-neighborhoods-shadow', 'admin-neighborhoods-line', 'admin-neighborhoods-label', 'admin-neighborhoods-hit'];
+    const setVisible = (layers: string[], visible: boolean) => layers.forEach((id) => {
+      const visibility = visible ? 'visible' : 'none';
+      if (map.getLayer(id) && map.getLayoutProperty(id, 'visibility') !== visibility) {
+        map.setLayoutProperty(id, 'visibility', visibility);
       }
+    });
 
-      // إذا كان هناك حي مختار: إبراز كامل مضلعه بصبغة لونية راقية وإطار حدوده
-      if (selectedNeighborhood) {
-        const neighId = Number(selectedNeighborhood.id);
-        if (map.getLayer('admin-neighborhoods-fill')) {
-          map.setLayoutProperty('admin-neighborhoods-fill', 'visibility', 'visible');
-          map.setFilter('admin-neighborhoods-fill', ['==', ['to-number', ['get', 'id']], neighId]);
-        }
-        if (map.getLayer('admin-neighborhoods-line')) {
-          map.setLayoutProperty('admin-neighborhoods-line', 'visibility', 'visible');
-          map.setFilter('admin-neighborhoods-line', ['==', ['to-number', ['get', 'id']], neighId]);
-        }
-        if (map.getLayer('admin-neighborhoods-shadow')) {
-          map.setLayoutProperty('admin-neighborhoods-shadow', 'visibility', 'visible');
-          map.setFilter('admin-neighborhoods-shadow', ['==', ['to-number', ['get', 'id']], neighId]);
-        }
-      } else {
-        // عند عدم اختيار أي حي: إخفاء مضلع الملء وإطار الحدود فوراً
-        if (map.getLayer('admin-neighborhoods-fill')) {
-          map.setLayoutProperty('admin-neighborhoods-fill', 'visibility', 'none');
-        }
-        if (map.getLayer('admin-neighborhoods-line')) {
-          map.setLayoutProperty('admin-neighborhoods-line', 'visibility', 'none');
-        }
-        if (map.getLayer('admin-neighborhoods-shadow')) {
-          map.setLayoutProperty('admin-neighborhoods-shadow', 'visibility', 'none');
-        }
-      }
+    const showPlaces = selectedCategories.length > 0 || Boolean(selectedPlace);
+    const showBoundaries = showAdminAreas && !showPlaces;
+    setVisible(['places-poi-pins', 'places-poi-pin-hover', 'places-poi-labels'], showPlaces);
+    const selection = selectedNeighborhood || selectedMunicipality;
+    setVisible(['admin-selection-hit'], showBoundaries && Boolean(selection));
+    map.setFilter('admin-selection-hit', ['==', ['to-number', ['get', 'id']], Number(selection?.id ?? -1)]);
 
-      if (selectedMunIdRef.current !== null) {
-        map.setFeatureState({ source: 'admin-boundaries', id: selectedMunIdRef.current }, { selected: false });
-        selectedMunIdRef.current = null;
-      }
-      if (hoveredMunIdRef.current !== null) {
-        map.setFeatureState({ source: 'admin-boundaries', id: hoveredMunIdRef.current }, { hover: false });
-        hoveredMunIdRef.current = null;
-      }
-      map.getCanvas().style.cursor = '';
-    } else {
-      // 2. التقسيمات الإدارية الرسمية مفعلة
-      if (selectedNeighborhood) {
-        // حالة اختيار حي: إخفاء المضلعات والظلال المرئية لمنع حجب معالم الحي
-        [...munLayers, ...neighVisualLayers].forEach((id) => {
-          if (map.getLayer(id)) map.setLayoutProperty(id, 'visibility', 'none');
-        });
-        neighInteractiveLayers.forEach((id) => {
-          if (map.getLayer(id)) {
-            map.setLayoutProperty(id, 'visibility', 'visible');
-            map.setFilter(id, ['==', ['get', 'level'], 10]);
-          }
-        });
-      } else if (selectedMunicipality) {
-        // حالة اختيار بلدية معينة: إظهار حدودها وعزل أحيائها التابعة فقط
-        ['admin-municipalities-shadow', 'admin-municipalities-fill', 'admin-municipalities-line'].forEach((id) => {
-          if (map.getLayer(id)) {
-            map.setLayoutProperty(id, 'visibility', 'visible');
-            map.setFilter(id, ['==', ['get', 'id'], selectedMunicipality.id]);
-          }
-        });
-        if (map.getLayer('admin-municipalities-label')) {
-          map.setLayoutProperty('admin-municipalities-label', 'visibility', 'none');
-        }
-
-        const neighFilter = ['all', ['==', ['get', 'level'], 10], ['==', ['get', 'parent_id'], selectedMunicipality.id]];
-        [...neighVisualLayers, ...neighInteractiveLayers].forEach((id) => {
-          if (map.getLayer(id)) {
-            map.setLayoutProperty(id, 'visibility', 'visible');
-            map.setFilter(id, neighFilter);
-          }
-        });
-      } else {
-        // حالة البداية عند تفعيل التقسيمات (Macro Overview): بلديات دمشق الـ 16 فقط!
-        munLayers.forEach((id) => {
-          if (map.getLayer(id)) {
-            map.setLayoutProperty(id, 'visibility', 'visible');
-            map.setFilter(id, ['==', ['get', 'level'], 9]);
-          }
-        });
-        // إخفاء جميع طبقات وتسميات ونقرات الأحياء لتفادي الاصطدام والتداخل التفاعلي
-        [...neighVisualLayers, ...neighInteractiveLayers].forEach((id) => {
-          if (map.getLayer(id)) map.setLayoutProperty(id, 'visibility', 'none');
-        });
-      }
+    municipalityLayers.forEach((id) => {
+      if (map.getLayer(id)) map.setFilter(id, selectedMunicipality
+        ? ['==', ['get', 'id'], selectedMunicipality.id]
+        : ['==', ['get', 'level'], 9]);
+    });
+    const neighborhoodFilter = selectedMunicipality
+      ? ['all', ['==', ['get', 'level'], 10], ['==', ['get', 'parent_id'], selectedMunicipality.id]]
+      : ['==', ['get', 'level'], 10];
+    neighborhoodLayers.forEach((id) => {
+      if (map.getLayer(id)) map.setFilter(id, neighborhoodFilter);
+    });
+    if (map.getLayer('admin-neighborhoods-fill')) {
+      map.setFilter('admin-neighborhoods-fill', selectedNeighborhood
+        ? ['==', ['to-number', ['get', 'id']], Number(selectedNeighborhood.id)]
+        : ['==', ['get', 'id'], -1]);
     }
-  }, [showAdminAreas, selectedMunicipality, selectedNeighborhood]);
+    const syncZoomVisibility = () => {
+      const zoom = map.getZoom();
+      const showNeighborhoods = showBoundaries && zoom >= 12.5 && zoom < 14;
+      setVisible(municipalityLayers, showBoundaries && zoom < 12.5);
+      setVisible(neighborhoodLayers, showNeighborhoods);
+      setVisible(['admin-neighborhoods-fill'], showNeighborhoods && Boolean(selectedNeighborhood));
+    };
+    syncZoomVisibility();
+    map.on('zoom', syncZoomVisibility);
+    return () => map.off('zoom', syncZoomVisibility);
+  }, [loading, showAdminAreas, selectedCategories, selectedMunicipality, selectedNeighborhood, selectedPlace]);
 
   // عرض مسار الخط المختار بدقة أو مسحه (Option B - Zero Clutter)
   useEffect(() => {
@@ -1634,16 +1359,15 @@ export default function MapViewer({
   // تحديث طبقات الـ POIs عند تغيير التحديد فقط وبدون وميض الخريطة
   useEffect(() => {
     const map = mapInstanceRef.current;
-    if (map && map.isStyleLoaded()) {
+    if (map) {
       refreshPoiLayer(map, selectedCategories);
     }
-  }, [selectedCategories, selectedSubcategory, selectedSector, refreshPoiLayer]);
+  }, [loading, selectedCategories, selectedSubcategory, selectedSector, refreshPoiLayer]);
 
   // فلترة المعالم فورياً حسب التصنيف الفرعي المختار دون وميض أو تأخير
   useEffect(() => {
     const map = mapInstanceRef.current;
-    if (!map || !map.isStyleLoaded()) return;
-    if (!map.getLayer('places-poi-pins')) return;
+    if (!map?.getLayer('places-poi-pins')) return;
 
     if (selectedPlaceRef.current) {
       const filter = ['==', ['to-number', ['get', 'id']], Number(selectedPlaceRef.current.id)];
@@ -1691,24 +1415,25 @@ export default function MapViewer({
   }, [selectedSubcategory, selectedCategories]);
 
   const handleSelectCommandCategory = (slug: string | null) => {
-    if (slug === null) {
-      if (selectedPlaceRef.current) closePlace();
-      setSelectedCategories([]);
-      setSelectedSubcategory(null);
-      setSelectedSector(null);
-    } else {
-      setSelectedCategories([slug]);
-      setSelectedSubcategory(null);
-      setSelectedSector(null);
-      setSelectedPlace(null);
-      placeCameraRef.current = null;
-      focusedPlaceRef.current = null;
-      mapInstanceRef.current?.fitBounds(DAMASCUS_BOUNDS, {
-        padding: { top: 60, bottom: 60, left: 60, right: 60 },
-        duration: 1200,
-        maxZoom: 11.6,
-      });
-    }
+    clearAdminSelection();
+    clearPoiHoverRef.current();
+    poiRequestRef.current?.abort();
+    selectedCategoriesRef.current = slug ? [slug] : [];
+    selectedPlaceRef.current = null;
+    selectedSubcategoryRef.current = null;
+    selectedSectorRef.current = null;
+    setSelectedCategories(selectedCategoriesRef.current);
+    setShowAdminAreas(!slug);
+    setSelectedSubcategory(null);
+    setSelectedSector(null);
+    setSelectedPlace(null);
+    placeCameraRef.current = null;
+    focusedPlaceRef.current = null;
+    const map = mapInstanceRef.current;
+    map?.getSource('places-poi-source')?.setData({ type: 'FeatureCollection', features: [] });
+    map?.fitBounds(DAMASCUS_BOUNDS, {
+      padding: { top: 60, bottom: 60, left: 60, right: 60 }, duration: 1000, maxZoom: 11.6,
+    });
   };
 
   const handleSelectCommandSubcategory = (subSlug: string | null) => {
@@ -1737,6 +1462,7 @@ export default function MapViewer({
 
   // التفاعل مع النقر على معالم الاستدلال الثابتة (Landmark Click Handler)
   const handleSelectLandmark = useCallback(async (item: LandmarkSelectPayload) => {
+    clearAdminSelection();
     const preview = createPlacePreview({ ...item }, item.coordinates);
     setSelectedPlace(preview);
     setSelectedArea(null);
@@ -1762,7 +1488,7 @@ export default function MapViewer({
         console.error('Error fetching landmark detail:', err);
       }
     }
-  }, []);
+  }, [clearAdminSelection]);
 
   useEffect(() => {
     handleSelectLandmarkRef.current = handleSelectLandmark;
@@ -1845,6 +1571,7 @@ export default function MapViewer({
     }
 
     if (item.type === 'municipality' || (item.type === 'area' && (item.level === 9 || item.title.startsWith('دائرة') || item.title.startsWith('بلدية')))) {
+      handleSelectCommandCategory(null);
       setShowAdminAreas(true);
       const feat = adminFeatures.find((f) => Number(f.properties?.id) === Number(item.id)) 
         || adminGeoJsonRef.current?.features?.find((f: any) => Number(f.properties?.id) === Number(item.id));
@@ -1861,6 +1588,7 @@ export default function MapViewer({
     }
 
     if (item.type === 'neighborhood' || (item.type === 'area' && item.level === 10)) {
+      handleSelectCommandCategory(null);
       setShowAdminAreas(true);
       const feat = adminFeatures.find((f) => Number(f.properties?.id) === Number(item.id)) 
         || adminGeoJsonRef.current?.features?.find((f: any) => Number(f.properties?.id) === Number(item.id));
@@ -1892,6 +1620,7 @@ export default function MapViewer({
     });
 
     if (item.type === 'place') {
+      clearAdminSelection();
       const preview = createPlacePreview({ ...item }, item.coordinates);
       setSelectedPlace(preview);
       setSelectedArea(null);
@@ -2108,6 +1837,12 @@ export default function MapViewer({
           </div>
       </header>
 
+      <button type="button" disabled aria-label="الرجوع — غير متاح حالياً" title="الرجوع — غير متاح حالياً"
+        className="map-header-back">
+        <ArrowLeft className="w-5 h-5" />
+        <span>الرجوع</span>
+      </button>
+
           {/* اليسار: قائمة منسدلة أنيقة للهوية البصرية (Popover Menu) */}
           <div ref={themeMenuRef} className="map-header-theme z-30 flex flex-col items-start gap-2" dir="rtl">
             <button
@@ -2125,7 +1860,7 @@ export default function MapViewer({
                   className="w-2.5 h-2.5 rounded-full inline-block shadow-xs border border-black/15"
                   style={{ backgroundColor: currentTheme?.dotColor || '#3a6962' }}
                 />
-                <span className="font-extrabold text-xs hidden md:inline">{activeTheme === 'governorate' ? currentTheme.label : currentTheme?.label.split(' ')[1] || 'الأخضر'}</span>
+                <span className="font-extrabold text-xs hidden md:inline">{currentTheme.label}</span>
               </span>
               <ChevronDown className={`w-3.5 h-3.5 text-zinc-400 transition-transform duration-200 ${isThemeMenuOpen ? 'rotate-180' : ''}`} />
             </button>
@@ -2176,7 +1911,7 @@ export default function MapViewer({
                 <div className="px-3 py-1.5 border-b border-black/5 text-[11px] font-bold text-zinc-400">
                   الهوية البصرية المعتمدة
                 </div>
-                {(Object.keys(THEMES) as ThemeKey[]).map((key) => {
+                {(['classic', 'governorate'] as ThemeKey[]).map((key) => {
                   const item = THEMES[key];
                   const isActive = activeTheme === key;
                   return (
@@ -2292,7 +2027,7 @@ export default function MapViewer({
       )}
 
       {/* شارة التحويم التفاعلية الدقيقة المتناسقة مع الهوية البصرية فوق مؤشر الفأرة مباشرة */}
-      {hoveredAdminArea && showAdminAreas && !selectedNeighborhood && (
+      {hoveredAdminArea && showAdminAreas && !selectedCategories.length && !selectedNeighborhood && (
         <div 
           className="pointer-events-none absolute z-30 select-none animate-in fade-in duration-100"
           style={
@@ -2362,8 +2097,10 @@ export default function MapViewer({
           <button
             type="button"
             onClick={handleToggleAdminAreas}
+            disabled={selectedCategories.length > 0}
+            style={selectedCategories.length ? { opacity: 0.55, cursor: 'not-allowed' } : undefined}
             aria-pressed={showAdminAreas}
-            title={showAdminAreas ? 'إخفاء الحدود الإدارية' : 'إظهار الحدود الإدارية'}
+            title={selectedCategories.length ? 'ألغِ اختيار الصنف لإظهار الحدود' : showAdminAreas ? 'إخفاء الحدود الإدارية' : 'إظهار الحدود الإدارية'}
             className={`flex items-center gap-2 px-3 sm:px-3.5 py-2 sm:py-2.5 rounded-2xl shadow-xl border text-xs font-bold transition-all cursor-pointer active:scale-95 ${
               showAdminAreas
                 ? 'bg-[#064239] text-[#f7f4ed] border-[#c8a76a]'

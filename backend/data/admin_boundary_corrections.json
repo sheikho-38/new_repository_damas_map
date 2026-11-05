@@ -6,7 +6,7 @@
   "changes": [
     {
       "id": 350,
-      "name_ar": "دائرة خدمات اليرموك",
+      "name_ar": "  اليرموك",
       "level": 9,
       "parent_id": null,
       "before_sha256": "6acf2014d0856bac96c8b57662e62ae5c890032160831ce6bbfbf77829535b36",
@@ -24,7 +24,7 @@
     },
     {
       "id": 351,
-      "name_ar": "دائرة خدمات الشاغور",
+      "name_ar": "  الشاغور",
       "level": 9,
       "parent_id": null,
       "before_sha256": "d021584b6c279e385b039628dbb44300838cd7c282b97a14c9ce1d39aa2c54a1",
@@ -47,7 +47,7 @@
     },
     {
       "id": 352,
-      "name_ar": "دائرة خدمات الشام الجديدة",
+      "name_ar": "  الشام الجديدة",
       "level": 9,
       "parent_id": null,
       "before_sha256": "61a3466b3cca3c83c70f29c349beebcd49f09a8794dfda4153e90684aa3f7bd1",
@@ -63,7 +63,7 @@
     },
     {
       "id": 353,
-      "name_ar": "دائرة خدمات القابون",
+      "name_ar": "  القابون",
       "level": 9,
       "parent_id": null,
       "before_sha256": "eee1a13d9afbcae4df1184e5fa5828db52fcf9430d65c2dd39ccf92ebfb4d033",
@@ -81,7 +81,7 @@
     },
     {
       "id": 354,
-      "name_ar": "دائرة خدمات القدم",
+      "name_ar": "  القدم",
       "level": 9,
       "parent_id": null,
       "before_sha256": "71f1bd2fb99b0cb47805fb7f4db5c3619e61adad5d9d034d1dead54a2263005f",
@@ -102,7 +102,7 @@
     },
     {
       "id": 355,
-      "name_ar": "دائرة خدمات القنوات",
+      "name_ar": "  القنوات",
       "level": 9,
       "parent_id": null,
       "before_sha256": "4889c06181bf0e756fb568c3adb1bcfc34e2490ec40b8bf1cbc09a6a044a5668",
@@ -126,7 +126,7 @@
     },
     {
       "id": 356,
-      "name_ar": "دائرة خدمات المزة",
+      "name_ar": "  المزة",
       "level": 9,
       "parent_id": null,
       "before_sha256": "75656a0fc1ee05aff70a378807d4c2e669c3824ec996a35f8c19da3da5847796",
@@ -148,7 +148,7 @@
     },
     {
       "id": 357,
-      "name_ar": "دائرة خدمات المهاجرين",
+      "name_ar": "  المهاجرين",
       "level": 9,
       "parent_id": null,
       "before_sha256": "9f28990f3da9979d89629dd08cc109dd9be579de328397f5e6a8b5841f4dfb6c",
@@ -174,7 +174,7 @@
     },
     {
       "id": 358,
-      "name_ar": "دائرة خدمات الميدان",
+      "name_ar": "  الميدان",
       "level": 9,
       "parent_id": null,
       "before_sha256": "7092b61d506294ca8674e1e607b2620b02a30b950ed02491cfa0a85746f7a7ac",
@@ -196,7 +196,7 @@
     },
     {
       "id": 359,
-      "name_ar": "دائرة خدمات برزة",
+      "name_ar": "  برزة",
       "level": 9,
       "parent_id": null,
       "before_sha256": "cfa39b2f0818b2dd24aca1e6a04cfab64e92aa96ddd1cbaea0570df6efa7e99c",
@@ -217,7 +217,7 @@
     },
     {
       "id": 360,
-      "name_ar": "دائرة خدمات جوبر",
+      "name_ar": "  جوبر",
       "level": 9,
       "parent_id": null,
       "before_sha256": "d0458a303cc2ba07573e242e9385442a28a48edea9a994f2bceae4b63e89f23f",
@@ -236,7 +236,7 @@
     },
     {
       "id": 361,
-      "name_ar": "دائرة خدمات دمر",
+      "name_ar": "  دمر",
       "level": 9,
       "parent_id": null,
       "before_sha256": "f99ab70620f1e096cc239f526da9a07c13ba47e948c48ea57496613318b9f277",
@@ -255,7 +255,7 @@
     },
     {
       "id": 362,
-      "name_ar": "دائرة خدمات دمشق القديمة",
+      "name_ar": "  دمشق القديمة",
       "level": 9,
       "parent_id": null,
       "before_sha256": "98ba686e0d2feb72b982b0a86416a2cd95139c4c43dc973824426725b1e9c4b6",
@@ -279,7 +279,7 @@
     },
     {
       "id": 363,
-      "name_ar": "دائرة خدمات ركن الدين",
+      "name_ar": "  ركن الدين",
       "level": 9,
       "parent_id": null,
       "before_sha256": "3fc876d2080981051c7f79839f39c760d6d6a55652013b26aec45cdf11645f3b",
@@ -300,7 +300,7 @@
     },
     {
       "id": 364,
-      "name_ar": "دائرة خدمات ساروجا",
+      "name_ar": "  ساروجا",
       "level": 9,
       "parent_id": null,
       "before_sha256": "ec6531bb09c3eb0ada7c35f7aa2d78b1817f78b7dbe8afcc0ec32f7d5860af6c",
@@ -323,7 +323,7 @@
     },
     {
       "id": 365,
-      "name_ar": "دائرة خدمات كفرسوسة",
+      "name_ar": "  كفرسوسة",
       "level": 9,
       "parent_id": null,
       "before_sha256": "54c85062c493686f836bd7877e6f2e0c4aea035c99ce335c513c82f4304b756e",

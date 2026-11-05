@@ -157,15 +157,22 @@ export default function DamasceneSearchBar({
   const [selectedIndex, setSelectedIndex] = useState<number>(-1);
   const [loading, setLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
   
   const searchContainerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const searchButtonRef = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    if (isSearchOpen) inputRef.current?.focus();
+  }, [isSearchOpen]);
 
   // إغلاق القائمة عند النقر خارجها
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (searchContainerRef.current && !searchContainerRef.current.contains(event.target as Node)) {
         setIsOpen(false);
+        setIsSearchOpen(false);
       }
     }
     document.addEventListener('mousedown', handleClickOutside);
@@ -232,6 +239,8 @@ export default function DamasceneSearchBar({
 
   const handleSelect = (item: SearchResultItem) => {
     setIsOpen(false);
+    setIsSearchOpen(false);
+    searchButtonRef.current?.focus();
     onSelectResult(item);
   };
 
@@ -335,7 +344,18 @@ export default function DamasceneSearchBar({
   const adminCount = (counts.municipalities || 0) + (counts.neighborhoods || 0);
 
   return (
-    <div ref={searchContainerRef} className="relative w-full max-w-lg z-30">
+    <div ref={searchContainerRef} className="relative flex items-center gap-2 z-30" onKeyDown={(event) => {
+      if (event.key === 'Escape') {
+        setIsSearchOpen(false);
+        searchButtonRef.current?.focus();
+      }
+    }}>
+      <button ref={searchButtonRef} type="button" aria-label="بحث" title="بحث" aria-expanded={isSearchOpen} aria-controls="map-search-panel"
+        onClick={() => { setIsSearchOpen(!isSearchOpen); setIsOpen(query.trim().length >= 2); }}
+        className="flex size-10 sm:size-11 items-center justify-center rounded-full border border-[#c8a76a]/60 bg-[#fdfbf7] text-[#064239] shadow-sm transition-colors hover:bg-[#064239] hover:text-white cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#c8a76a]">
+        <Search className="w-5 h-5" />
+      </button>
+      {isSearchOpen && <div id="map-search-panel" className="absolute left-0 top-full mt-3 w-[min(36rem,calc(100vw-2rem))]">
       {/* شريط الإدخال الرئيسي */}
       <div className="relative flex items-center bg-[#fdfbf7]/95 dark:bg-zinc-900/95 backdrop-blur-md rounded-2xl shadow-xl border border-[#064239]/20 hover:border-[#064239]/40 focus-within:ring-2 focus-within:ring-[#064239]/20 focus-within:border-[#064239]/50 transition-all duration-200">
         <div className="pr-4 pl-2 text-[#064239] dark:text-emerald-400">
@@ -474,15 +494,15 @@ export default function DamasceneSearchBar({
                       : 'hover:bg-[#f3eddf]/70 dark:hover:bg-zinc-800/60'
                   }`}
                 >
-                  <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
+                  <div className="flex flex-1 items-center gap-2.5 sm:gap-3 min-w-0">
                     <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-white dark:bg-zinc-800 border border-black/5 flex items-center justify-center shadow-xs shrink-0 group-hover:scale-105 transition-transform">
                       {getIcon(item)}
                     </div>
                     <div className="min-w-0">
-                      <h4 className="text-sm font-extrabold text-[#064239] dark:text-zinc-100 group-hover:text-[#04352e] dark:group-hover:text-emerald-300 truncate">
+                      <h4 className="text-sm font-extrabold text-[#064239] dark:text-zinc-100 group-hover:text-[#04352e] dark:group-hover:text-emerald-300 whitespace-normal break-words">
                         {renderHighlightedText(item.title, query)}
                       </h4>
-                      <p className="text-xs text-zinc-500 dark:text-zinc-400 font-medium mt-0.5 truncate">
+                      <p className="text-xs text-zinc-500 dark:text-zinc-400 font-medium mt-0.5 whitespace-normal break-words">
                         {item.subtitle}
                       </p>
                     </div>
@@ -508,6 +528,7 @@ export default function DamasceneSearchBar({
           لم يتم العثور على نتائج تطابق &quot;{query}&quot; في دمشق
         </div>
       )}
+      </div>}
     </div>
   );
 }

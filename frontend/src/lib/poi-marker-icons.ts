@@ -173,13 +173,13 @@ export function getSubcategoryPinIcon(
 
 const imageLoads = new WeakMap<object, Map<string, Promise<void>>>();
 
-export function getPoiPinImageId(icon: unknown): string {
+export function getPoiPinImageId(icon: unknown, hovered = false): string {
   const name =
     typeof icon === "string" && icon ? icon.toLowerCase() : "map-pin";
-  return `poi-pin-${name.replace(/[^a-z0-9-]/g, "-")}`;
+  return `poi-pin-${name.replace(/[^a-z0-9-]/g, "-")}${hovered ? '-hover' : ''}`;
 }
 
-export function createPoiPinSvg(iconName: string): string {
+export function createPoiPinSvg(iconName: string, hovered = false): string {
   const name = iconName.toLowerCase();
   const Icon = icons[name] ?? MapPinIcon;
   const iconSvg = renderToStaticMarkup(
@@ -189,7 +189,7 @@ export function createPoiPinSvg(iconName: string): string {
     }),
   );
   const iconPaths = iconSvg.replace(/^<svg[^>]*>/, "").replace(/<\/svg>$/, "");
-  return `<svg xmlns="http://www.w3.org/2000/svg" width="112" height="136" viewBox="0 0 56 68"><path d="M28 2C13.7 2 2 13.7 2 28c0 18.3 26 38 26 38s26-19.7 26-38C54 13.7 42.3 2 28 2Z" fill="#c8a76a" stroke="#fff" stroke-width="3"/><svg x="15" y="12" width="26" height="26" viewBox="0 0 256 256" fill="#064239">${iconPaths}</svg></svg>`;
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="112" height="136" viewBox="0 0 56 68"><path d="M28 2C13.7 2 2 13.7 2 28c0 18.3 26 38 26 38s26-19.7 26-38C54 13.7 42.3 2 28 2Z" fill="${hovered ? '#064239' : '#c8a76a'}" stroke="#fff" stroke-width="3"/><svg x="15" y="12" width="26" height="26" viewBox="0 0 256 256" fill="${hovered ? '#c8a76a' : '#064239'}">${iconPaths}</svg></svg>`;
 }
 
 export function registerPoiPinIcons(
@@ -207,8 +207,8 @@ export function registerPoiPinIcons(
       ...new Set(
         iconNames.map((name) => (typeof name === "string" ? name : "map-pin")),
       ),
-    ].map((iconName) => {
-      const id = getPoiPinImageId(iconName);
+    ].flatMap((iconName) => [false, true].map((hovered) => {
+      const id = getPoiPinImageId(iconName, hovered);
       if (map.hasImage(id)) return Promise.resolve();
       const existing = pending!.get(id);
       if (existing) return existing;
@@ -225,10 +225,10 @@ export function registerPoiPinIcons(
         };
         image.onerror = () =>
           reject(new Error(`Could not create map icon: ${iconName}`));
-        image.src = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(createPoiPinSvg(iconName))}`;
+        image.src = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(createPoiPinSvg(iconName, hovered))}`;
       }).finally(() => pending!.delete(id));
       pending.set(id, promise);
       return promise;
-    }),
+    })),
   ).then(() => undefined);
 }
