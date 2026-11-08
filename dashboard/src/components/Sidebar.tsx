@@ -7,6 +7,7 @@ const NAV_ITEMS: NavItem[] = [
   { page: 'dashboard', icon: '▦', label: 'لوحة التحكم' },
   { page: 'routes', icon: '🚌', label: 'خطوط النقل' },
   { page: 'routes-map', icon: '🗺', label: 'المسارات' },
+  { page: 'places-edit', icon: '📍', label: 'تعديل مكان' },
   { page: null, icon: '💰', label: 'الأجور' },
   { page: null, icon: '⚙', label: 'الإعدادات' },
 ]

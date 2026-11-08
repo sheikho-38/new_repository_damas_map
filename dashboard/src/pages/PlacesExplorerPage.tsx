@@ -1,31 +1,23 @@
 import { useEffect, useRef, useState } from 'react'
 import PlacesMap from '../components/places/PlacesMap'
-import PlaceForm from '../components/places/PlaceForm'
 import PlacesFilters from '../components/places/PlacesFilters'
 import { usePlaces, usePlacesMetadata } from '../hooks/usePlaces'
 import { placesApi } from '../services/placesApi'
 import { emptyFilters, type Place } from '../types/places'
 import { API_URL } from '../config'
 
-export default function PlacesExplorerPage({ onAdd, savedId }: { onAdd: () => void; savedId?: number }) {
+export default function PlacesExplorerPage({ onAdd, onEdit }: { onAdd: () => void; onEdit: (id: number) => void }) {
   const { metadata, error: metadataError } = usePlacesMetadata()
   const [filters, setFilters] = useState(emptyFilters)
   const [page, setPage] = useState(1)
   const [bbox, setBbox] = useState('')
   const [revision, setRevision] = useState(0)
   const [selected, setSelected] = useState<Place | null>(null)
-  const [editing, setEditing] = useState(false)
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState('')
-  const [notice, setNotice] = useState(savedId ? 'تم حفظ المكان بنجاح' : '')
+  const [notice, setNotice] = useState('')
   const selectionRequest = useRef<AbortController | null>(null)
   const { list, geojson, loading, error: loadError } = usePlaces(filters, page, bbox, revision)
-  useEffect(() => {
-    if (!savedId) return
-    const controller = new AbortController()
-    placesApi.detail(savedId, controller.signal).then(setSelected).catch(e => { if (e.name !== 'AbortError') setError(e.message) })
-    return () => controller.abort()
-  }, [savedId])
   useEffect(() => () => selectionRequest.current?.abort(), [])
   const select = async (id: number) => {
     selectionRequest.current?.abort(); const controller = new AbortController(); selectionRequest.current = controller
@@ -43,7 +35,6 @@ export default function PlacesExplorerPage({ onAdd, savedId }: { onAdd: () => vo
   }
   if (metadataError) return <p role="alert">{metadataError} <a href={`${API_URL.replace(/\/api\/?$/, '')}/admin/login/`} target="_blank" rel="noreferrer">تسجيل الدخول</a> ثم أعد تحميل الصفحة.</p>
   if (!metadata) return <p>جارٍ تحميل بيانات الإدارة…</p>
-  if (editing && selected) return <PlaceForm key={selected.id} metadata={metadata} initial={selected} uploadMedia={placesApi.uploadMedia} onCancel={() => setEditing(false)} onSaved={p => { setSelected(p); setEditing(false); setRevision(r => r + 1); setNotice('تم حفظ التعديلات') }} />
   return <section className="places-explorer">
     <div className="places-row"><h2>استكشاف الأماكن</h2><button className="places-primary" onClick={onAdd}>إضافة مكان</button></div>
     {notice && <p role="status">{notice}</p>}
@@ -51,7 +42,7 @@ export default function PlacesExplorerPage({ onAdd, savedId }: { onAdd: () => vo
     <PlacesFilters metadata={metadata} value={filters} onChange={f => { selectionRequest.current?.abort(); setFilters(f); setPage(1); setSelected(null) }} />
     <div className="places-split">
       <aside className="places-panel">
-        {selected && <article className="place-details"><button onClick={() => { selectionRequest.current?.abort(); setSelected(null) }}>إغلاق واستعادة الخريطة</button><h3>{selected.title_ar}</h3><p>{selected.category_name} / {selected.sub_category_name}</p><p>{selected.description}</p><p>{selected.admin_area_name} · {selected.location_text}</p><p>{selected.is_visible ? 'ظاهر' : 'مخفي'} · {selected.is_verified ? 'موثّق' : 'غير موثّق'}</p><p dir="ltr">{selected.latitude}, {selected.longitude}</p><div className="places-row"><button disabled={busy} onClick={() => setEditing(true)}>تعديل</button><button disabled={busy} onClick={() => void mutate(false)}>{selected.is_visible ? 'إخفاء' : 'إظهار'}</button><button disabled={busy} onClick={() => void mutate(true)}>حذف</button></div></article>}
+        {selected && <article className="place-details"><button onClick={() => { selectionRequest.current?.abort(); setSelected(null) }}>إغلاق واستعادة الخريطة</button><h3>{selected.title_ar}</h3><p>{selected.category_name} / {selected.sub_category_name}</p><p>{selected.description}</p><p>{selected.admin_area_name} · {selected.location_text}</p><p>{selected.is_visible ? 'ظاهر' : 'مخفي'} · {selected.is_verified ? 'موثّق' : 'غير موثّق'}</p><p dir="ltr">{selected.latitude}, {selected.longitude}</p><div className="places-row"><button disabled={busy} onClick={() => onEdit(selected.id)}>تعديل</button><button disabled={busy} onClick={() => void mutate(false)}>{selected.is_visible ? 'إخفاء' : 'إظهار'}</button><button disabled={busy} onClick={() => void mutate(true)}>حذف</button></div></article>}
         <h3>{list.count} مكان</h3>{loading && <p role="status">جارٍ التحميل…</p>}
         {!loading && !list.results.length && <p>لا توجد أماكن مطابقة للفلاتر.</p>}
         <div className="places-list">{list.results.map(p => <button key={p.id} className={selected?.id === p.id ? 'selected' : ''} onClick={() => void select(p.id)}><strong>{p.title_ar}</strong><small>{p.category_name} · {p.admin_area_name} · {p.is_visible ? 'ظاهر' : 'مخفي'}</small></button>)}</div>
