@@ -49,13 +49,11 @@ it('shows add choices at the root and opens the corresponding forms', () => {
   expect(screen.getByText('standalone-place-form')).toBeTruthy()
 })
 
-it('hides place exploration from navigation while preserving route navigation', () => {
+it('hides place editing from transport navigation while preserving route navigation', () => {
   window.history.replaceState({}, '', '/admin')
   render(<App />)
   expect(screen.queryByRole('button', { name: /استكشاف الأماكن/ })).toBeNull()
-  fireEvent.click(screen.getByRole('button', { name: /تعديل مكان/ }))
-  expect(window.location.pathname).toBe('/admin/places/edit')
-  expect(screen.getByText('edit-place-page')).toBeTruthy()
+  expect(screen.queryByRole('button', { name: /تعديل مكان/ })).toBeNull()
   fireEvent.click(screen.getByRole('button', { name: /خطوط النقل/ }))
   expect(window.location.pathname).toBe('/admin/routes')
   expect(screen.getByText('routes-page')).toBeTruthy()

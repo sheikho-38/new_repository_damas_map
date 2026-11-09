@@ -9,6 +9,8 @@ from . import geo_lookup
 urlpatterns = [
     path('place-submissions/media/', media_upload_api.SubmissionMediaUpload.as_view()),
     path('place-submissions/metadata/', submission_api.SubmissionMetadata.as_view()),
+    path('place-submissions/places/', submission_api.SubmissionPlaceList.as_view()),
+    path('place-submissions/places/<int:pk>/', submission_api.SubmissionPlaceDetail.as_view()),
     path('place-submissions/', submission_api.SubmitPlace.as_view()),
     path('admin/places/metadata/', management_api.metadata),
     path('admin/places/media/', media_upload_api.AdminMediaUpload.as_view()),

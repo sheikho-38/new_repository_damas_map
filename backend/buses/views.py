@@ -14,6 +14,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_GET, require_POST
 
 from places.models import Bus, BusRoute
+from places.routing_service import calculate_car_route, RoutingError
 from django.db import transaction
 
 # ---------------------------------------------------------
@@ -163,79 +164,13 @@ def get_route_waypoints(body):
 # ---------------------------------------------------------
 
 def calculate_geometry(waypoints):
-    if not isinstance(waypoints, list) or len(waypoints) < 2:
-        raise ValueError("يجب إرسال نقطتين على الأقل")
-
-    pairs = []
-
-    for point in waypoints:
-        if not isinstance(point, dict):
-            raise ValueError("صيغة نقطة المسار غير صحيحة")
-
-        try:
-            lon = float(point["lon"])
-            lat = float(point["lat"])
-        except (KeyError, TypeError, ValueError):
-            raise ValueError("كل نقطة يجب أن تحتوي على lon و lat")
-
-        if not (-180 <= lon <= 180 and -90 <= lat <= 90):
-            raise ValueError("إحداثيات النقطة خارج النطاق المسموح")
-
-        pairs.append(f"{lon},{lat}")
-
-    base_url = os.environ.get(
-        "BROUTER_URL", "http://localhost:17777"
-    ).rstrip("/")
-
-    params = urlencode({
-        "lonlats": "|".join(pairs),
-        "profile": "car-eco",
-        "alternativeidx": 0,
-        "format": "geojson",
-    })
-
-    req = Request(
-        f"{base_url}/brouter?{params}",
-        headers={"Accept": "application/json"},
-        method="GET",
-    )
-
     try:
-        with urlopen(req, timeout=30) as response:
-            result = json.loads(response.read().decode("utf-8"))
-    except (HTTPError, URLError, TimeoutError, json.JSONDecodeError) as exc:
-        raise RuntimeError("تعذّر الاتصال بخدمة BRouter") from exc
-
-    features = result.get("features") or []
-    if not features:
-        raise RuntimeError("لم تُرجع خدمة BRouter أي مسار")
-
-    feature = features[0]
-    geometry = feature.get("geometry")
-    properties = feature.get("properties") or {}
-
-    if (
-        not isinstance(geometry, dict)
-        or geometry.get("type") != "LineString"
-        or not isinstance(geometry.get("coordinates"), list)
-        or len(geometry["coordinates"]) < 2
-    ):
-        raise RuntimeError("الهندسة التي أعادها BRouter غير صالحة")
-
-    try:
-        distance_m = float(properties["track-length"])
-        duration_s = float(properties["total-time"])
-    except (KeyError, TypeError, ValueError):
-        raise RuntimeError("استجابة BRouter لا تحتوي على المسافة والمدة")
-
-    if (
-        not all(map(lambda n: n >= 0 and n < float("inf"), [
-            distance_m, duration_s
-        ]))
-    ):
-        raise RuntimeError("المسافة أو المدة التي أعادها BRouter غير صالحة")
-
-    return geometry, distance_m, duration_s
+        route = calculate_car_route(waypoints)
+    except RoutingError as exc:
+        if exc.status == 400:
+            raise ValueError(str(exc)) from exc
+        raise RuntimeError(str(exc)) from exc
+    return route['geometry'], route['distance_m'], route['duration_s']
 
 
 def save_route(bus, direction, start_point, end_point,

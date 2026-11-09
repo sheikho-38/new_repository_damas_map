@@ -5681,21 +5681,63 @@
       "source-layer": "place",
       "minzoom": 8,
       "filter": [
-        "match",
+        "all",
         [
-          "get",
-          "class"
+          "match",
+          [
+            "get",
+            "class"
+          ],
+          [
+            "city",
+            "continent",
+            "country",
+            "state",
+            "town",
+            "village"
+          ],
+          false,
+          true
         ],
         [
-          "city",
-          "continent",
-          "country",
-          "state",
-          "town",
-          "village"
-        ],
-        false,
-        true
+          "!",
+          [
+            "any",
+            [
+              "in",
+              "ضاحية الشهيد باسل",
+              [
+                "to-string",
+                [
+                  "get",
+                  "name:ar"
+                ]
+              ]
+            ],
+            [
+              "in",
+              "ضاحية الشهيد باسل",
+              [
+                "to-string",
+                [
+                  "get",
+                  "name"
+                ]
+              ]
+            ],
+            [
+              "in",
+              "ضاحية الشهيد باسل",
+              [
+                "to-string",
+                [
+                  "get",
+                  "name:latin"
+                ]
+              ]
+            ]
+          ]
+        ]
       ],
       "layout": {
         "text-field": [
@@ -5747,12 +5789,54 @@
       "source-layer": "place",
       "minzoom": 9,
       "filter": [
-        "==",
+        "all",
         [
-          "get",
-          "class"
+          "==",
+          [
+            "get",
+            "class"
+          ],
+          "village"
         ],
-        "village"
+        [
+          "!",
+          [
+            "any",
+            [
+              "in",
+              "ضاحية الشهيد باسل",
+              [
+                "to-string",
+                [
+                  "get",
+                  "name:ar"
+                ]
+              ]
+            ],
+            [
+              "in",
+              "ضاحية الشهيد باسل",
+              [
+                "to-string",
+                [
+                  "get",
+                  "name"
+                ]
+              ]
+            ],
+            [
+              "in",
+              "ضاحية الشهيد باسل",
+              [
+                "to-string",
+                [
+                  "get",
+                  "name:latin"
+                ]
+              ]
+            ]
+          ]
+        ]
       ],
       "layout": {
         "icon-allow-overlap": true,
@@ -5816,12 +5900,54 @@
       "source-layer": "place",
       "minzoom": 6,
       "filter": [
-        "==",
+        "all",
         [
-          "get",
-          "class"
+          "==",
+          [
+            "get",
+            "class"
+          ],
+          "town"
         ],
-        "town"
+        [
+          "!",
+          [
+            "any",
+            [
+              "in",
+              "ضاحية الشهيد باسل",
+              [
+                "to-string",
+                [
+                  "get",
+                  "name:ar"
+                ]
+              ]
+            ],
+            [
+              "in",
+              "ضاحية الشهيد باسل",
+              [
+                "to-string",
+                [
+                  "get",
+                  "name"
+                ]
+              ]
+            ],
+            [
+              "in",
+              "ضاحية الشهيد باسل",
+              [
+                "to-string",
+                [
+                  "get",
+                  "name:latin"
+                ]
+              ]
+            ]
+          ]
+        ]
       ],
       "layout": {
         "icon-allow-overlap": true,
@@ -5886,12 +6012,54 @@
       "minzoom": 5,
       "maxzoom": 8,
       "filter": [
-        "==",
+        "all",
         [
-          "get",
-          "class"
+          "==",
+          [
+            "get",
+            "class"
+          ],
+          "state"
         ],
-        "state"
+        [
+          "!",
+          [
+            "any",
+            [
+              "in",
+              "ضاحية الشهيد باسل",
+              [
+                "to-string",
+                [
+                  "get",
+                  "name:ar"
+                ]
+              ]
+            ],
+            [
+              "in",
+              "ضاحية الشهيد باسل",
+              [
+                "to-string",
+                [
+                  "get",
+                  "name"
+                ]
+              ]
+            ],
+            [
+              "in",
+              "ضاحية الشهيد باسل",
+              [
+                "to-string",
+                [
+                  "get",
+                  "name:latin"
+                ]
+              ]
+            ]
+          ]
+        ]
       ],
       "layout": {
         "text-field": [
@@ -5945,20 +6113,62 @@
       "filter": [
         "all",
         [
-          "==",
+          "all",
           [
-            "get",
-            "class"
+            "==",
+            [
+              "get",
+              "class"
+            ],
+            "city"
           ],
-          "city"
+          [
+            "!=",
+            [
+              "get",
+              "capital"
+            ],
+            2
+          ]
         ],
         [
-          "!=",
+          "!",
           [
-            "get",
-            "capital"
-          ],
-          2
+            "any",
+            [
+              "in",
+              "ضاحية الشهيد باسل",
+              [
+                "to-string",
+                [
+                  "get",
+                  "name:ar"
+                ]
+              ]
+            ],
+            [
+              "in",
+              "ضاحية الشهيد باسل",
+              [
+                "to-string",
+                [
+                  "get",
+                  "name"
+                ]
+              ]
+            ],
+            [
+              "in",
+              "ضاحية الشهيد باسل",
+              [
+                "to-string",
+                [
+                  "get",
+                  "name:latin"
+                ]
+              ]
+            ]
+          ]
         ]
       ],
       "layout": {
@@ -6031,20 +6241,62 @@
       "filter": [
         "all",
         [
-          "==",
+          "all",
           [
-            "get",
-            "class"
+            "==",
+            [
+              "get",
+              "class"
+            ],
+            "city"
           ],
-          "city"
+          [
+            "==",
+            [
+              "get",
+              "capital"
+            ],
+            2
+          ]
         ],
         [
-          "==",
+          "!",
           [
-            "get",
-            "capital"
-          ],
-          2
+            "any",
+            [
+              "in",
+              "ضاحية الشهيد باسل",
+              [
+                "to-string",
+                [
+                  "get",
+                  "name:ar"
+                ]
+              ]
+            ],
+            [
+              "in",
+              "ضاحية الشهيد باسل",
+              [
+                "to-string",
+                [
+                  "get",
+                  "name"
+                ]
+              ]
+            ],
+            [
+              "in",
+              "ضاحية الشهيد باسل",
+              [
+                "to-string",
+                [
+                  "get",
+                  "name:latin"
+                ]
+              ]
+            ]
+          ]
         ]
       ],
       "layout": {
@@ -6118,20 +6370,62 @@
       "filter": [
         "all",
         [
-          "==",
+          "all",
           [
-            "get",
-            "class"
+            "==",
+            [
+              "get",
+              "class"
+            ],
+            "country"
           ],
-          "country"
+          [
+            ">=",
+            [
+              "get",
+              "rank"
+            ],
+            3
+          ]
         ],
         [
-          ">=",
+          "!",
           [
-            "get",
-            "rank"
-          ],
-          3
+            "any",
+            [
+              "in",
+              "ضاحية الشهيد باسل",
+              [
+                "to-string",
+                [
+                  "get",
+                  "name:ar"
+                ]
+              ]
+            ],
+            [
+              "in",
+              "ضاحية الشهيد باسل",
+              [
+                "to-string",
+                [
+                  "get",
+                  "name"
+                ]
+              ]
+            ],
+            [
+              "in",
+              "ضاحية الشهيد باسل",
+              [
+                "to-string",
+                [
+                  "get",
+                  "name:latin"
+                ]
+              ]
+            ]
+          ]
         ]
       ],
       "layout": {
@@ -6184,20 +6478,62 @@
       "filter": [
         "all",
         [
-          "==",
+          "all",
           [
-            "get",
-            "class"
+            "==",
+            [
+              "get",
+              "class"
+            ],
+            "country"
           ],
-          "country"
+          [
+            "==",
+            [
+              "get",
+              "rank"
+            ],
+            2
+          ]
         ],
         [
-          "==",
+          "!",
           [
-            "get",
-            "rank"
-          ],
-          2
+            "any",
+            [
+              "in",
+              "ضاحية الشهيد باسل",
+              [
+                "to-string",
+                [
+                  "get",
+                  "name:ar"
+                ]
+              ]
+            ],
+            [
+              "in",
+              "ضاحية الشهيد باسل",
+              [
+                "to-string",
+                [
+                  "get",
+                  "name"
+                ]
+              ]
+            ],
+            [
+              "in",
+              "ضاحية الشهيد باسل",
+              [
+                "to-string",
+                [
+                  "get",
+                  "name:latin"
+                ]
+              ]
+            ]
+          ]
         ]
       ],
       "layout": {
@@ -6250,20 +6586,62 @@
       "filter": [
         "all",
         [
-          "==",
+          "all",
           [
-            "get",
-            "class"
+            "==",
+            [
+              "get",
+              "class"
+            ],
+            "country"
           ],
-          "country"
+          [
+            "==",
+            [
+              "get",
+              "rank"
+            ],
+            1
+          ]
         ],
         [
-          "==",
+          "!",
           [
-            "get",
-            "rank"
-          ],
-          1
+            "any",
+            [
+              "in",
+              "ضاحية الشهيد باسل",
+              [
+                "to-string",
+                [
+                  "get",
+                  "name:ar"
+                ]
+              ]
+            ],
+            [
+              "in",
+              "ضاحية الشهيد باسل",
+              [
+                "to-string",
+                [
+                  "get",
+                  "name"
+                ]
+              ]
+            ],
+            [
+              "in",
+              "ضاحية الشهيد باسل",
+              [
+                "to-string",
+                [
+                  "get",
+                  "name:latin"
+                ]
+              ]
+            ]
+          ]
         ]
       ],
       "layout": {

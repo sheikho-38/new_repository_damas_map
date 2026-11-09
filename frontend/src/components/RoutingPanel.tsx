@@ -9,7 +9,6 @@ import {
   Footprints, 
   Clock, 
   Coins, 
-  Flame, 
   ArrowRight, 
   Loader2,
   MapPin,
@@ -17,72 +16,61 @@ import {
 } from 'lucide-react';
 import { getApiBaseUrl } from '@/lib/api-config';
 
-export interface RouteResult {
-  mode: 'transit' | 'car' | 'walk';
-  mode_title: string;
-  summary: string;
-  line_name?: string;
-  cost_syp: number;
-  total_distance_km: number;
-  duration_minutes: number;
-  calories_burned?: number;
-  steps: Array<{
-    instruction: string;
-    icon: string;
-    duration_mins: number;
-  }>;
-  route_geojson: any;
-}
+import { fetchRoutingResult, type RouteResult } from '@/lib/routing-api';
+import type { LocationStatus, UserLocation } from './useUserLocation';
 
 interface RoutingPanelProps {
+  locationStatus: LocationStatus;
+  getCurrentLocation: () => Promise<UserLocation>;
+  onSelectDestination: () => void;
   destination: {
     lat: number;
     lon: number;
     title: string;
   } | null;
   onClose: () => void;
-  onApplyRouteGeoJSON: (geojson: any) => void;
+  onApplyRouteGeoJSON: (geojson: any, result?: RouteResult) => void;
   onClearRoute: () => void;
 }
 
 export default function RoutingPanel({
   destination,
+  locationStatus,
+  getCurrentLocation,
+  onSelectDestination,
   onClose,
   onApplyRouteGeoJSON,
   onClearRoute,
 }: RoutingPanelProps) {
-  const [mode, setMode] = useState<'transit' | 'car' | 'walk'>('transit');
+  const [mode, setMode] = useState<'transit' | 'car' | 'walk'>('car');
   const [loading, setLoading] = useState(false);
   const [routeResult, setRouteResult] = useState<RouteResult | null>(null);
-
-  // نقطة الانطلاق الافتراضية: ساحة المرجة / جسر الحرية (قلب دمشق)
-  const [origin, setOrigin] = useState({
-    title: 'جسر الحرية / ساحة الأمويين',
-    lat: 33.5132,
-    lon: 36.2954,
-  });
+  const [transitPrimary, setTransitPrimary] = useState<RouteResult | null>(null);
+  const [error, setError] = useState('');
 
   useEffect(() => {
     if (!destination) return;
 
     let isMounted = true;
-    setLoading(true);
+    const controller = new AbortController();
 
     const fetchRoute = async () => {
+      setRouteResult(null);
+      setError('');
+      onClearRoute();
+      setLoading(true);
       try {
-        const url = `${getApiBaseUrl()}/routing/?start_lat=${origin.lat}&start_lon=${origin.lon}&end_lat=${destination.lat}&end_lon=${destination.lon}&mode=${mode}`;
-        const res = await fetch(url);
-        if (res.ok) {
-          const data: RouteResult = await res.json();
-          if (isMounted) {
-            setRouteResult(data);
-            if (data.route_geojson) {
-              onApplyRouteGeoJSON(data.route_geojson);
-            }
-          }
+        const current = await getCurrentLocation();
+        if (!isMounted) return;
+        const origin = { lat: current.lat, lon: current.lon, title: 'موقعي الحالي' };
+        const data = await fetchRoutingResult(getApiBaseUrl(), origin, destination, mode, controller.signal);
+        if (isMounted) {
+          setRouteResult(data);
+          setTransitPrimary(mode === 'transit' && data.recommended_mode === 'transit' ? data : null);
+          onApplyRouteGeoJSON(data.route_geojson, data);
         }
       } catch (err) {
-        console.error('Error fetching route:', err);
+        if (isMounted && (err as Error).name !== 'AbortError') setError((err as Error).message || 'تعذر الاتصال بخدمة التوجيه.');
       } finally {
         if (isMounted) setLoading(false);
       }
@@ -92,14 +80,32 @@ export default function RoutingPanel({
 
     return () => {
       isMounted = false;
+      controller.abort();
     };
-  }, [destination, mode, origin]);
+  }, [destination, mode]);
 
   if (!destination) return null;
 
   const handleClose = () => {
     onClearRoute();
     onClose();
+  };
+  const transitUsesBus = mode === 'transit' && routeResult?.recommended_mode === 'transit';
+  const originLabel = locationStatus === 'stale' ? 'آخر موقع معروف (غير حديث)'
+    : locationStatus === 'denied' ? 'إذن الموقع مرفوض'
+    : locationStatus === 'unavailable' ? 'الموقع غير متاح'
+    : 'موقعي الحالي';
+  const showWalkingAlternative = () => {
+    const primary = transitPrimary;
+    const alternative = primary?.alternatives?.[0];
+    if (!primary || !alternative) return;
+    const walking: RouteResult = { ...primary, recommended_mode: 'walk',
+      summary: alternative.summary, line_name: undefined, cost_syp: 0,
+      total_distance_km: Math.round(alternative.distance_m / 10) / 100,
+      duration_minutes: Math.round(alternative.duration_s / 60), steps: [],
+      route_legs: alternative.legs, route_geojson: alternative.legs[0].geojson };
+    setRouteResult(walking);
+    onApplyRouteGeoJSON(walking.route_geojson, walking);
   };
 
   return (
@@ -142,13 +148,16 @@ export default function RoutingPanel({
           <div className="flex items-center gap-2">
             <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 shrink-0" />
             <span className="text-zinc-300">من:</span>
-            <span className="font-bold text-white truncate">{origin.title}</span>
+            <span className="font-bold text-white truncate">{originLabel}</span>
           </div>
           <div className="flex items-center gap-2">
             <span className="w-2.5 h-2.5 rounded-full bg-[#c8a76a] shrink-0" />
             <span className="text-zinc-300">إلى:</span>
             <span className="font-bold text-white truncate">{destination.title}</span>
           </div>
+        </div>
+        <div className="flex flex-wrap gap-2 text-xs font-bold">
+          <button type="button" onClick={onSelectDestination} className="rounded-lg bg-white/15 px-2 py-1">الوجهة من الخريطة</button>
         </div>
 
         {/* أزرار وسائط النقل الثلاث: باص - سيارة - مشي */}
@@ -196,6 +205,7 @@ export default function RoutingPanel({
 
       {/* تفاصيل المسار والخطوات */}
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
+        {error ? <p role="alert" className="rounded-xl bg-red-50 p-3 text-xs font-bold text-red-700">{error}</p> : null}
         {loading ? (
           <div className="py-12 flex flex-col items-center justify-center gap-3 text-zinc-500">
             <Loader2 className="w-8 h-8 animate-spin text-[#064239]" />
@@ -204,7 +214,7 @@ export default function RoutingPanel({
         ) : routeResult ? (
           <>
             {/* ملخص إحصائيات الرحلة */}
-            <div className="grid grid-cols-3 gap-2 bg-[#f7f4ed] dark:bg-zinc-800/60 p-3 rounded-2xl border border-[#064239]/10 text-center">
+            <div className={`grid ${mode === 'walk' || (mode === 'transit' && !transitUsesBus) ? 'grid-cols-2' : 'grid-cols-3'} gap-2 bg-[#f7f4ed] dark:bg-zinc-800/60 p-3 rounded-2xl border border-[#064239]/10 text-center`}>
               <div className="p-1">
                 <div className="flex items-center justify-center gap-1 text-[#064239] dark:text-emerald-400 mb-0.5">
                   <Clock className="w-4 h-4" />
@@ -225,7 +235,7 @@ export default function RoutingPanel({
                 <span className="text-[10px] text-zinc-500 block font-bold">كيلومتر</span>
               </div>
 
-              <div className="p-1">
+              {mode !== 'walk' && (mode !== 'transit' || transitUsesBus) && <div className="p-1">
                 {mode === 'transit' ? (
                   <>
                     <div className="flex items-center justify-center gap-1 text-emerald-600 mb-0.5">
@@ -236,30 +246,20 @@ export default function RoutingPanel({
                     </span>
                     <span className="text-[10px] text-zinc-500 block font-bold">ل.س (تعرفة)</span>
                   </>
-                ) : mode === 'walk' ? (
-                  <>
-                    <div className="flex items-center justify-center gap-1 text-amber-600 mb-0.5">
-                      <Flame className="w-4 h-4" />
-                    </div>
-                    <span className="text-base font-black text-amber-700">
-                      {routeResult.calories_burned || 80}
-                    </span>
-                    <span className="text-[10px] text-zinc-500 block font-bold">سعرة حرارية</span>
-                  </>
                 ) : (
                   <>
                     <div className="flex items-center justify-center gap-1 text-[#3a6962] mb-0.5">
                       <Car className="w-4 h-4" />
                     </div>
-                    <span className="text-base font-black text-[#3a6962]">
-                      سريع
-                    </span>
-                    <span className="text-[10px] text-zinc-500 block font-bold">شوارع رئيسية</span>
+                    <span className="text-base font-black text-[#3a6962]">مسار طرق</span>
+                    <span className="text-[10px] text-zinc-500 block font-bold">وقت تقديري</span>
                   </>
                 )}
-              </div>
+              </div>}
             </div>
 
+            {mode === 'transit' && !transitUsesBus && <p className="text-xs font-bold text-[#064239]">المشي هو الخيار الأنسب لهذه الرحلة</p>}
+            {transitUsesBus && <p className="text-xs text-amber-700">زمن الانتظار غير متاح، ونقطتا الصعود والنزول مقترحتان وليستا موقفين مؤكدين.</p>}
             {/* تفاصيل مسار الخط إن وجد */}
             {routeResult.line_name && (
               <div className="bg-[#3a6962]/10 dark:bg-teal-950/40 p-3 rounded-xl border border-[#3a6962]/20 dark:border-teal-700/30 flex items-center gap-2.5">
@@ -271,12 +271,25 @@ export default function RoutingPanel({
                   <span className="text-[11px] text-zinc-500 dark:text-zinc-400">
                     التعرفة الرسمية المحددة: {routeResult.cost_syp} ليرة سورية
                   </span>
+                  {routeResult.direction && <span className="text-[11px] text-zinc-500 dark:text-zinc-400 block">
+                    الاتجاه: {routeResult.direction === 'outbound' ? 'ذهاب' : 'إياب'}
+                  </span>}
                 </div>
               </div>
             )}
+            {transitUsesBus && <div className="text-xs text-zinc-600 dark:text-zinc-300">
+              المشي: {routeResult.walking_distance_km} كم · الحافلة: {routeResult.bus_distance_km} كم ({routeResult.bus_duration_minutes} دقيقة)
+            </div>}
+            {mode === 'transit' && transitPrimary?.alternatives?.length ? (
+              <button type="button" onClick={transitUsesBus ? showWalkingAlternative : () => {
+                setRouteResult(transitPrimary); onApplyRouteGeoJSON(transitPrimary.route_geojson, transitPrimary);
+              }} className="rounded-xl border border-[#2684C7]/40 px-3 py-2 text-xs font-bold text-[#2684C7]">
+                {transitUsesBus ? 'عرض المشي كبديل' : 'العودة إلى رحلة الباص'}
+              </button>
+            ) : null}
 
             {/* إرشادات خطوة بخطوة */}
-            <div className="space-y-2">
+            {routeResult.steps.length > 0 ? <div className="space-y-2">
               <h4 className="text-xs font-bold text-zinc-400 uppercase tracking-wider">
                 إرشادات الطريق خطوة بخطوة
               </h4>
@@ -301,10 +314,14 @@ export default function RoutingPanel({
                   </div>
                 ))}
               </div>
-            </div>
+            </div> : <p className="text-xs text-zinc-500">تعليمات الانعطاف غير متاحة لهذا المسار.</p>}
           </>
         ) : null}
       </div>
+      <button type="button" onClick={handleClose}
+        className="mx-4 mb-4 rounded-xl border border-[#064239]/20 px-3 py-2 text-xs font-bold text-[#064239] dark:text-emerald-300">
+        إلغاء المسار
+      </button>
     </div>
     </>
   );

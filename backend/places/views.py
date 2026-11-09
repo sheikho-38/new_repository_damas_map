@@ -663,6 +663,7 @@ def calculate_route(request):
     البارامترات:
     start_lat, start_lon, end_lat, end_lon, mode
     """
+    from .routing_service import calculate_car_route, calculate_walking_route, RoutingError
     try:
         start_lat = float(request.GET.get('start_lat'))
         start_lon = float(request.GET.get('start_lon'))
@@ -672,10 +673,64 @@ def calculate_route(request):
         return JsonResponse({"error": "يرجى تزويد إحداثيات البداية والنهاية بشكل صحيح"}, status=400)
 
     mode = request.GET.get('mode', 'transit').lower()
+    if mode == 'car':
+        try:
+            route = calculate_car_route(
+                [{'lon': start_lon, 'lat': start_lat}, {'lon': end_lon, 'lat': end_lat}],
+                enforce_damascus=True,
+            )
+        except RoutingError as exc:
+            return JsonResponse({'error': str(exc), 'code': exc.code}, status=exc.status)
+        return JsonResponse({
+            'mode': 'car', 'mode_title': 'بالسيارة', 'summary': 'مسار محسوب على شبكة الطرق',
+            'cost_syp': 0, 'total_distance_km': round(route['distance_m'] / 1000, 2),
+            'distance_m': route['distance_m'],
+            'duration_minutes': round(route['duration_s'] / 60, 1),
+            'duration_seconds': route['duration_s'],
+            'start': {'longitude': start_lon, 'latitude': start_lat},
+            'end': {'longitude': end_lon, 'latitude': end_lat},
+            'snapped_start': route['snapped_start'], 'snapped_end': route['snapped_end'],
+            'steps': route['instructions'],
+            'route_geojson': {'type': 'Feature', 'geometry': route['geometry'],
+                              'properties': {'color': '#c8a76a', 'mode': 'car'}},
+        })
     total_straight_dist_km = haversine_distance_km(start_lat, start_lon, end_lat, end_lon)
 
     # 1. وضع المواصلات العامة (Transit)
     if mode == 'transit':
+        from .transit_routing_service import calculate_transit_route
+        try:
+            journey = calculate_transit_route((start_lon, start_lat), (end_lon, end_lat))
+        except RoutingError as exc:
+            return JsonResponse({'error': str(exc), 'code': exc.code}, status=exc.status)
+        steps = []
+        if journey['recommended_mode'] == 'transit':
+            steps = [
+                {'instruction': 'امشِ إلى نقطة الصعود المقترحة', 'icon': 'walk',
+                 'duration_mins': round(journey['legs'][0]['duration_seconds'] / 60)},
+                {'instruction': f"اركب {journey['line_name']} باتجاه المسار المحدد", 'icon': 'bus',
+                 'duration_mins': round(journey['bus_duration_s'] / 60)},
+                {'instruction': 'انزل عند النقطة المقترحة وتابع مشياً إلى الوجهة', 'icon': 'walk',
+                 'duration_mins': round(journey['legs'][2]['duration_seconds'] / 60)},
+            ]
+        return JsonResponse({
+            'mode': 'transit', 'recommended_mode': journey['recommended_mode'],
+            'mode_title': 'مواصلات عامة (باص / سرفيس)', 'summary': journey['summary'],
+            'line_name': journey.get('line_name'), 'direction': journey.get('direction'),
+            'cost_syp': journey['cost'], 'total_distance_km': round(journey['distance_m'] / 1000, 2),
+            'duration_minutes': round(journey['duration_s'] / 60),
+            'walking_distance_km': round(journey['walking_distance_m'] / 1000, 2),
+            'walking_duration_minutes': round(journey['walking_duration_s'] / 60),
+            'bus_distance_km': round(journey.get('bus_distance_m', 0) / 1000, 2),
+            'bus_duration_minutes': round(journey.get('bus_duration_s', 0) / 60),
+            'waiting_time_minutes': journey.get('waiting_time_minutes'),
+            'boarding': journey.get('boarding'), 'alighting': journey.get('alighting'),
+            'boarding_safety_verified': journey.get('boarding_safety_verified'),
+            'alternatives': journey.get('alternatives', []),
+            'start': {'longitude': start_lon, 'latitude': start_lat},
+            'end': {'longitude': end_lon, 'latitude': end_lat},
+            'steps': steps, 'route_legs': journey['legs'], 'route_geojson': journey['route_geojson'],
+        })
         # البحث عن أقرب مسار باص من نقطة الانطلاق
         all_routes = BusRoute.objects.filter(is_active=True, bus__is_active=True).select_related('bus')
         best_route = None
@@ -738,101 +793,32 @@ def calculate_route(request):
                 }
             })
 
-    # 2. وضع قيادة السيارة (Car)
-    if mode == 'car':
-        driving_km = round(total_straight_dist_km * 1.25, 2)
-        duration_mins = max(4, int(driving_km * 2.1)) # متوسط 30 كم/س داخل شوارع دمشق
-
-        # توليد نقاط المسار التوجيهي
-        mid_lon = (start_lon + end_lon) / 2 + 0.001
-        mid_lat = (start_lat + end_lat) / 2 - 0.0008
-        car_path = [
-            [start_lon, start_lat],
-            [(start_lon + mid_lon)/2, (start_lat + mid_lat)/2],
-            [mid_lon, mid_lat],
-            [(mid_lon + end_lon)/2, (mid_lat + end_lat)/2],
-            [end_lon, end_lat]
-        ]
-
-        return JsonResponse({
-            "mode": "car",
-            "mode_title": "بالسيارة",
-            "summary": "عبر الشوارع الرئيسية والمحاور الحيوية",
-            "cost_syp": 0,
-            "total_distance_km": driving_km,
-            "duration_minutes": duration_mins,
-            "steps": [
-                {
-                    "instruction": "انطلق باتجاه الشارع الرئيسي الأقرب",
-                    "icon": "car",
-                    "duration_mins": 2,
-                },
-                {
-                    "instruction": f"تابع على المسار مسافة {driving_km} كم نحو الوجهة",
-                    "icon": "arrow-up",
-                    "duration_mins": duration_mins - 3,
-                },
-                {
-                    "instruction": "انعطف نحو المدخل وتصل إلى وجهتك على اليمين",
-                    "icon": "map-pin",
-                    "duration_mins": 1,
-                }
-            ],
-            "route_geojson": {
-                "type": "Feature",
-                "geometry": {
-                    "type": "LineString",
-                    "coordinates": car_path,
-                },
-                "properties": {
-                    "color": "#c8a76a",
-                    "mode": "car",
-                }
-            }
-        })
-
     # 3. وضع المشي على الأقدام (Walk)
-    walk_km = round(total_straight_dist_km * 1.15, 2)
-    duration_mins = max(3, int(walk_km * 13.5)) # مشي 4.5 كم/س
-    calories = int(walk_km * 55)
+    try:
+        route = calculate_walking_route(
+            [{'lon': start_lon, 'lat': start_lat}, {'lon': end_lon, 'lat': end_lat}],
+        )
+    except RoutingError as exc:
+        return JsonResponse({'error': str(exc), 'code': exc.code}, status=exc.status)
 
-    walk_path = [
-        [start_lon, start_lat],
-        [(start_lon * 2 + end_lon) / 3, (start_lat * 2 + end_lat) / 3],
-        [(start_lon + end_lon * 2) / 3, (start_lat + end_lat * 2) / 3],
-        [end_lon, end_lat]
-    ]
+    walk_km = round(route['distance_m'] / 1000, 2)
+    duration_mins = max(1, round(route['duration_s'] / 60))
+    calories = int(walk_km * 55)
 
     return JsonResponse({
         "mode": "walk",
         "mode_title": "مشياً على الأقدام",
-        "summary": "مسار مشي آمن عبر الأرصفة والممرات المخصصة",
+        "summary": "مسار محسوب للمشي على شبكة الطرق والممرات",
         "cost_syp": 0,
         "total_distance_km": walk_km,
         "duration_minutes": duration_mins,
         "calories_burned": calories,
-        "steps": [
-            {
-                "instruction": "ابدأ المشي عبر الرصيف بمحاذاة الشارع",
-                "icon": "walk",
-                "duration_mins": 2,
-            },
-            {
-                "instruction": f"واصل السير بشكل مستقيم مسافة {walk_km} كم",
-                "icon": "arrow-up",
-                "duration_mins": duration_mins - 2,
-            },
-            {
-                "instruction": "الوصول إلى الوجهة المقصودة",
-                "icon": "map-pin",
-                "duration_mins": 1,
-            }
-        ],
+        "steps": route['instructions'],
         "route_geojson": {
             "type": "Feature",
             "geometry": {
                 "type": "LineString",
-                "coordinates": walk_path,
+                "coordinates": route['geometry']['coordinates'],
             },
             "properties": {
                 "color": "#3a6962",

@@ -19,6 +19,24 @@ PROJECT_ROOT = BASE_DIR.parent
 
 MBTILES_PATH = PROJECT_ROOT / 'brouter' / 'damascus_2026.mbtiles'
 FONT_PATH = PROJECT_ROOT / 'frontend' / 'public' / 'fonts'
+BROUTER_URL = os.environ.get('BROUTER_URL', 'http://localhost:17777')
+BROUTER_TIMEOUT_SECONDS = 30
+# Broad local coverage; the snapped-point limit below rejects remote roads.
+CAR_ROUTING_BOUNDS = (36.18, 33.43, 36.38, 33.58)
+CAR_ROUTING_MAX_SNAP_METRES = 500
+WALK_ROUTING_PROFILE = 'shortest'
+WALK_ROUTING_BOUNDS = CAR_ROUTING_BOUNDS
+WALK_ROUTING_MAX_SNAP_METRES = 100
+TRANSIT_MAX_ROUTES_SCANNED = int(os.environ.get('TRANSIT_MAX_ROUTES_SCANNED', '120'))
+TRANSIT_CANDIDATES_PER_END = int(os.environ.get('TRANSIT_CANDIDATES_PER_END', '3'))
+TRANSIT_MAX_WALKING_PAIRS = int(os.environ.get('TRANSIT_MAX_WALKING_PAIRS', '6'))
+TRANSIT_MAX_CROW_ACCESS_METRES = float(os.environ.get('TRANSIT_MAX_CROW_ACCESS_METRES', '1500'))
+TRANSIT_MIN_RIDE_METRES = float(os.environ.get('TRANSIT_MIN_RIDE_METRES', '500'))
+TRANSIT_MIN_WALK_SAVING_METRES = float(os.environ.get('TRANSIT_MIN_WALK_SAVING_METRES', '400'))
+TRANSIT_CIRCULAR_GAP_METRES = float(os.environ.get('TRANSIT_CIRCULAR_GAP_METRES', '150'))
+TRANSIT_DEFAULT_BUS_SPEED_KMH = float(os.environ.get('TRANSIT_DEFAULT_BUS_SPEED_KMH', '18'))
+TRANSIT_TRANSFER_PENALTY_SECONDS = float(os.environ.get('TRANSIT_TRANSFER_PENALTY_SECONDS', '300'))
+TRANSIT_MAX_RIDE_DETOUR_RATIO = float(os.environ.get('TRANSIT_MAX_RIDE_DETOUR_RATIO', '4'))
 
 
 # Quick-start development settings - unsuitable for production

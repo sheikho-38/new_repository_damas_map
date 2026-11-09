@@ -16,7 +16,7 @@ assign   consider_river         = false   # %consider_river% | Activate to prefe
 assign   consider_forest        = false   # %consider_forest% | Activate to prefer a route in forest or green areas| boolean
 assign   consider_town          = false   # %consider_town% | Activate to bypass cities / big towns as far as possible | boolean
 
-assign   shortest_way             0    # 0 as default, duplicate shortest standard profile, SAC access limit ignored for now
+assign   shortest_way             1    # Prefer the shortest legal pedestrian route in the city.
 
 assign   iswet                    0    # %iswet% | tries to prevent muddy boots and wet buttocks | boolean
 assign   hiking_routes_preference 0.20 # %hiking_routes_preference% | Increases cost of non hiking routes by multiplier 1 + hiking_routes_preference (0.10 to 2.0) | number
@@ -169,12 +169,9 @@ assign bikeaccess
                             1
               not or bicycle=private or bicycle=no bicycle=dismount
 
-assign footaccess     or issidewalk
-                      or and bikeaccess  not foot=no|use_sidepath
-                      or bicycle=dismount
-                      switch foot=      defaultaccess    not foot=private|no|use_sidepath
+assign footaccess     switch foot= defaultaccess not foot=private|no|use_sidepath
 
-assign accesspenalty switch footaccess 0 switch bikeaccess 4 switch foot=use_sidepath 10 switch any_hiking_route 12 switch any_cycleroute 16 100000
+assign accesspenalty switch footaccess 0 100000
 
 assign badoneway = 0
 assign onewaypenalty = 0
@@ -465,14 +462,13 @@ assign bikeaccess
                         1
 
 assign footaccess
-       or bicycle=dismount
-          switch foot=
-                 defaultaccess
-                 switch or foot=private foot=no
-                        0
-                        1
+       switch foot=
+              defaultaccess
+              switch or foot=private foot=no foot=use_sidepath
+                     0
+                     1
 
-assign initialcost switch or bikeaccess footaccess 0 1000000
+assign initialcost switch footaccess 0 1000000
 
 #############################################################################################
 # ****) Offroad_factor ( ported MTB_factor from bicycle Trekking profile

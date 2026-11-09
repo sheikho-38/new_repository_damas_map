@@ -1,11 +1,12 @@
-"""Account-free, create-only place submissions from the employee form."""
+"""Account-free place submissions and edits from the place form."""
 from django.conf import settings
 from rest_framework import generics
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.throttling import AnonRateThrottle
 from rest_framework.views import APIView
-from .management_api import PlaceSerializer, place_metadata
+from .management_api import PlaceSerializer, Pagination, filtered_places, place_metadata
+from .models import Place
 
 LINK_SALT = 'places.create-only.v1'
 
@@ -16,7 +17,7 @@ class SubmissionThrottle(AnonRateThrottle):
 
 
 class SubmissionAccess:
-    # This endpoint only creates places; management remains staff-only.
+    # The standalone place form works without a staff session.
     authentication_classes = []
     permission_classes = [AllowAny]
 
@@ -33,3 +34,20 @@ class SubmitPlace(SubmissionAccess, generics.CreateAPIView):
     def perform_create(self, serializer):
         # Submitters cannot self-verify or change the owner's publication policy.
         serializer.save(is_verified=False, is_visible=settings.PLACES_SUBMISSION_AUTO_PUBLISH)
+
+
+class SubmissionPlaceList(SubmissionAccess, generics.ListAPIView):
+    serializer_class = PlaceSerializer
+    pagination_class = Pagination
+
+    def get_queryset(self):
+        return filtered_places(self.request.query_params, Place.objects.select_related('sub_category__category', 'admin_area').prefetch_related('communication_info', 'media').order_by('id'))
+
+
+class SubmissionPlaceDetail(SubmissionAccess, generics.RetrieveUpdateAPIView):
+    serializer_class = PlaceSerializer
+    queryset = Place.objects.select_related('sub_category__category', 'admin_area').prefetch_related('communication_info', 'media')
+    throttle_classes = [SubmissionThrottle]
+
+    def perform_update(self, serializer):
+        serializer.save(is_verified=False)

@@ -19,10 +19,12 @@ export function createSubmissionApi() {
   }
   return {
     metadata: (signal: AbortSignal) => request<SubmissionMetadata>('metadata/', { signal }),
+    list: (query: string, signal: AbortSignal) => request<import('../types/places').PlacePage>(`places/?${query}`, { signal }),
+    detail: (id: number, signal?: AbortSignal) => request<Place>(`places/${id}/`, { signal }),
     uploadMedia: (files: LocalMediaFile[]) => Promise.all(files.map(({ file, is_cover }) => {
       const body = new FormData(); body.append('file', file); body.append('is_cover', String(is_cover))
       return request<PlaceInput['media'][number]>('media/', { method: 'POST', body })
     })),
-    save: (input: PlaceInput) => request<Place>('', { method: 'POST', body: JSON.stringify({ ...input, is_verified: false, is_visible: false }) }),
+    save: (input: PlaceInput, id?: number) => request<Place>(id ? `places/${id}/` : '', { method: id ? 'PATCH' : 'POST', body: JSON.stringify({ ...input, is_verified: false, is_visible: id ? input.is_visible : false }) }),
   }
 }

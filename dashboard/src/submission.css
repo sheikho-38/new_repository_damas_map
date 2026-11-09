@@ -8,6 +8,10 @@
 }
 .place-submission > header { border-bottom: 2px solid #c8a76a; margin-bottom: 24px; padding-bottom: 12px; }
 .place-submission > header span { color: #7b6338; }
+.submission-tabs { display: flex; gap: 10px; margin: 16px 0; }
+.submission-tabs button[aria-current="page"] { background: #c8a76a; color: #032d27; }
+.submission-picker { max-width: 700px; margin: 0 auto; }
+.submission-picker input { display: block; width: 100%; margin: 8px 0 16px; padding: 12px; }
 .place-submission h1 { margin: 10px 0; }
 .place-submission .places-split { grid-template-columns: minmax(320px, 480px) minmax(0, 1fr); }
 .place-submission button { font: inherit; cursor: pointer; border: 1px solid #c8a76a; border-radius: 8px; padding: 10px 18px; background: #064239; color: white; }
