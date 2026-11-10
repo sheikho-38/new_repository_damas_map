@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.gis.db import models as gis_models
 from django.core.validators import MinValueValidator, MaxValueValidator
 from .text_utils import build_search_index_text
 #! جدول التقسيمات الإدارية (AdminArea) مرتبط بنفسه عبر علاقة ForeignKey، ويحتوي على الحقول التالية:
@@ -561,4 +562,56 @@ class Log(models.Model):
 
     def __str__(self):
         return f"{self.action} at {self.created_at}"
+
+#! جدول نقاط التوجيه (RoutingNode) مرتبط بنقاط التوجيه في شبكة الطرق، ويحتوي على الحقول التالية:
+class RoutingNode(models.Model):
+    id = models.BigIntegerField(primary_key=True)
+    node_type = models.CharField(max_length=16)
+    geom = gis_models.PointField(srid=4326)
+
+    class Meta:
+        db_table = 'routing_nodes'
+        managed = False
+
+    def __str__(self):
+        return f'Routing node {self.id} ({self.node_type})'
+
+#! جدول الحواف في شبكة التوجيه (RoutingEdge) مرتبط بنقاط التوجيه (RoutingNode) عبر علاقات ForeignKey، ويحتوي على الحقول التالية:
+class RoutingEdge(models.Model):
+    id = models.BigIntegerField(primary_key=True)
+    source = models.ForeignKey(RoutingNode, on_delete=models.DO_NOTHING, db_column='source', related_name='outgoing_edges')
+    target = models.ForeignKey(RoutingNode, on_delete=models.DO_NOTHING, db_column='target', related_name='incoming_edges')
+    edge_type = models.CharField(max_length=16)
+    bus_route_id = models.BigIntegerField(null=True, blank=True)
+    length_m = models.FloatField()
+    cost = models.FloatField()
+    reverse_cost = models.FloatField()
+    geom = gis_models.LineStringField(srid=4326)
+    attributes = models.JSONField(default=dict)
+
+    class Meta:
+        db_table = 'routing_edges'
+        managed = False
+
+    def __str__(self):
+        return f'Routing edge {self.id} ({self.source_id} → {self.target_id})'
+
+#! جدول نقاط الصعود (BoardingPoint) المرتب بخطوط النقل العام (BusRoute) عبر علاقة ForeignKey، ويحتوي على الحقول التالية:
+
+class RoutingBoardingPoint(models.Model):
+    id = models.BigIntegerField(primary_key=True)
+    bus_route_id = models.BigIntegerField()
+    bus_node = models.ForeignKey(RoutingNode, on_delete=models.DO_NOTHING, db_column='bus_node_id')
+    sequence_index = models.IntegerField()
+    distance_along_route_m = models.FloatField()
+    geom = gis_models.PointField(srid=4326)
+    is_active = models.BooleanField(default=True)
+
+    class Meta:
+        db_table = 'routing_boarding_points'
+        managed = False
+        unique_together = (('bus_route_id', 'sequence_index'),)
+
+    def __str__(self):
+        return f'Boarding point {self.id} (route {self.bus_route_id})'
 

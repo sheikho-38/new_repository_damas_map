@@ -2380,11 +2380,13 @@ export default function MapViewer({
           false,
         ],
       ];
-      if (
-        result.recommended_mode === "transit" &&
-        result.boarding &&
-        result.alighting
-      ) {
+      const busLegs = result.route_legs?.filter((leg) => leg.mode === "bus" && leg.boarding && leg.alighting);
+      if (result.recommended_mode === "transit" && busLegs?.length) {
+        busLegs.forEach((leg) => points.push(
+          [leg.boarding!, "#D99432", "صعود", true],
+          [leg.alighting!, "#2684C7", "نزول", true],
+        ));
+      } else if (result.recommended_mode === "transit" && result.boarding && result.alighting) {
         points.push(
           [result.boarding, "#D99432", "صعود", true],
           [result.alighting, "#2684C7", "نزول", true],
@@ -2583,7 +2585,7 @@ export default function MapViewer({
       <button
         type="button"
         disabled
-        aria-label="الرجوع — غير متاح حالياً"
+        aria-label="ال — غير متاح حالياً"
         title="الرجوع — غير متاح حالياً"
         className="map-header-back"
       >

@@ -17,10 +17,18 @@ from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent.parent
 PROJECT_ROOT = BASE_DIR.parent
 
+if os.name == 'nt':
+    _postgis_bin = Path(os.environ.get('POSTGIS_DLL_DIR', r'C:\Program Files\PostgreSQL\18\bin'))
+    GDAL_LIBRARY_PATH = str(_postgis_bin / 'libgdal-35.dll')
+    GEOS_LIBRARY_PATH = str(_postgis_bin / 'libgeos_c.dll')
+
 MBTILES_PATH = PROJECT_ROOT / 'brouter' / 'damascus_2026.mbtiles'
 FONT_PATH = PROJECT_ROOT / 'frontend' / 'public' / 'fonts'
 BROUTER_URL = os.environ.get('BROUTER_URL', 'http://localhost:17777')
 BROUTER_TIMEOUT_SECONDS = 30
+ROUTING_ENGINE = os.environ.get('ROUTING_ENGINE', 'brouter').lower()
+if ROUTING_ENGINE not in ('brouter', 'database'):
+    raise ValueError('ROUTING_ENGINE must be brouter or database')
 # Broad local coverage; the snapped-point limit below rejects remote roads.
 CAR_ROUTING_BOUNDS = (36.18, 33.43, 36.38, 33.58)
 CAR_ROUTING_MAX_SNAP_METRES = 500
@@ -37,6 +45,13 @@ TRANSIT_CIRCULAR_GAP_METRES = float(os.environ.get('TRANSIT_CIRCULAR_GAP_METRES'
 TRANSIT_DEFAULT_BUS_SPEED_KMH = float(os.environ.get('TRANSIT_DEFAULT_BUS_SPEED_KMH', '18'))
 TRANSIT_TRANSFER_PENALTY_SECONDS = float(os.environ.get('TRANSIT_TRANSFER_PENALTY_SECONDS', '300'))
 TRANSIT_MAX_RIDE_DETOUR_RATIO = float(os.environ.get('TRANSIT_MAX_RIDE_DETOUR_RATIO', '4'))
+TRANSIT_BOARDING_SPACING_METRES = float(os.environ.get('TRANSIT_BOARDING_SPACING_METRES', '250'))
+TRANSIT_MAX_BOARDING_SNAP_METRES = float(os.environ.get('TRANSIT_MAX_BOARDING_SNAP_METRES', '2'))
+TRANSIT_MAX_USER_SNAP_METRES = float(os.environ.get('TRANSIT_MAX_USER_SNAP_METRES', '20'))
+TRANSIT_MAX_ACCESS_WALK_METRES = float(os.environ.get('TRANSIT_MAX_ACCESS_WALK_METRES', '1800'))
+TRANSIT_TRANSFER_CROW_METRES = float(os.environ.get('TRANSIT_TRANSFER_CROW_METRES', '200'))
+TRANSIT_MAX_TRANSFER_WALK_METRES = float(os.environ.get('TRANSIT_MAX_TRANSFER_WALK_METRES', '600'))
+TRANSIT_MAX_TRANSFER_PAIRS = int(os.environ.get('TRANSIT_MAX_TRANSFER_PAIRS', '24'))
 
 
 # Quick-start development settings - unsuitable for production
@@ -70,6 +85,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.gis',
     # Third-party apps
     'rest_framework',
     'corsheaders',
@@ -119,7 +135,7 @@ USE_POSTGRES = os.environ.get('USE_POSTGRES', 'true').lower() in ('true', '1', '
 if USE_POSTGRES:
     DATABASES = {
         'default': {
-            'ENGINE': 'django.db.backends.postgresql',
+            'ENGINE': 'django.contrib.gis.db.backends.postgis',
             'NAME': os.environ.get('DB_NAME', 'damascus_guide_db'),
             'USER': os.environ.get('DB_USER', 'postgres'),
             'PASSWORD': os.environ.get('DB_PASSWORD', '12345678'),

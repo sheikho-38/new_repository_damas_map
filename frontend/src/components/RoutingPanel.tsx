@@ -266,7 +266,9 @@ export default function RoutingPanel({
                 <Bus className="w-5 h-5 text-[#3a6962] dark:text-teal-400 shrink-0" />
                 <div>
                   <span className="text-xs font-bold text-[#064239] dark:text-emerald-300 block">
-                    الخط المعتمد: {routeResult.line_name}
+                    {routeResult.transfers_count ? 'الخطوط والتبديلات:' : 'الخط المعتمد:'} {routeResult.transfers_count
+                      ? routeResult.route_legs?.filter((leg) => leg.mode === 'bus').map((leg) => leg.line_name).join(' ← ')
+                      : routeResult.line_name}
                   </span>
                   <span className="text-[11px] text-zinc-500 dark:text-zinc-400">
                     التعرفة الرسمية المحددة: {routeResult.cost_syp} ليرة سورية
@@ -274,11 +276,15 @@ export default function RoutingPanel({
                   {routeResult.direction && <span className="text-[11px] text-zinc-500 dark:text-zinc-400 block">
                     الاتجاه: {routeResult.direction === 'outbound' ? 'ذهاب' : 'إياب'}
                   </span>}
+                  {!!routeResult.transfers_count && <span className="text-[11px] text-zinc-500 dark:text-zinc-400 block">
+                    عدد التبديلات: {routeResult.transfers_count}
+                  </span>}
                 </div>
               </div>
             )}
             {transitUsesBus && <div className="text-xs text-zinc-600 dark:text-zinc-300">
               المشي: {routeResult.walking_distance_km} كم · الحافلة: {routeResult.bus_distance_km} كم ({routeResult.bus_duration_minutes} دقيقة)
+              {!!routeResult.planning_buffer_minutes && <span className="block">المدة تقديرية، وتشمل {routeResult.planning_buffer_minutes} دقائق احتياطية للصعود والتبديل؛ لا توجد مواعيد وصول.</span>}
             </div>}
             {mode === 'transit' && transitPrimary?.alternatives?.length ? (
               <button type="button" onClick={transitUsesBus ? showWalkingAlternative : () => {

@@ -2,6 +2,8 @@ import math
 import json
 import re
 from django.http import JsonResponse, Http404
+from django.conf import settings
+from django.db import DatabaseError
 from django.views.decorators.http import require_GET
 from django.views.decorators.cache import never_cache
 from django.db.models import Q
@@ -673,9 +675,25 @@ def calculate_route(request):
         return JsonResponse({"error": "يرجى تزويد إحداثيات البداية والنهاية بشكل صحيح"}, status=400)
 
     mode = request.GET.get('mode', 'transit').lower()
+    database_route = None
+    if settings.ROUTING_ENGINE == 'database' and mode in ('car', 'walk'):
+        from .database_routing_service import calculate_database_route, DatabaseRoutingError
+
+        try:
+            database_route = calculate_database_route(
+                {'lon': start_lon, 'lat': start_lat},
+                {'lon': end_lon, 'lat': end_lat}, mode,
+            )
+        except DatabaseRoutingError as exc:
+            status = (400 if exc.code in ('invalid_coordinates', 'invalid_mode') else
+                      422 if exc.code in ('no_nearby_edge', 'no_route', 'empty_route') else 502)
+            return JsonResponse({'error': str(exc), 'code': exc.code}, status=status)
+        except DatabaseError:
+            return JsonResponse({'error': 'خدمة التوجيه غير متاحة', 'code': 'engine_unavailable'}, status=503)
+
     if mode == 'car':
         try:
-            route = calculate_car_route(
+            route = database_route if settings.ROUTING_ENGINE == 'database' else calculate_car_route(
                 [{'lon': start_lon, 'lat': start_lat}, {'lon': end_lon, 'lat': end_lat}],
                 enforce_damascus=True,
             )
@@ -698,13 +716,25 @@ def calculate_route(request):
 
     # 1. وضع المواصلات العامة (Transit)
     if mode == 'transit':
-        from .transit_routing_service import calculate_transit_route
+        from .database_routing_service import DatabaseRoutingError
+        if settings.ROUTING_ENGINE == 'database':
+            from .database_transit_routing_service import calculate_database_transit_route
+            calculate_transit = calculate_database_transit_route
+        else:
+            from .transit_routing_service import calculate_transit_route
+            calculate_transit = calculate_transit_route
         try:
-            journey = calculate_transit_route((start_lon, start_lat), (end_lon, end_lat))
+            journey = calculate_transit((start_lon, start_lat), (end_lon, end_lat))
         except RoutingError as exc:
             return JsonResponse({'error': str(exc), 'code': exc.code}, status=exc.status)
+        except DatabaseRoutingError as exc:
+            status = (400 if exc.code in ('invalid_coordinates', 'invalid_mode') else
+                      422 if exc.code in ('no_nearby_edge', 'no_route', 'empty_route') else 502)
+            return JsonResponse({'error': str(exc), 'code': exc.code}, status=status)
+        except DatabaseError:
+            return JsonResponse({'error': 'خدمة التوجيه غير متاحة', 'code': 'engine_unavailable'}, status=503)
         steps = []
-        if journey['recommended_mode'] == 'transit':
+        if journey['recommended_mode'] == 'transit' and 'steps' not in journey:
             steps = [
                 {'instruction': 'امشِ إلى نقطة الصعود المقترحة', 'icon': 'walk',
                  'duration_mins': round(journey['legs'][0]['duration_seconds'] / 60)},
@@ -713,6 +743,7 @@ def calculate_route(request):
                 {'instruction': 'انزل عند النقطة المقترحة وتابع مشياً إلى الوجهة', 'icon': 'walk',
                  'duration_mins': round(journey['legs'][2]['duration_seconds'] / 60)},
             ]
+        steps = journey.get('steps', steps)
         return JsonResponse({
             'mode': 'transit', 'recommended_mode': journey['recommended_mode'],
             'mode_title': 'مواصلات عامة (باص / سرفيس)', 'summary': journey['summary'],
@@ -726,6 +757,9 @@ def calculate_route(request):
             'waiting_time_minutes': journey.get('waiting_time_minutes'),
             'boarding': journey.get('boarding'), 'alighting': journey.get('alighting'),
             'boarding_safety_verified': journey.get('boarding_safety_verified'),
+            'planning_buffer_minutes': journey.get('planning_buffer_minutes'),
+            'duration_estimated': journey.get('duration_estimated'),
+            'transfers_count': journey.get('transfers_count', 0),
             'alternatives': journey.get('alternatives', []),
             'start': {'longitude': start_lon, 'latitude': start_lat},
             'end': {'longitude': end_lon, 'latitude': end_lat},
@@ -795,7 +829,7 @@ def calculate_route(request):
 
     # 3. وضع المشي على الأقدام (Walk)
     try:
-        route = calculate_walking_route(
+        route = database_route if settings.ROUTING_ENGINE == 'database' else calculate_walking_route(
             [{'lon': start_lon, 'lat': start_lat}, {'lon': end_lon, 'lat': end_lat}],
         )
     except RoutingError as exc:
