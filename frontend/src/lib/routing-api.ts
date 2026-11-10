@@ -1,10 +1,16 @@
 export type RoutingPoint = { lat: number; lon: number; title: string };
 export type RoutingMode = 'transit' | 'car' | 'walk';
+export type RouteFeature = { type: 'Feature'; geometry: { type: 'LineString'; coordinates: number[][] }; properties?: Record<string, unknown> };
 export interface RouteLeg {
   mode: 'walk' | 'bus';
   distance_m: number;
   duration_seconds: number;
-  geojson: { type: 'Feature'; geometry: { type: 'LineString'; coordinates: number[][] }; properties?: Record<string, unknown> };
+  geojson: RouteFeature;
+  line_name?: string;
+  bus_route_id?: number;
+  direction?: 'outbound' | 'inbound';
+  boarding?: number[];
+  alighting?: number[];
 }
 
 export interface RouteResult {
@@ -20,7 +26,10 @@ export interface RouteResult {
   duration_minutes: number;
   calories_burned?: number;
   steps: Array<{ instruction: string; icon: string; duration_mins: number }>;
-  route_geojson: { type: 'Feature'; geometry: { type: 'LineString'; coordinates: number[][] } };
+  route_geojson: RouteFeature | { type: 'FeatureCollection'; features: RouteFeature[] };
+  transfers_count?: number;
+  planning_buffer_minutes?: number;
+  duration_estimated?: boolean;
   distance_m?: number;
   duration_seconds?: number;
   walking_distance_km?: number;

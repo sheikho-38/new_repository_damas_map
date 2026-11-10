@@ -28,14 +28,15 @@
 - python manage.py seed_social_affairs_institutes
 - python manage.py seed_health_facilities_2026_affairs_institutes
 - python manage.py seed_damascus_service_departments
+- python manag.py seed_transit_lines
 
 # التشغيل اليومي
 
 - cd backend
 - .\venv\Scripts\Activate.ps1
+- $env:ROUTING_ENGINE = 'database'
 - python manage.py runserver 8000
-
----
+- ***
 
 # 2. Frontend — Next.js
 
