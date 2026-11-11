@@ -283,7 +283,7 @@ body {
   background: #fdfbf7;
   color: #064239;
   box-shadow: 0 12px 40px rgba(6, 66, 57, 0.12);
-  cursor: not-allowed;
+  cursor: pointer;
   font-size: 15px;
   font-weight: 700;
 }

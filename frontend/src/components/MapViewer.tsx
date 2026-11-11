@@ -80,6 +80,7 @@ const DEFAULT_CENTER: [number, number] = [36.273, 33.512]; // المركز ال�
 const DEFAULT_ZOOM = 11.2; // مستوى التقريب الأولي لكشف دمشق كاملة ببلدياتها الـ 16
 const DAMASCUS_OVERVIEW_CENTER: [number, number] = [36.273, 33.512];
 const DAMASCUS_OVERVIEW_ZOOM = 11.2;
+const THREE_D_VIDEO_URL = process.env.NEXT_PUBLIC_THREE_D_VIDEO_URL?.trim();
 
 export default function MapViewer({
   initialCenter = DEFAULT_CENTER,
@@ -97,6 +98,10 @@ export default function MapViewer({
   const [isThreeDNoticeOpen, setIsThreeDNoticeOpen] = useState(false);
   const [mapViewMode, setMapViewMode] = useState<"2d" | "3d">("2d");
   const themeMenuRef = useRef<HTMLDivElement>(null);
+  const closeThreeDNotice = () => {
+    setIsThreeDNoticeOpen(false);
+    setMapViewMode("2d");
+  };
 
   // 1. بيانات الطبقات والتصنيفات (المعالم مخفية افتراضياً عند الإقلاع الأول)
   const [categories, setCategories] =
@@ -368,19 +373,17 @@ export default function MapViewer({
                 const latest = (map.getSource("places-poi-source") as any)
                   ?._data;
                 if (!latest) return;
-                map
-                  .getSource("places-poi-source")
-                  .setData({
-                    type: "FeatureCollection",
-                    features: [
-                      newFeature,
-                      ...latest.features.filter(
-                        (feature: any) =>
-                          Number(feature.properties?.id) !==
-                          Number(selectedPlace.id),
-                      ),
-                    ],
-                  });
+                map.getSource("places-poi-source").setData({
+                  type: "FeatureCollection",
+                  features: [
+                    newFeature,
+                    ...latest.features.filter(
+                      (feature: any) =>
+                        Number(feature.properties?.id) !==
+                        Number(selectedPlace.id),
+                    ),
+                  ],
+                });
               })
               .catch((error) =>
                 console.warn("Could not render place marker icon:", error),
@@ -2266,7 +2269,17 @@ export default function MapViewer({
         layout: roundedLineLayout,
         paint: {
           "line-color": "#FFFFFF",
-          "line-width": ["interpolate", ["linear"], ["zoom"], 11, 9, 14, 12, 17, 15],
+          "line-width": [
+            "interpolate",
+            ["linear"],
+            ["zoom"],
+            11,
+            9,
+            14,
+            12,
+            17,
+            15,
+          ],
           "line-opacity": 1,
         },
       });
@@ -2278,7 +2291,17 @@ export default function MapViewer({
         layout: roundedLineLayout,
         paint: {
           "line-color": "#ECC988", // gold-light
-          "line-width": ["interpolate", ["linear"], ["zoom"], 11, 7, 14, 9.5, 17, 12],
+          "line-width": [
+            "interpolate",
+            ["linear"],
+            ["zoom"],
+            11,
+            7,
+            14,
+            9.5,
+            17,
+            12,
+          ],
           "line-opacity": 1,
         },
       });
@@ -2290,7 +2313,17 @@ export default function MapViewer({
         layout: roundedLineLayout,
         paint: {
           "line-color": "#064239", // green
-          "line-width": ["interpolate", ["linear"], ["zoom"], 11, 4.5, 14, 6.5, 17, 9],
+          "line-width": [
+            "interpolate",
+            ["linear"],
+            ["zoom"],
+            11,
+            4.5,
+            14,
+            6.5,
+            17,
+            9,
+          ],
           "line-opacity": 1,
         },
       });
@@ -2304,7 +2337,17 @@ export default function MapViewer({
         layout: roundedLineLayout,
         paint: {
           "line-color": "#FFFFFF",
-          "line-width": ["interpolate", ["linear"], ["zoom"], 11, 6, 14, 8.5, 17, 11],
+          "line-width": [
+            "interpolate",
+            ["linear"],
+            ["zoom"],
+            11,
+            6,
+            14,
+            8.5,
+            17,
+            11,
+          ],
           "line-dasharray": [2, 2],
           "line-opacity": 1,
         },
@@ -2317,7 +2360,17 @@ export default function MapViewer({
         layout: roundedLineLayout,
         paint: {
           "line-color": "#3A6962", // green-medium
-          "line-width": ["interpolate", ["linear"], ["zoom"], 11, 3.5, 14, 5.5, 17, 8],
+          "line-width": [
+            "interpolate",
+            ["linear"],
+            ["zoom"],
+            11,
+            3.5,
+            14,
+            5.5,
+            17,
+            8,
+          ],
           "line-dasharray": [2, 2],
           "line-opacity": 1,
         },
@@ -2332,7 +2385,17 @@ export default function MapViewer({
         layout: roundedLineLayout,
         paint: {
           "line-color": "#FFFFFF",
-          "line-width": ["interpolate", ["linear"], ["zoom"], 11, 9, 14, 11.5, 17, 14],
+          "line-width": [
+            "interpolate",
+            ["linear"],
+            ["zoom"],
+            11,
+            9,
+            14,
+            11.5,
+            17,
+            14,
+          ],
           "line-opacity": 1,
         },
       });
@@ -2344,7 +2407,17 @@ export default function MapViewer({
         layout: roundedLineLayout,
         paint: {
           "line-color": "#B8912E", // gold-accent
-          "line-width": ["interpolate", ["linear"], ["zoom"], 11, 5.5, 14, 8, 17, 10.5],
+          "line-width": [
+            "interpolate",
+            ["linear"],
+            ["zoom"],
+            11,
+            5.5,
+            14,
+            8,
+            17,
+            10.5,
+          ],
           "line-opacity": 1,
         },
       });
@@ -2380,13 +2453,21 @@ export default function MapViewer({
           false,
         ],
       ];
-      const busLegs = result.route_legs?.filter((leg) => leg.mode === "bus" && leg.boarding && leg.alighting);
+      const busLegs = result.route_legs?.filter(
+        (leg) => leg.mode === "bus" && leg.boarding && leg.alighting,
+      );
       if (result.recommended_mode === "transit" && busLegs?.length) {
-        busLegs.forEach((leg) => points.push(
-          [leg.boarding!, "#D99432", "صعود", true],
-          [leg.alighting!, "#2684C7", "نزول", true],
-        ));
-      } else if (result.recommended_mode === "transit" && result.boarding && result.alighting) {
+        busLegs.forEach((leg) =>
+          points.push(
+            [leg.boarding!, "#D99432", "صعود", true],
+            [leg.alighting!, "#2684C7", "نزول", true],
+          ),
+        );
+      } else if (
+        result.recommended_mode === "transit" &&
+        result.boarding &&
+        result.alighting
+      ) {
         points.push(
           [result.boarding, "#D99432", "صعود", true],
           [result.alighting, "#2684C7", "نزول", true],
@@ -2582,16 +2663,15 @@ export default function MapViewer({
         </div>
       </header>
 
-      <button
-        type="button"
-        disabled
-        aria-label="ال — غير متاح حالياً"
-        title="الرجوع — غير متاح حالياً"
+      <a
+        href="https://dec.damascus.gov.sy/portal"
+        aria-label="الرئيسية"
+        title="الرئيسية"
         className="map-header-back"
       >
         <ArrowLeft className="w-5 h-5" />
-        <span>الرجوع</span>
-      </button>
+        <span>الرئيسية</span>
+      </a>
 
       {/* اليسار: قائمة منسدلة أنيقة للهوية البصرية (Popover Menu) */}
       <div
@@ -2706,17 +2786,26 @@ export default function MapViewer({
       {isThreeDNoticeOpen && (
         <div
           className="fixed inset-0 z-[70] flex items-center justify-center bg-[#064239]/20 p-4 backdrop-blur-sm"
-          onClick={() => setIsThreeDNoticeOpen(false)}
+          onClick={closeThreeDNotice}
           role="presentation"
         >
           <div
-            className="w-full max-w-sm rounded-3xl border border-white/60 bg-white/35 p-6 text-center shadow-2xl backdrop-blur-xl dark:border-white/20 dark:bg-zinc-900/35"
+            className="relative w-full max-w-sm rounded-3xl border border-white/60 bg-white/35 p-6 text-center shadow-2xl backdrop-blur-xl dark:border-white/20 dark:bg-zinc-900/35"
             onClick={(event) => event.stopPropagation()}
             role="dialog"
             aria-modal="true"
             aria-labelledby="three-d-notice-title"
             dir="rtl"
           >
+            <button
+              type="button"
+              onClick={closeThreeDNotice}
+              aria-label="إغلاق والعودة إلى العرض ثنائي الأبعاد"
+              title="العودة إلى 2D"
+              className="absolute left-3 top-3 flex h-10 w-10 cursor-pointer items-center justify-center rounded-full text-[#064239] transition-colors hover:bg-white/50 dark:text-white dark:hover:bg-white/10"
+            >
+              <X className="h-5 w-5" aria-hidden="true" />
+            </button>
             <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-2xl border border-white/60 bg-white/35 text-[#064239] shadow-lg dark:border-white/20 dark:bg-white/10 dark:text-emerald-300">
               <Box className="h-6 w-6" />
             </div>
@@ -2731,10 +2820,19 @@ export default function MapViewer({
             </p>
             <button
               type="button"
-              onClick={() => setIsThreeDNoticeOpen(false)}
-              className="mt-5 w-full rounded-2xl border border-white/60 bg-white/45 px-4 py-2.5 text-xs font-black text-[#064239] shadow-lg transition-all hover:bg-white/65 active:scale-95 dark:border-white/20 dark:bg-white/10 dark:text-white dark:hover:bg-white/20"
+              disabled={!THREE_D_VIDEO_URL}
+              onClick={() => {
+                if (THREE_D_VIDEO_URL) {
+                  window.open(
+                    THREE_D_VIDEO_URL,
+                    "_blank",
+                    "noopener,noreferrer",
+                  );
+                }
+              }}
+              className="mt-5 w-full cursor-pointer rounded-2xl border border-white/60 bg-white/45 px-4 py-2.5 text-xs font-black text-[#064239] shadow-lg transition-all hover:bg-white/65 active:scale-95 disabled:cursor-pointer disabled:opacity-50 dark:border-white/20 dark:bg-white/10 dark:text-white dark:hover:bg-white/20"
             >
-              حسناً
+              شاهد الفيديو التوضيحي
             </button>
           </div>
         </div>
