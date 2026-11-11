@@ -15,7 +15,7 @@ export default function UserLocationButton({ status, message, onLocate }: {
       aria-label="تحديد موقعي" aria-busy={loading}
       className="flex items-center gap-2 rounded-2xl border border-[#064239]/20 bg-[#fdfbf7] px-3 py-2 text-xs font-bold text-[#064239] shadow-xl cursor-pointer disabled:opacity-60">
       {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <LocateFixed className="h-4 w-4" />}
-      <span>{loading ? 'جارٍ تحديد الموقع…' : 'تحديد موقعي'}</span>
+      <span>{loading ? 'جارٍ تحديد الموقع…' : status === 'live' ? 'الموقع مفعّل' : status === 'stale' ? 'متابعة الموقع مفعّلة' : 'تحديد موقعي'}</span>
     </button>
   </div>;
 }

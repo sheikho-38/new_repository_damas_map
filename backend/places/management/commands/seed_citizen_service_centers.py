@@ -34,7 +34,7 @@ class Command(BaseCommand):
                     'longitude': lon,
                     'location_text': address,
                     'description': entry['services'],
-                    'sector': 'Public',
+                    'sector': '',
                     'is_verified': True,
                     'is_visible': True,
                 },

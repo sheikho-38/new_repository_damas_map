@@ -1,0 +1,1079 @@
+{
+  "format": "postgres-binary-copy-gzip-v1",
+  "data_version": "20261110T112832Z",
+  "created_at_utc": "2026-11-10T11:28:32.767165+00:00",
+  "schema_sha256": "a84776f4b6f9e95e2df14e0b6d6da66f099aeea67129f532b501c3aa8aaf1aca",
+  "tables": {
+    "buses": {
+      "file": "buses.copy.gz",
+      "rows": 6,
+      "schema": {
+        "columns": [
+          [
+            "id",
+            "bigint",
+            true,
+            "d",
+            "",
+            null
+          ],
+          [
+            "name",
+            "character varying(150)",
+            true,
+            "",
+            "",
+            null
+          ],
+          [
+            "color",
+            "character varying(20)",
+            true,
+            "",
+            "",
+            null
+          ],
+          [
+            "old_price",
+            "numeric(10,2)",
+            false,
+            "",
+            "",
+            null
+          ],
+          [
+            "new_price",
+            "numeric(10,2)",
+            false,
+            "",
+            "",
+            null
+          ],
+          [
+            "is_active",
+            "boolean",
+            true,
+            "",
+            "",
+            null
+          ]
+        ],
+        "constraints": [
+          [
+            "bus_new_price_nonnegative",
+            "CHECK (((new_price >= (0)::numeric) OR (new_price IS NULL)))"
+          ],
+          [
+            "bus_old_price_nonnegative",
+            "CHECK (((old_price >= (0)::numeric) OR (old_price IS NULL)))"
+          ],
+          [
+            "buses_color_not_null",
+            "NOT NULL color"
+          ],
+          [
+            "buses_id_not_null",
+            "NOT NULL id"
+          ],
+          [
+            "buses_is_active_not_null",
+            "NOT NULL is_active"
+          ],
+          [
+            "buses_name_not_null",
+            "NOT NULL name"
+          ],
+          [
+            "buses_pkey",
+            "PRIMARY KEY (id)"
+          ]
+        ],
+        "indexes": [
+          [
+            "buses_pkey",
+            "CREATE UNIQUE INDEX buses_pkey ON public.buses USING btree (id)"
+          ]
+        ],
+        "sequence": [
+          1,
+          1,
+          1,
+          9223372036854775807,
+          1,
+          false
+        ]
+      },
+      "copy_sha256": "fa154d2fbcea420729a9291f0fe5a193c6dcf5460d4abd5faf1bf27c13b56332",
+      "sha256": "5bedc1521873d29736eb2c1fb53a7309e08fc803cb416494e90b54643cabbbc7",
+      "bytes": 203
+    },
+    "bus_routes": {
+      "file": "bus_routes.copy.gz",
+      "rows": 8,
+      "schema": {
+        "columns": [
+          [
+            "id",
+            "bigint",
+            true,
+            "d",
+            "",
+            null
+          ],
+          [
+            "version",
+            "integer",
+            true,
+            "",
+            "",
+            null
+          ],
+          [
+            "lineString",
+            "jsonb",
+            true,
+            "",
+            "",
+            null
+          ],
+          [
+            "distance",
+            "double precision",
+            true,
+            "",
+            "",
+            null
+          ],
+          [
+            "trip_time",
+            "integer",
+            true,
+            "",
+            "",
+            null
+          ],
+          [
+            "direction",
+            "character varying(50)",
+            true,
+            "",
+            "",
+            null
+          ],
+          [
+            "start_point",
+            "character varying(150)",
+            true,
+            "",
+            "",
+            null
+          ],
+          [
+            "end_point",
+            "character varying(150)",
+            true,
+            "",
+            "",
+            null
+          ],
+          [
+            "is_active",
+            "boolean",
+            true,
+            "",
+            "",
+            null
+          ],
+          [
+            "bus_id",
+            "bigint",
+            true,
+            "",
+            "",
+            null
+          ]
+        ],
+        "constraints": [
+          [
+            "bus_route_distance_nonnegative",
+            "CHECK ((distance >= (0.0)::double precision))"
+          ],
+          [
+            "bus_route_positive_version",
+            "CHECK ((version >= 1))"
+          ],
+          [
+            "bus_route_unique_version",
+            "UNIQUE (bus_id, direction, version)"
+          ],
+          [
+            "bus_route_valid_direction",
+            "CHECK (((direction)::text = ANY ((ARRAY['outbound'::character varying, 'inbound'::character varying])::text[])))"
+          ],
+          [
+            "bus_routes_bus_id_19522cd3_fk_buses_id",
+            "FOREIGN KEY (bus_id) REFERENCES buses(id) DEFERRABLE INITIALLY DEFERRED"
+          ],
+          [
+            "bus_routes_bus_id_not_null",
+            "NOT NULL bus_id"
+          ],
+          [
+            "bus_routes_direction_not_null",
+            "NOT NULL direction"
+          ],
+          [
+            "bus_routes_distance_not_null",
+            "NOT NULL distance"
+          ],
+          [
+            "bus_routes_end_point_not_null",
+            "NOT NULL end_point"
+          ],
+          [
+            "bus_routes_id_not_null",
+            "NOT NULL id"
+          ],
+          [
+            "bus_routes_is_active_not_null",
+            "NOT NULL is_active"
+          ],
+          [
+            "bus_routes_lineString_not_null",
+            "NOT NULL \"lineString\""
+          ],
+          [
+            "bus_routes_pkey",
+            "PRIMARY KEY (id)"
+          ],
+          [
+            "bus_routes_start_point_not_null",
+            "NOT NULL start_point"
+          ],
+          [
+            "bus_routes_trip_time_check",
+            "CHECK ((trip_time >= 0))"
+          ],
+          [
+            "bus_routes_trip_time_not_null",
+            "NOT NULL trip_time"
+          ],
+          [
+            "bus_routes_version_check",
+            "CHECK ((version >= 0))"
+          ],
+          [
+            "bus_routes_version_not_null",
+            "NOT NULL version"
+          ]
+        ],
+        "indexes": [
+          [
+            "bus_route_one_active_direction",
+            "CREATE UNIQUE INDEX bus_route_one_active_direction ON public.bus_routes USING btree (bus_id, direction) WHERE is_active"
+          ],
+          [
+            "bus_route_unique_version",
+            "CREATE UNIQUE INDEX bus_route_unique_version ON public.bus_routes USING btree (bus_id, direction, version)"
+          ],
+          [
+            "bus_routes_bus_id_19522cd3",
+            "CREATE INDEX bus_routes_bus_id_19522cd3 ON public.bus_routes USING btree (bus_id)"
+          ],
+          [
+            "bus_routes_pkey",
+            "CREATE UNIQUE INDEX bus_routes_pkey ON public.bus_routes USING btree (id)"
+          ]
+        ],
+        "sequence": [
+          1,
+          1,
+          1,
+          9223372036854775807,
+          1,
+          false
+        ]
+      },
+      "copy_sha256": "d6d73b4e9098995fae247ce008caab29b24d64307f322a5a680be7254497a6d6",
+      "sha256": "4477cbf905b47e437bd610af007a933b461c2a66d8ad6f804333232b7ba6742a",
+      "bytes": 7290
+    },
+    "routing_nodes": {
+      "file": "routing_nodes.copy.gz",
+      "rows": 25494,
+      "schema": {
+        "columns": [
+          [
+            "id",
+            "bigint",
+            true,
+            "d",
+            "",
+            null
+          ],
+          [
+            "node_type",
+            "character varying(16)",
+            true,
+            "",
+            "",
+            "'road'::character varying"
+          ],
+          [
+            "geom",
+            "geometry(Point,4326)",
+            true,
+            "",
+            "",
+            null
+          ]
+        ],
+        "constraints": [
+          [
+            "routing_nodes_geom_not_null",
+            "NOT NULL geom"
+          ],
+          [
+            "routing_nodes_id_not_null",
+            "NOT NULL id"
+          ],
+          [
+            "routing_nodes_node_type_check",
+            "CHECK (((node_type)::text = ANY ((ARRAY['road'::character varying, 'bus'::character varying])::text[])))"
+          ],
+          [
+            "routing_nodes_node_type_not_null",
+            "NOT NULL node_type"
+          ],
+          [
+            "routing_nodes_pkey",
+            "PRIMARY KEY (id)"
+          ]
+        ],
+        "indexes": [
+          [
+            "routing_nodes_geom_gix",
+            "CREATE INDEX routing_nodes_geom_gix ON public.routing_nodes USING gist (geom)"
+          ],
+          [
+            "routing_nodes_pkey",
+            "CREATE UNIQUE INDEX routing_nodes_pkey ON public.routing_nodes USING btree (id)"
+          ]
+        ],
+        "sequence": [
+          1,
+          1,
+          1,
+          9223372036854775807,
+          1,
+          false
+        ]
+      },
+      "copy_sha256": "4ee2df5eb22b29d1ba513794177a86f2329c7d514bf2af1d4099cde5d435cf61",
+      "sha256": "ff96eb79a19e0581da534c0d10575069b9588af0d810ffb79bebac1ed51c9218",
+      "bytes": 422368
+    },
+    "routing_edges": {
+      "file": "routing_edges.copy.gz",
+      "rows": 63445,
+      "schema": {
+        "columns": [
+          [
+            "id",
+            "bigint",
+            true,
+            "d",
+            "",
+            null
+          ],
+          [
+            "source",
+            "bigint",
+            true,
+            "",
+            "",
+            null
+          ],
+          [
+            "target",
+            "bigint",
+            true,
+            "",
+            "",
+            null
+          ],
+          [
+            "edge_type",
+            "character varying(16)",
+            true,
+            "",
+            "",
+            null
+          ],
+          [
+            "bus_route_id",
+            "bigint",
+            false,
+            "",
+            "",
+            null
+          ],
+          [
+            "length_m",
+            "double precision",
+            true,
+            "",
+            "",
+            null
+          ],
+          [
+            "cost",
+            "double precision",
+            true,
+            "",
+            "",
+            null
+          ],
+          [
+            "reverse_cost",
+            "double precision",
+            true,
+            "",
+            "",
+            null
+          ],
+          [
+            "geom",
+            "geometry(LineString,4326)",
+            true,
+            "",
+            "",
+            null
+          ],
+          [
+            "attributes",
+            "jsonb",
+            true,
+            "",
+            "",
+            "'{}'::jsonb"
+          ]
+        ],
+        "constraints": [
+          [
+            "routing_edges_attributes_not_null",
+            "NOT NULL attributes"
+          ],
+          [
+            "routing_edges_cost_check",
+            "CHECK ((cost >= (0)::double precision))"
+          ],
+          [
+            "routing_edges_cost_not_null",
+            "NOT NULL cost"
+          ],
+          [
+            "routing_edges_edge_type_check",
+            "CHECK (((edge_type)::text = ANY ((ARRAY['walk'::character varying, 'car'::character varying, 'bus'::character varying, 'transfer'::character varying, 'board'::character varying, 'alight'::character varying])::text[])))"
+          ],
+          [
+            "routing_edges_edge_type_not_null",
+            "NOT NULL edge_type"
+          ],
+          [
+            "routing_edges_geom_not_null",
+            "NOT NULL geom"
+          ],
+          [
+            "routing_edges_id_not_null",
+            "NOT NULL id"
+          ],
+          [
+            "routing_edges_length_m_check",
+            "CHECK ((length_m >= (0)::double precision))"
+          ],
+          [
+            "routing_edges_length_m_not_null",
+            "NOT NULL length_m"
+          ],
+          [
+            "routing_edges_pkey",
+            "PRIMARY KEY (id)"
+          ],
+          [
+            "routing_edges_reverse_cost_check",
+            "CHECK (((reverse_cost = ('-1'::integer)::double precision) OR (reverse_cost >= (0)::double precision)))"
+          ],
+          [
+            "routing_edges_reverse_cost_not_null",
+            "NOT NULL reverse_cost"
+          ],
+          [
+            "routing_edges_source_fkey",
+            "FOREIGN KEY (source) REFERENCES routing_nodes(id)"
+          ],
+          [
+            "routing_edges_source_not_null",
+            "NOT NULL source"
+          ],
+          [
+            "routing_edges_target_fkey",
+            "FOREIGN KEY (target) REFERENCES routing_nodes(id)"
+          ],
+          [
+            "routing_edges_target_not_null",
+            "NOT NULL target"
+          ]
+        ],
+        "indexes": [
+          [
+            "routing_edges_bus_route_idx",
+            "CREATE INDEX routing_edges_bus_route_idx ON public.routing_edges USING btree (bus_route_id) WHERE (bus_route_id IS NOT NULL)"
+          ],
+          [
+            "routing_edges_geom_gix",
+            "CREATE INDEX routing_edges_geom_gix ON public.routing_edges USING gist (geom)"
+          ],
+          [
+            "routing_edges_pkey",
+            "CREATE UNIQUE INDEX routing_edges_pkey ON public.routing_edges USING btree (id)"
+          ],
+          [
+            "routing_edges_source_idx",
+            "CREATE INDEX routing_edges_source_idx ON public.routing_edges USING btree (source)"
+          ],
+          [
+            "routing_edges_target_idx",
+            "CREATE INDEX routing_edges_target_idx ON public.routing_edges USING btree (target)"
+          ],
+          [
+            "routing_edges_type_idx",
+            "CREATE INDEX routing_edges_type_idx ON public.routing_edges USING btree (edge_type)"
+          ]
+        ],
+        "sequence": [
+          1,
+          1,
+          1,
+          9223372036854775807,
+          1,
+          false
+        ]
+      },
+      "copy_sha256": "ca17472eb60f7e724cee0ce5e312a65f003b552a432a1fdd5f2817eefb09a695",
+      "sha256": "14c107f5351905c39a6c55bd8892d6a3ea6d26a0e8ad142e775562d7c63561ec",
+      "bytes": 3911335
+    },
+    "routing_boarding_points": {
+      "file": "routing_boarding_points.copy.gz",
+      "rows": 0,
+      "schema": {
+        "columns": [
+          [
+            "id",
+            "bigint",
+            true,
+            "d",
+            "",
+            null
+          ],
+          [
+            "bus_route_id",
+            "bigint",
+            true,
+            "",
+            "",
+            null
+          ],
+          [
+            "bus_node_id",
+            "bigint",
+            true,
+            "",
+            "",
+            null
+          ],
+          [
+            "sequence_index",
+            "integer",
+            true,
+            "",
+            "",
+            null
+          ],
+          [
+            "distance_along_route_m",
+            "double precision",
+            true,
+            "",
+            "",
+            null
+          ],
+          [
+            "geom",
+            "geometry(Point,4326)",
+            true,
+            "",
+            "",
+            null
+          ],
+          [
+            "is_active",
+            "boolean",
+            true,
+            "",
+            "",
+            "true"
+          ]
+        ],
+        "constraints": [
+          [
+            "routing_boarding_points_bus_node_id_fkey",
+            "FOREIGN KEY (bus_node_id) REFERENCES routing_nodes(id)"
+          ],
+          [
+            "routing_boarding_points_bus_node_id_not_null",
+            "NOT NULL bus_node_id"
+          ],
+          [
+            "routing_boarding_points_bus_route_id_not_null",
+            "NOT NULL bus_route_id"
+          ],
+          [
+            "routing_boarding_points_bus_route_id_sequence_index_key",
+            "UNIQUE (bus_route_id, sequence_index)"
+          ],
+          [
+            "routing_boarding_points_distance_along_route_m_check",
+            "CHECK ((distance_along_route_m >= (0)::double precision))"
+          ],
+          [
+            "routing_boarding_points_distance_along_route_m_not_null",
+            "NOT NULL distance_along_route_m"
+          ],
+          [
+            "routing_boarding_points_geom_not_null",
+            "NOT NULL geom"
+          ],
+          [
+            "routing_boarding_points_id_not_null",
+            "NOT NULL id"
+          ],
+          [
+            "routing_boarding_points_is_active_not_null",
+            "NOT NULL is_active"
+          ],
+          [
+            "routing_boarding_points_pkey",
+            "PRIMARY KEY (id)"
+          ],
+          [
+            "routing_boarding_points_sequence_index_check",
+            "CHECK ((sequence_index >= 0))"
+          ],
+          [
+            "routing_boarding_points_sequence_index_not_null",
+            "NOT NULL sequence_index"
+          ]
+        ],
+        "indexes": [
+          [
+            "routing_boarding_points_bus_route_id_sequence_index_key",
+            "CREATE UNIQUE INDEX routing_boarding_points_bus_route_id_sequence_index_key ON public.routing_boarding_points USING btree (bus_route_id, sequence_index)"
+          ],
+          [
+            "routing_boarding_points_geom_gix",
+            "CREATE INDEX routing_boarding_points_geom_gix ON public.routing_boarding_points USING gist (geom)"
+          ],
+          [
+            "routing_boarding_points_pkey",
+            "CREATE UNIQUE INDEX routing_boarding_points_pkey ON public.routing_boarding_points USING btree (id)"
+          ],
+          [
+            "routing_boarding_points_route_idx",
+            "CREATE INDEX routing_boarding_points_route_idx ON public.routing_boarding_points USING btree (bus_route_id, sequence_index)"
+          ]
+        ],
+        "sequence": [
+          1,
+          1,
+          1,
+          9223372036854775807,
+          1,
+          false
+        ]
+      },
+      "copy_sha256": "62a74fd0e2d1e3a59b88b5b71c06ca8d43662c6787430c516b8e0bc28bbbda02",
+      "sha256": "bedc00828efb8583e247632d0d5ce01cd0396427164d65e8200d09b9d7610429",
+      "bytes": 71
+    },
+    "routing_turn_restrictions": {
+      "file": "routing_turn_restrictions.copy.gz",
+      "rows": 76,
+      "schema": {
+        "columns": [
+          [
+            "id",
+            "bigint",
+            true,
+            "a",
+            "",
+            null
+          ],
+          [
+            "osm_relation_id",
+            "bigint",
+            true,
+            "",
+            "",
+            null
+          ],
+          [
+            "restriction_type",
+            "character varying(32)",
+            true,
+            "",
+            "",
+            null
+          ],
+          [
+            "mode",
+            "character varying(8)",
+            true,
+            "",
+            "",
+            null
+          ],
+          [
+            "sequence_index",
+            "integer",
+            true,
+            "",
+            "",
+            null
+          ],
+          [
+            "directed_path",
+            "jsonb",
+            true,
+            "",
+            "",
+            null
+          ]
+        ],
+        "constraints": [
+          [
+            "routing_turn_restrictions_directed_path_not_null",
+            "NOT NULL directed_path"
+          ],
+          [
+            "routing_turn_restrictions_id_not_null",
+            "NOT NULL id"
+          ],
+          [
+            "routing_turn_restrictions_mode_check",
+            "CHECK (((mode)::text = 'car'::text))"
+          ],
+          [
+            "routing_turn_restrictions_mode_not_null",
+            "NOT NULL mode"
+          ],
+          [
+            "routing_turn_restrictions_osm_relation_id_not_null",
+            "NOT NULL osm_relation_id"
+          ],
+          [
+            "routing_turn_restrictions_osm_relation_id_sequence_index_key",
+            "UNIQUE (osm_relation_id, sequence_index)"
+          ],
+          [
+            "routing_turn_restrictions_pkey",
+            "PRIMARY KEY (id)"
+          ],
+          [
+            "routing_turn_restrictions_restriction_type_not_null",
+            "NOT NULL restriction_type"
+          ],
+          [
+            "routing_turn_restrictions_sequence_index_check",
+            "CHECK ((sequence_index > 0))"
+          ],
+          [
+            "routing_turn_restrictions_sequence_index_not_null",
+            "NOT NULL sequence_index"
+          ]
+        ],
+        "indexes": [
+          [
+            "routing_turn_restrictions_osm_relation_id_sequence_index_key",
+            "CREATE UNIQUE INDEX routing_turn_restrictions_osm_relation_id_sequence_index_key ON public.routing_turn_restrictions USING btree (osm_relation_id, sequence_index)"
+          ],
+          [
+            "routing_turn_restrictions_pkey",
+            "CREATE UNIQUE INDEX routing_turn_restrictions_pkey ON public.routing_turn_restrictions USING btree (id)"
+          ]
+        ],
+        "sequence": [
+          1,
+          1,
+          1,
+          9223372036854775807,
+          1,
+          false
+        ]
+      },
+      "copy_sha256": "51f903e09f7ff4a6feccd5662572be882102d4d681f2863355cd14332393dd7e",
+      "sha256": "1c5670de0675ca92da4f685defd080df1af27122f6d2d40493df87948115fc02",
+      "bytes": 4410
+    },
+    "routing_car_states": {
+      "file": "routing_car_states.copy.gz",
+      "rows": 53518,
+      "schema": {
+        "columns": [
+          [
+            "id",
+            "bigint",
+            true,
+            "",
+            "",
+            null
+          ],
+          [
+            "edge_id",
+            "bigint",
+            true,
+            "",
+            "",
+            null
+          ],
+          [
+            "direction",
+            "character varying(7)",
+            true,
+            "",
+            "",
+            null
+          ],
+          [
+            "context_id",
+            "integer",
+            true,
+            "",
+            "",
+            null
+          ],
+          [
+            "source_node",
+            "bigint",
+            true,
+            "",
+            "",
+            null
+          ],
+          [
+            "target_node",
+            "bigint",
+            true,
+            "",
+            "",
+            null
+          ],
+          [
+            "is_initial",
+            "boolean",
+            true,
+            "",
+            "",
+            null
+          ]
+        ],
+        "constraints": [
+          [
+            "routing_car_states_context_id_not_null",
+            "NOT NULL context_id"
+          ],
+          [
+            "routing_car_states_direction_not_null",
+            "NOT NULL direction"
+          ],
+          [
+            "routing_car_states_edge_id_direction_context_id_key",
+            "UNIQUE (edge_id, direction, context_id)"
+          ],
+          [
+            "routing_car_states_edge_id_fkey",
+            "FOREIGN KEY (edge_id) REFERENCES routing_edges(id)"
+          ],
+          [
+            "routing_car_states_edge_id_not_null",
+            "NOT NULL edge_id"
+          ],
+          [
+            "routing_car_states_id_not_null",
+            "NOT NULL id"
+          ],
+          [
+            "routing_car_states_is_initial_not_null",
+            "NOT NULL is_initial"
+          ],
+          [
+            "routing_car_states_pkey",
+            "PRIMARY KEY (id)"
+          ],
+          [
+            "routing_car_states_source_node_fkey",
+            "FOREIGN KEY (source_node) REFERENCES routing_nodes(id)"
+          ],
+          [
+            "routing_car_states_source_node_not_null",
+            "NOT NULL source_node"
+          ],
+          [
+            "routing_car_states_target_node_fkey",
+            "FOREIGN KEY (target_node) REFERENCES routing_nodes(id)"
+          ],
+          [
+            "routing_car_states_target_node_not_null",
+            "NOT NULL target_node"
+          ]
+        ],
+        "indexes": [
+          [
+            "routing_car_states_edge_id_direction_context_id_key",
+            "CREATE UNIQUE INDEX routing_car_states_edge_id_direction_context_id_key ON public.routing_car_states USING btree (edge_id, direction, context_id)"
+          ],
+          [
+            "routing_car_states_pkey",
+            "CREATE UNIQUE INDEX routing_car_states_pkey ON public.routing_car_states USING btree (id)"
+          ]
+        ],
+        "sequence": null
+      },
+      "copy_sha256": "c911f7c8e754ff51eecc1e75ca1cde4aa7b6cca4970fcb2b0574421f9293f7e2",
+      "sha256": "44be37594f5a97290ea20c5ea712234443d3fafb9eb8a30c398f25ec1003307f",
+      "bytes": 567658
+    },
+    "routing_car_transitions": {
+      "file": "routing_car_transitions.copy.gz",
+      "rows": 140999,
+      "schema": {
+        "columns": [
+          [
+            "id",
+            "bigint",
+            true,
+            "",
+            "",
+            null
+          ],
+          [
+            "source",
+            "bigint",
+            true,
+            "",
+            "",
+            null
+          ],
+          [
+            "target",
+            "bigint",
+            true,
+            "",
+            "",
+            null
+          ],
+          [
+            "edge_id",
+            "bigint",
+            true,
+            "",
+            "",
+            null
+          ],
+          [
+            "direction",
+            "character varying(7)",
+            true,
+            "",
+            "",
+            null
+          ],
+          [
+            "cost",
+            "double precision",
+            true,
+            "",
+            "",
+            null
+          ]
+        ],
+        "constraints": [
+          [
+            "routing_car_transitions_cost_check",
+            "CHECK ((cost >= (0)::double precision))"
+          ],
+          [
+            "routing_car_transitions_cost_not_null",
+            "NOT NULL cost"
+          ],
+          [
+            "routing_car_transitions_direction_not_null",
+            "NOT NULL direction"
+          ],
+          [
+            "routing_car_transitions_edge_id_fkey",
+            "FOREIGN KEY (edge_id) REFERENCES routing_edges(id)"
+          ],
+          [
+            "routing_car_transitions_edge_id_not_null",
+            "NOT NULL edge_id"
+          ],
+          [
+            "routing_car_transitions_id_not_null",
+            "NOT NULL id"
+          ],
+          [
+            "routing_car_transitions_pkey",
+            "PRIMARY KEY (id)"
+          ],
+          [
+            "routing_car_transitions_source_fkey",
+            "FOREIGN KEY (source) REFERENCES routing_car_states(id)"
+          ],
+          [
+            "routing_car_transitions_source_not_null",
+            "NOT NULL source"
+          ],
+          [
+            "routing_car_transitions_target_fkey",
+            "FOREIGN KEY (target) REFERENCES routing_car_states(id)"
+          ],
+          [
+            "routing_car_transitions_target_not_null",
+            "NOT NULL target"
+          ]
+        ],
+        "indexes": [
+          [
+            "routing_car_transitions_edge_direction_idx",
+            "CREATE INDEX routing_car_transitions_edge_direction_idx ON public.routing_car_transitions USING btree (edge_id, direction)"
+          ],
+          [
+            "routing_car_transitions_pkey",
+            "CREATE UNIQUE INDEX routing_car_transitions_pkey ON public.routing_car_transitions USING btree (id)"
+          ]
+        ],
+        "sequence": null
+      },
+      "copy_sha256": "eed2b885038e85a34e715bc9f2a91d3c3a64ea8b63b54ead34bcb9a2da6d7f6b",
+      "sha256": "4a4c4a9682b8a4ed5e961b09a1255b90852545294e94dc002b3abea4fcdb0886",
+      "bytes": 1772114
+    }
+  },
+  "postgres_major": 18,
+  "extensions": {
+    "postgis": "3.6.2",
+    "pgrouting": "4.0.1"
+  }
+}

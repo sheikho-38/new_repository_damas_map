@@ -13,6 +13,7 @@ data/*places*.json
 data/samples/
 *.dump
 *.sql
+!places/seed_data/routing/schema.sql
 
 # One-off scripts and temporary tools (keep local, do not push to git)
 *.bak

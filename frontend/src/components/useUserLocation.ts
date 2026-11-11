@@ -5,9 +5,10 @@ import { Marker, type Map as MapLibreMap } from 'maplibre-gl';
 
 export type UserLocation = { lat: number; lon: number; accuracy: number; timestamp: number };
 export type LocationStatus = 'idle' | 'loading' | 'live' | 'stale' | 'denied' | 'unavailable';
-const OPTIONS: PositionOptions = { enableHighAccuracy: true, maximumAge: 5000, timeout: 12000 };
+const OPTIONS: PositionOptions = { enableHighAccuracy: true, maximumAge: 5000, timeout: 30000 };
 const FRESH_MS = 15000;
 const MAX_ACCURACY = 150;
+type WaitingLocation = { resolve: (value: UserLocation) => void; reject: (error: Error) => void; timer: number };
 
 function errorMessage(error: GeolocationPositionError) {
   if (error.code === 1) return 'تم رفض إذن الموقع. فعّله من إعدادات المتصفح ثم أعد المحاولة.';
@@ -25,6 +26,7 @@ export function useUserLocation(map: MapLibreMap | null) {
   const latest = useRef<UserLocation | null>(null);
   const marker = useRef<Marker | null>(null);
   const following = useRef(false);
+  const waiting = useRef(new Set<WaitingLocation>());
 
   const updateMarker = useCallback((value: UserLocation, stale = false) => {
     if (!map) return;
@@ -45,7 +47,18 @@ export function useUserLocation(map: MapLibreMap | null) {
   const acceptPosition = useCallback((position: GeolocationPosition) => {
     const value = { lat: position.coords.latitude, lon: position.coords.longitude,
       accuracy: position.coords.accuracy, timestamp: position.timestamp || Date.now() };
-    latest.current = value; setLocation(value); setStatus('live'); setMessage(''); updateMarker(value);
+    latest.current = value; setLocation(value);
+    if (value.accuracy > MAX_ACCURACY) {
+      setStatus('stale'); setMessage('دقة الموقع الحالية غير كافية؛ ننتظر تحديثًا أدق.');
+      updateMarker(value, true);
+      return;
+    }
+    setStatus('live'); setMessage(''); updateMarker(value);
+    for (const request of waiting.current) {
+      window.clearTimeout(request.timer);
+      request.resolve(value);
+    }
+    waiting.current.clear();
     if (following.current && map) map.easeTo({ center: [value.lon, value.lat] });
   }, [map, updateMarker]);
 
@@ -53,8 +66,14 @@ export function useUserLocation(map: MapLibreMap | null) {
     setMessage(errorMessage(error));
     if (error.code === 1) {
       setStatus('denied'); setTrackingEnabled(false);
+      following.current = false; setCameraFollowing(false);
       if (watchId.current !== null) navigator.geolocation.clearWatch(watchId.current);
       watchId.current = null;
+      for (const request of waiting.current) {
+        window.clearTimeout(request.timer);
+        request.reject(new Error(errorMessage(error)));
+      }
+      waiting.current.clear();
     } else {
       setStatus(latest.current ? 'stale' : 'unavailable');
       if (latest.current) updateMarker(latest.current, true);
@@ -67,26 +86,37 @@ export function useUserLocation(map: MapLibreMap | null) {
     watchId.current = navigator.geolocation.watchPosition(acceptPosition, handleError, OPTIONS);
   }, [acceptPosition, handleError]);
 
+  useEffect(() => {
+    if (!map) return;
+    if (!window.isSecureContext || !navigator.geolocation) return;
+    startWatch();
+  }, [map, startWatch]);
+
   const requestFreshPosition = useCallback(() => new Promise<UserLocation>((resolve, reject) => {
     if (!window.isSecureContext || !navigator.geolocation) {
       const error = new Error('تحديد الموقع يحتاج اتصال HTTPS ومتصفحًا يدعم GPS.');
       setMessage(error.message); setStatus('unavailable'); reject(error); return;
     }
+    startWatch();
     const current = latest.current;
     if (current && Date.now() - current.timestamp <= FRESH_MS && current.accuracy <= MAX_ACCURACY) {
       resolve(current); return;
     }
-    setStatus('loading'); startWatch();
-    navigator.geolocation.getCurrentPosition(position => {
-      acceptPosition(position);
-      const value = latest.current!;
-      if (value.accuracy > MAX_ACCURACY) {
-        const error = new Error('دقة الموقع الحالية غير كافية لحساب المسار. حاول مجددًا في مكان ذي إشارة أفضل.');
-        setStatus('stale'); setMessage(error.message); updateMarker(value, true); reject(error); return;
-      }
-      resolve(value);
-    }, error => { handleError(error); reject(new Error(errorMessage(error))); }, OPTIONS);
-  }), [acceptPosition, handleError, startWatch, updateMarker]);
+    setStatus('loading');
+    const request: WaitingLocation = { resolve, reject, timer: 0 };
+    request.timer = window.setTimeout(() => {
+      waiting.current.delete(request);
+      const error = new Error('لم يصل تحديث دقيق للموقع خلال 30 ثانية. ستستمر متابعة الموقع تلقائيًا.');
+      setStatus(latest.current ? 'stale' : 'unavailable');
+      setMessage(error.message);
+      reject(error);
+    }, 30000);
+    waiting.current.add(request);
+    // The watch may stay silent while the device is stationary.
+    navigator.geolocation.getCurrentPosition(acceptPosition, error => {
+      if (error.code === 1) handleError(error);
+    }, OPTIONS);
+  }), [acceptPosition, handleError, startWatch]);
 
   const locateAndFollow = useCallback(async () => {
     following.current = true; setCameraFollowing(true);
@@ -103,16 +133,23 @@ export function useUserLocation(map: MapLibreMap | null) {
     const onVisibility = () => {
       if (document.visibilityState === 'visible' && watchId.current !== null && latest.current &&
           Date.now() - latest.current.timestamp > FRESH_MS) {
-        navigator.geolocation.getCurrentPosition(acceptPosition, handleError, OPTIONS);
+        void requestFreshPosition().catch(() => undefined);
       }
     };
     document.addEventListener('visibilitychange', onVisibility);
     return () => { window.clearInterval(timer); document.removeEventListener('visibilitychange', onVisibility); };
-  }, [acceptPosition, handleError, updateMarker]);
+  }, [requestFreshPosition, updateMarker]);
 
   useEffect(() => () => {
     if (watchId.current !== null) navigator.geolocation.clearWatch(watchId.current);
+    watchId.current = null;
+    for (const request of waiting.current) {
+      window.clearTimeout(request.timer);
+      request.reject(new Error('تم إيقاف متابعة الموقع.'));
+    }
+    waiting.current.clear();
     marker.current?.remove();
+    marker.current = null;
   }, []);
 
   return { location, status, message, trackingEnabled, cameraFollowing,

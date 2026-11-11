@@ -50,7 +50,7 @@ class Command(BaseCommand):
                     'location_text': entry.get('address', ''),
                     'opening_hours': {'hours': entry['hours']} if entry.get('hours') else {},
                     'description': '\n'.join(part for part in description if part),
-                    'sector': 'Public', 'is_visible': True, 'is_verified': True,
+                    'sector': '', 'is_visible': True, 'is_verified': True,
                 },
             )
             save_contact_values(place, phone=entry.get('phones', ''), email=entry.get('email', ''))

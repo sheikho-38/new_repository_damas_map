@@ -28,7 +28,7 @@ class Command(BaseCommand):
                     'latitude': lat, 'longitude': lon,
                     'location_text': entry['name'],
                     'description': 'موقع مقترح لتخصيصه مكباً للأنقاض والردم وفق كتاب محافظة دمشق لعام 2026.',
-                    'sector': 'Public', 'is_verified': True, 'is_visible': True,
+                    'sector': '', 'is_verified': True, 'is_visible': True,
                 },
             )
             created += is_new

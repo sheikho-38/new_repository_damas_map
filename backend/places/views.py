@@ -675,8 +675,11 @@ def calculate_route(request):
         return JsonResponse({"error": "يرجى تزويد إحداثيات البداية والنهاية بشكل صحيح"}, status=400)
 
     mode = request.GET.get('mode', 'transit').lower()
+    routing_engine = request.GET.get('engine', settings.ROUTING_ENGINE).lower()
+    if routing_engine not in ('brouter', 'database'):
+        return JsonResponse({'error': 'Invalid routing engine', 'code': 'invalid_engine'}, status=400)
     database_route = None
-    if settings.ROUTING_ENGINE == 'database' and mode in ('car', 'walk'):
+    if routing_engine == 'database' and mode in ('car', 'walk'):
         from .database_routing_service import calculate_database_route, DatabaseRoutingError
 
         try:
@@ -693,7 +696,7 @@ def calculate_route(request):
 
     if mode == 'car':
         try:
-            route = database_route if settings.ROUTING_ENGINE == 'database' else calculate_car_route(
+            route = database_route if routing_engine == 'database' else calculate_car_route(
                 [{'lon': start_lon, 'lat': start_lat}, {'lon': end_lon, 'lat': end_lat}],
                 enforce_damascus=True,
             )
@@ -717,7 +720,7 @@ def calculate_route(request):
     # 1. وضع المواصلات العامة (Transit)
     if mode == 'transit':
         from .database_routing_service import DatabaseRoutingError
-        if settings.ROUTING_ENGINE == 'database':
+        if routing_engine == 'database':
             from .database_transit_routing_service import calculate_database_transit_route
             calculate_transit = calculate_database_transit_route
         else:
@@ -829,7 +832,7 @@ def calculate_route(request):
 
     # 3. وضع المشي على الأقدام (Walk)
     try:
-        route = database_route if settings.ROUTING_ENGINE == 'database' else calculate_walking_route(
+        route = database_route if routing_engine == 'database' else calculate_walking_route(
             [{'lon': start_lon, 'lat': start_lat}, {'lon': end_lon, 'lat': end_lat}],
         )
     except RoutingError as exc:

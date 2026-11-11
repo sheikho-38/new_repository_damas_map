@@ -55,6 +55,7 @@ export async function fetchRoutingResult(
   const query = new URLSearchParams({
     start_lat: String(origin.lat), start_lon: String(origin.lon),
     end_lat: String(destination.lat), end_lon: String(destination.lon), mode,
+    engine: 'database',
   });
   const response = await fetch(`${apiBaseUrl}/routing/?${query}`, { signal });
   const data = await response.json();

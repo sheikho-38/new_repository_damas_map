@@ -44,7 +44,8 @@ class Command(BaseCommand):
                     'description': description,
                     'opening_hours': {'hours': entry['operational_status']}
                     if entry['operational_status'] else {},
-                    'sector': {'حكومي': 'Public', 'خاص': 'private'}.get(ownership, ''),
+                    'sector': '' if entry['type'] == 'بنك دم'
+                    else {'حكومي': 'Public', 'خاص': 'private'}.get(ownership, ''),
                 },
             )
             save_contact_values(place, phone=entry['phone'])
