@@ -1,12 +1,21 @@
 {
   "format": "postgres-binary-copy-gzip-v1",
+<<<<<<< HEAD
   "data_version": "20261110T112832Z",
   "created_at_utc": "2026-11-10T11:28:32.767165+00:00",
+=======
+  "data_version": "20261111T162357Z",
+  "created_at_utc": "2026-11-11T16:23:57.587271+00:00",
+>>>>>>> new_guide
   "schema_sha256": "a84776f4b6f9e95e2df14e0b6d6da66f099aeea67129f532b501c3aa8aaf1aca",
   "tables": {
     "buses": {
       "file": "buses.copy.gz",
+<<<<<<< HEAD
       "rows": 6,
+=======
+      "rows": 1,
+>>>>>>> new_guide
       "schema": {
         "columns": [
           [
@@ -103,6 +112,7 @@
           false
         ]
       },
+<<<<<<< HEAD
       "copy_sha256": "fa154d2fbcea420729a9291f0fe5a193c6dcf5460d4abd5faf1bf27c13b56332",
       "sha256": "5bedc1521873d29736eb2c1fb53a7309e08fc803cb416494e90b54643cabbbc7",
       "bytes": 203
@@ -110,6 +120,15 @@
     "bus_routes": {
       "file": "bus_routes.copy.gz",
       "rows": 8,
+=======
+      "copy_sha256": "85233c3881eaa1202132b44f9741d285ba106c76bc42de67f7ed60cd288593af",
+      "sha256": "a689386286412f780a953a9e6cbde010c9fd167f53838478bdba3bce94ec53fa",
+      "bytes": 112
+    },
+    "bus_routes": {
+      "file": "bus_routes.copy.gz",
+      "rows": 2,
+>>>>>>> new_guide
       "schema": {
         "columns": [
           [
@@ -294,6 +313,7 @@
           false
         ]
       },
+<<<<<<< HEAD
       "copy_sha256": "d6d73b4e9098995fae247ce008caab29b24d64307f322a5a680be7254497a6d6",
       "sha256": "4477cbf905b47e437bd610af007a933b461c2a66d8ad6f804333232b7ba6742a",
       "bytes": 7290
@@ -301,6 +321,15 @@
     "routing_nodes": {
       "file": "routing_nodes.copy.gz",
       "rows": 25494,
+=======
+      "copy_sha256": "5166f78226ace9ee5d8842a7c1d14c1691ca7010ca691b53e5fda7115cf347dd",
+      "sha256": "ac8b8c2a6340d6a0ed26ffde5c825053b8344fbd33164166fd9a73a8335e760a",
+      "bytes": 4364
+    },
+    "routing_nodes": {
+      "file": "routing_nodes.copy.gz",
+      "rows": 0,
+>>>>>>> new_guide
       "schema": {
         "columns": [
           [
@@ -339,7 +368,11 @@
           ],
           [
             "routing_nodes_node_type_check",
+<<<<<<< HEAD
             "CHECK (((node_type)::text = ANY ((ARRAY['road'::character varying, 'bus'::character varying])::text[])))"
+=======
+            "CHECK (((node_type)::text = ANY (ARRAY[('road'::character varying)::text, ('bus'::character varying)::text])))"
+>>>>>>> new_guide
           ],
           [
             "routing_nodes_node_type_not_null",
@@ -369,6 +402,7 @@
           false
         ]
       },
+<<<<<<< HEAD
       "copy_sha256": "4ee2df5eb22b29d1ba513794177a86f2329c7d514bf2af1d4099cde5d435cf61",
       "sha256": "ff96eb79a19e0581da534c0d10575069b9588af0d810ffb79bebac1ed51c9218",
       "bytes": 422368
@@ -376,6 +410,15 @@
     "routing_edges": {
       "file": "routing_edges.copy.gz",
       "rows": 63445,
+=======
+      "copy_sha256": "62a74fd0e2d1e3a59b88b5b71c06ca8d43662c6787430c516b8e0bc28bbbda02",
+      "sha256": "29dcb23d3a6f914d49740472630a601ea05cd8ddf1df63a2bbb9817384048e92",
+      "bytes": 61
+    },
+    "routing_edges": {
+      "file": "routing_edges.copy.gz",
+      "rows": 0,
+>>>>>>> new_guide
       "schema": {
         "columns": [
           [
@@ -474,7 +517,11 @@
           ],
           [
             "routing_edges_edge_type_check",
+<<<<<<< HEAD
             "CHECK (((edge_type)::text = ANY ((ARRAY['walk'::character varying, 'car'::character varying, 'bus'::character varying, 'transfer'::character varying, 'board'::character varying, 'alight'::character varying])::text[])))"
+=======
+            "CHECK (((edge_type)::text = ANY (ARRAY[('walk'::character varying)::text, ('car'::character varying)::text, ('bus'::character varying)::text, ('transfer'::character varying)::text, ('board'::character varying)::text, ('alight'::character varying)::text])))"
+>>>>>>> new_guide
           ],
           [
             "routing_edges_edge_type_not_null",
@@ -560,9 +607,15 @@
           false
         ]
       },
+<<<<<<< HEAD
       "copy_sha256": "ca17472eb60f7e724cee0ce5e312a65f003b552a432a1fdd5f2817eefb09a695",
       "sha256": "14c107f5351905c39a6c55bd8892d6a3ea6d26a0e8ad142e775562d7c63561ec",
       "bytes": 3911335
+=======
+      "copy_sha256": "62a74fd0e2d1e3a59b88b5b71c06ca8d43662c6787430c516b8e0bc28bbbda02",
+      "sha256": "4f68eef2d1edd83e39b0ddb505150326237483fb172b24ee28565517475dfe13",
+      "bytes": 61
+>>>>>>> new_guide
     },
     "routing_boarding_points": {
       "file": "routing_boarding_points.copy.gz",
@@ -709,7 +762,11 @@
     },
     "routing_turn_restrictions": {
       "file": "routing_turn_restrictions.copy.gz",
+<<<<<<< HEAD
       "rows": 76,
+=======
+      "rows": 0,
+>>>>>>> new_guide
       "schema": {
         "columns": [
           [
@@ -822,6 +879,7 @@
           false
         ]
       },
+<<<<<<< HEAD
       "copy_sha256": "51f903e09f7ff4a6feccd5662572be882102d4d681f2863355cd14332393dd7e",
       "sha256": "1c5670de0675ca92da4f685defd080df1af27122f6d2d40493df87948115fc02",
       "bytes": 4410
@@ -829,6 +887,15 @@
     "routing_car_states": {
       "file": "routing_car_states.copy.gz",
       "rows": 53518,
+=======
+      "copy_sha256": "62a74fd0e2d1e3a59b88b5b71c06ca8d43662c6787430c516b8e0bc28bbbda02",
+      "sha256": "b4937a897cf98346f8f43acd39ebbcfe76fbc0469a6db646056f491f33fbe025",
+      "bytes": 73
+    },
+    "routing_car_states": {
+      "file": "routing_car_states.copy.gz",
+      "rows": 0,
+>>>>>>> new_guide
       "schema": {
         "columns": [
           [
@@ -950,6 +1017,7 @@
         ],
         "sequence": null
       },
+<<<<<<< HEAD
       "copy_sha256": "c911f7c8e754ff51eecc1e75ca1cde4aa7b6cca4970fcb2b0574421f9293f7e2",
       "sha256": "44be37594f5a97290ea20c5ea712234443d3fafb9eb8a30c398f25ec1003307f",
       "bytes": 567658
@@ -957,6 +1025,15 @@
     "routing_car_transitions": {
       "file": "routing_car_transitions.copy.gz",
       "rows": 140999,
+=======
+      "copy_sha256": "62a74fd0e2d1e3a59b88b5b71c06ca8d43662c6787430c516b8e0bc28bbbda02",
+      "sha256": "427d8e4e390e3fadb15d3bacc69d6b8b1a7d63584932f02b6aaac3774d7bacd6",
+      "bytes": 66
+    },
+    "routing_car_transitions": {
+      "file": "routing_car_transitions.copy.gz",
+      "rows": 0,
+>>>>>>> new_guide
       "schema": {
         "columns": [
           [
@@ -1066,9 +1143,15 @@
         ],
         "sequence": null
       },
+<<<<<<< HEAD
       "copy_sha256": "eed2b885038e85a34e715bc9f2a91d3c3a64ea8b63b54ead34bcb9a2da6d7f6b",
       "sha256": "4a4c4a9682b8a4ed5e961b09a1255b90852545294e94dc002b3abea4fcdb0886",
       "bytes": 1772114
+=======
+      "copy_sha256": "62a74fd0e2d1e3a59b88b5b71c06ca8d43662c6787430c516b8e0bc28bbbda02",
+      "sha256": "e4416f7c8a69d533c9c80efa3072e69f9d0fd17a6cf424331a3f23563639ba69",
+      "bytes": 71
+>>>>>>> new_guide
     }
   },
   "postgres_major": 18,

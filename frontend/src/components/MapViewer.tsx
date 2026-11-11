@@ -2453,17 +2453,7 @@ export default function MapViewer({
           false,
         ],
       ];
-      const busLegs = result.route_legs?.filter(
-        (leg) => leg.mode === "bus" && leg.boarding && leg.alighting,
-      );
-      if (result.recommended_mode === "transit" && busLegs?.length) {
-        busLegs.forEach((leg) =>
-          points.push(
-            [leg.boarding!, "#D99432", "صعود", true],
-            [leg.alighting!, "#2684C7", "نزول", true],
-          ),
-        );
-      } else if (
+      if (
         result.recommended_mode === "transit" &&
         result.boarding &&
         result.alighting
@@ -2663,10 +2653,11 @@ export default function MapViewer({
         </div>
       </header>
 
-      <a
-        href="https://dec.damascus.gov.sy/portal"
-        aria-label="الرئيسية"
-        title="الرئيسية"
+      <button
+        type="button"
+        disabled
+        aria-label="الرجوع — غير متاح حالياً"
+        title="الرجوع — غير متاح حالياً"
         className="map-header-back"
       >
         <ArrowLeft className="w-5 h-5" />

@@ -135,10 +135,10 @@ USE_POSTGRES = os.environ.get('USE_POSTGRES', 'true').lower() in ('true', '1', '
 if USE_POSTGRES:
     DATABASES = {
         'default': {
-            'ENGINE': 'django.contrib.gis.db.backends.postgis',
-            'NAME': os.environ.get('DB_NAME', 'test2'),
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': os.environ.get('DB_NAME', 'damascus_guide_db'),
             'USER': os.environ.get('DB_USER', 'postgres'),
-            'PASSWORD': os.environ.get('DB_PASSWORD', '12345678'),
+            'PASSWORD': os.environ.get('DB_PASSWORD', 'postgres'),
             'HOST': os.environ.get('DB_HOST', 'localhost'),
             'PORT': os.environ.get('DB_PORT', '5432'),
         }
