@@ -35,7 +35,7 @@ class Command(BaseCommand):
                     'latitude': lat, 'longitude': lon,
                     'description': '\n'.join(details),
                     'opening_hours': {'hours': '؛ '.join(entry['hours'])},
-                    'sector': 'Public', 'is_verified': True, 'is_visible': True,
+                    'sector': '', 'is_verified': True, 'is_visible': True,
                 },
             )
             save_contact_values(place, phone=' / '.join(entry['phones']), email=entry['email'])

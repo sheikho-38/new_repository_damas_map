@@ -2,6 +2,7 @@
   {
     "source_row": 2,
     "name": "الشام الجديدة",
+    "sector": "",
     "address": "مشروع دمر الجزيرة الثالثة مقابل جامع التقوى",
     "mobile": "0932964056",
     "plus_code": "G6MM+36V",
@@ -13,6 +14,7 @@
   {
     "source_row": 3,
     "name": "كفرسوسة",
+    "sector": "",
     "address": "كفرسوسة مجمع دوائر الخدمات ط 3",
     "mobile": "0932988093",
     "plus_code": "G72G+6RP",
@@ -24,6 +26,7 @@
   {
     "source_row": 4,
     "name": "ساروجة",
+    "sector": "",
     "address": "العدوي مقابل مشفى الحياة",
     "mobile": "0944346362",
     "plus_code": "G8F2+WRP",
@@ -35,6 +38,7 @@
   {
     "source_row": 5,
     "name": "القابون",
+    "sector": null,
     "address": "القابون خلف كلية الشرطة جانب مقسم الهاتف",
     "mobile": "0932721515",
     "plus_code": "G8VJ+637",
@@ -46,6 +50,7 @@
   {
     "source_row": 6,
     "name": "برزة",
+    "sector": null,
     "address": "مساكن برزة جانب مركز خدمة المواطن",
     "mobile": "0948907783",
     "plus_code": "G8XF+4CJ",
@@ -57,6 +62,7 @@
   {
     "source_row": 7,
     "name": "المزة",
+    "sector": null,
     "address": "مزة جبل شارع عمر الخيام جانب مخفر الغربية",
     "mobile": "0944215819",
     "plus_code": "G732+XP7",
@@ -68,6 +74,7 @@
   {
     "source_row": 8,
     "name": "حوش بلاس",
+    "sector": null,
     "address": "اتستراد درعا مقابل أفران شمسين جانب مديرية زراعة ريف دمشق",
     "mobile": "0994340937",
     "plus_code": "C7V9+P6F",
@@ -79,6 +86,7 @@
   {
     "source_row": 9,
     "name": "المهاجرين",
+    "sector": null,
     "address": "الجسر الأبيض بناء مركز خدمة المواطن",
     "mobile": "0944398090",
     "plus_code": "G7GQ+7Q9",
@@ -90,6 +98,7 @@
   {
     "source_row": 10,
     "name": "القدم",
+    "sector": null,
     "address": "القدم شارع عمان جانب قسم شرطة القدم",
     "mobile": "0996252723",
     "plus_code": "F7CP+VW8",
@@ -170,11 +179,13 @@
     "coordinates": [
       33.4738625,
       36.3097031
-    ]
+    ],
+    "sector": null
   },
   {
     "source_row": 18,
     "name": "دمر",
+    "sector": null,
     "address": "دمر مقابل حديقة دمر",
     "mobile": "0956346199",
     "plus_code": "G6RQ+4P9",
@@ -186,6 +197,7 @@
   {
     "source_row": 19,
     "name": "ركن الدين",
+    "sector": null,
     "address": "شرقي ركن الدين بناء الهجرة والجوازات المدخل الاول طابق ثاتي",
     "mobile": "0988913321",
     "plus_code": "G8Q3+CFG",

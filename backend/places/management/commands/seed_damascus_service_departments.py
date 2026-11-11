@@ -33,7 +33,8 @@ class Command(BaseCommand):
                 defaults={
                     'latitude': lat, 'longitude': lon,
                     'location_text': f"{entry['address']} - {entry['plus_code']}",
-                    'sector': 'Public', 'is_verified': True, 'is_visible': True,
+                    'sector': entry.get('sector') or '',
+                    'is_verified': True, 'is_visible': True,
                 },
             )
             save_contact_values(place, mobile=entry['mobile'])

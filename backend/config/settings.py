@@ -47,7 +47,7 @@ TRANSIT_TRANSFER_PENALTY_SECONDS = float(os.environ.get('TRANSIT_TRANSFER_PENALT
 TRANSIT_MAX_RIDE_DETOUR_RATIO = float(os.environ.get('TRANSIT_MAX_RIDE_DETOUR_RATIO', '4'))
 TRANSIT_BOARDING_SPACING_METRES = float(os.environ.get('TRANSIT_BOARDING_SPACING_METRES', '250'))
 TRANSIT_MAX_BOARDING_SNAP_METRES = float(os.environ.get('TRANSIT_MAX_BOARDING_SNAP_METRES', '2'))
-TRANSIT_MAX_USER_SNAP_METRES = float(os.environ.get('TRANSIT_MAX_USER_SNAP_METRES', '20'))
+TRANSIT_MAX_USER_SNAP_METRES = float(os.environ.get('TRANSIT_MAX_USER_SNAP_METRES', '30'))
 TRANSIT_MAX_ACCESS_WALK_METRES = float(os.environ.get('TRANSIT_MAX_ACCESS_WALK_METRES', '1800'))
 TRANSIT_TRANSFER_CROW_METRES = float(os.environ.get('TRANSIT_TRANSFER_CROW_METRES', '200'))
 TRANSIT_MAX_TRANSFER_WALK_METRES = float(os.environ.get('TRANSIT_MAX_TRANSFER_WALK_METRES', '600'))
@@ -136,9 +136,9 @@ if USE_POSTGRES:
     DATABASES = {
         'default': {
             'ENGINE': 'django.contrib.gis.db.backends.postgis',
-            'NAME': os.environ.get('DB_NAME', 'damascus_guide_db'),
+            'NAME': os.environ.get('DB_NAME', 'test'),
             'USER': os.environ.get('DB_USER', 'postgres'),
-            'PASSWORD': os.environ.get('DB_PASSWORD', '12345678'),
+            'PASSWORD': os.environ.get('DB_PASSWORD', 'postgres'),
             'HOST': os.environ.get('DB_HOST', 'localhost'),
             'PORT': os.environ.get('DB_PORT', '5432'),
         }

@@ -29,7 +29,7 @@ class Command(BaseCommand):
                     'latitude': lat,
                     'longitude': lon,
                     'description': f"{entry['services']}\nرابط الموقع: {entry['map_url']}",
-                    'sector': 'Public',
+                    'sector': '',
                     'is_verified': True,
                     'is_visible': True,
                 },

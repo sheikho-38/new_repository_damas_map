@@ -39,7 +39,7 @@ class Command(BaseCommand):
                     'description': '\n'.join(part for part in details if part),
                     'opening_hours': {'hours': entry['contact'].split('أوقات الدوام:', 1)[1].strip()}
                     if 'أوقات الدوام:' in entry['contact'] else {},
-                    'sector': 'Public',
+                    'sector': '',
                     'is_verified': True,
                     'is_visible': True,
                 },
