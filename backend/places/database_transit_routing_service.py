@@ -9,6 +9,7 @@ from django.db import connection
 
 from .database_routing_service import DatabaseRoutingError, calculate_database_route
 from .models import BusRoute
+from .routing_cache import cached_routing
 from .transit_routing_service import _cumulative, _distance, _feature, _walk_leg
 
 
@@ -46,6 +47,13 @@ def _routes():
 
 
 def _boarding_candidates(routes):
+    key = ('boarding', tuple((rid, tuple(map(tuple, coords)))
+                            for rid, (_, coords, _) in routes.items()),
+           settings.TRANSIT_MAX_BOARDING_SNAP_METRES, settings.TRANSIT_BOARDING_SPACING_METRES)
+    return cached_routing(key, lambda: _build_boarding_candidates(routes))
+
+
+def _build_boarding_candidates(routes):
     # A route vertex is only a proposed boarding site when it nearly coincides
     # with a walkable edge. It is not a verified stop or a street crossing.
     points = [{'route_id': rid, 'idx': i, 'lon': p[0], 'lat': p[1]}

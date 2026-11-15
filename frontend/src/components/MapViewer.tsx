@@ -80,7 +80,7 @@ const DEFAULT_CENTER: [number, number] = [36.273, 33.512]; // المركز ال�
 const DEFAULT_ZOOM = 11.2; // مستوى التقريب الأولي لكشف دمشق كاملة ببلدياتها الـ 16
 const DAMASCUS_OVERVIEW_CENTER: [number, number] = [36.273, 33.512];
 const DAMASCUS_OVERVIEW_ZOOM = 11.2;
-const THREE_D_VIDEO_URL = process.env.NEXT_PUBLIC_THREE_D_VIDEO_URL?.trim();
+const THREE_D_VIDEO_URL = "https://youtu.be/LDo_ec-INyQ?si=NyE6a-28GdyKHIvJ";
 
 export default function MapViewer({
   initialCenter = DEFAULT_CENTER,
@@ -2439,39 +2439,46 @@ export default function MapViewer({
     routingMarkersRef.current = [];
     const Marker = maplibreglRef.current?.Marker;
     if (Marker && result?.start && result?.end) {
-      const points: Array<[number[], string, string, boolean]> = [
+      const points: Array<[number[], string, string, 'top' | 'bottom' | null, string?]> = [
         [
           [result.start.longitude, result.start.latitude],
           "#16a34a",
           "البداية",
-          false,
+          null,
         ],
         [
           [result.end.longitude, result.end.latitude],
           "#dc2626",
           "الوجهة",
-          false,
+          null,
         ],
       ];
-      if (
-        result.recommended_mode === "transit" &&
-        result.boarding &&
-        result.alighting
-      ) {
-        points.push(
-          [result.boarding, "#D99432", "صعود", true],
-          [result.alighting, "#2684C7", "نزول", true],
-        );
+      if (result.recommended_mode === "transit") {
+        const busLegs = result.route_legs?.filter(leg => leg.mode === 'bus');
+        const stops = busLegs?.length ? busLegs : [result];
+        stops.forEach(leg => {
+          if (leg.boarding) points.push(
+            [leg.boarding, '#D99432', 'صعود', 'top', leg.line_name],
+          );
+          if (leg.alighting) points.push(
+            [leg.alighting, '#2684C7', 'نزول', 'bottom', leg.line_name],
+          );
+        });
       }
-      points.forEach(([coordinates, color, title, labelled]) => {
+      points.forEach(([coordinates, color, title, side, lineName]) => {
         const element = document.createElement("div");
-        element.title = title;
-        element.textContent = labelled ? title : "";
-        element.style.cssText = labelled
-          ? `padding:3px 7px;border-radius:10px;background:${color};color:white;border:2px solid white;font:700 11px sans-serif;box-shadow:0 1px 5px #0008`
+        element.title = lineName ? `${title}: ${lineName}` : title;
+        element.setAttribute('aria-label', element.title);
+        element.textContent = side ? title : '';
+        element.style.cssText = side
+          ? `padding:2px 6px;border-radius:7px;background:${color};color:white;border:1px solid white;font:700 11px/16px sans-serif;white-space:nowrap;box-shadow:0 1px 3px #0005`
           : `width:16px;height:16px;border-radius:50%;background:${color};border:3px solid white;box-shadow:0 1px 5px #0008`;
         routingMarkersRef.current.push(
-          new Marker({ element }).setLngLat(coordinates).addTo(map),
+          new Marker({
+            element,
+            anchor: side === 'top' ? 'bottom' : side === 'bottom' ? 'top' : 'center',
+            offset: [0, side === 'top' ? -4 : side === 'bottom' ? 4 : 0],
+          }).setLngLat(coordinates).addTo(map),
         );
       });
     }

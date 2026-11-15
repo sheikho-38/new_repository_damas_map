@@ -38,8 +38,11 @@ def schema_of(cursor, name):
                           .replace("'::character varying)::text, ('", "'::character varying, '")
                           .replace("'::character varying)::text])))", "'::character varying])::text[])))"))
         constraints.append([constraint_name, definition])
+    # Migration 0006 owns the performance index; it is not part of the seed schema.
     cursor.execute("""SELECT indexname, indexdef FROM pg_indexes
-                      WHERE schemaname = 'public' AND tablename = %s ORDER BY indexname""", (name,))
+                      WHERE schemaname = 'public' AND tablename = %s
+                        AND indexname <> 'routing_edges_geography_gix'
+                      ORDER BY indexname""", (name,))
     indexes = [list(row) for row in cursor.fetchall()]
     cursor.execute('SELECT pg_get_serial_sequence(%s, %s)', (f'public.{name}', 'id'))
     sequence = cursor.fetchone()[0]

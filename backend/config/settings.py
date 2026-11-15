@@ -138,7 +138,7 @@ if USE_POSTGRES:
             'ENGINE': 'django.db.backends.postgresql',
             'NAME': os.environ.get('DB_NAME', 'damascus_guide_db'),
             'USER': os.environ.get('DB_USER', 'postgres'),
-            'PASSWORD': os.environ.get('DB_PASSWORD', 'postgres'),
+            'PASSWORD': os.environ.get('DB_PASSWORD', '12345678'),
             'HOST': os.environ.get('DB_HOST', 'localhost'),
             'PORT': os.environ.get('DB_PORT', '5432'),
         }

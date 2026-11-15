@@ -31,8 +31,11 @@ def table_schema(cursor, name):
     cursor.execute("""SELECT conname, pg_get_constraintdef(oid)
                       FROM pg_constraint WHERE conrelid = %s::regclass ORDER BY conname""", (f'public.{name}',))
     constraints = cursor.fetchall()
+    # Migration 0006 owns the performance index; keep exports compatible with the seed schema.
     cursor.execute("""SELECT indexname, indexdef FROM pg_indexes
-                      WHERE schemaname = 'public' AND tablename = %s ORDER BY indexname""", (name,))
+                      WHERE schemaname = 'public' AND tablename = %s
+                        AND indexname <> 'routing_edges_geography_gix'
+                      ORDER BY indexname""", (name,))
     indexes = cursor.fetchall()
     cursor.execute('SELECT pg_get_serial_sequence(%s, %s)', (f'public.{name}', 'id'))
     sequence = cursor.fetchone()[0]

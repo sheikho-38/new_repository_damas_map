@@ -5,6 +5,8 @@ import math
 
 from django.db import connection
 
+from .routing_cache import cached_routing
+
 
 EDGE_SQL = {
     'car': "SELECT id, source, target, cost, reverse_cost FROM routing_edges WHERE edge_type = 'car'",
@@ -238,6 +240,11 @@ def calculate_database_route(start, end, mode):
     if not isinstance(mode, str) or mode not in EDGE_SQL:
         raise DatabaseRoutingError('invalid_mode', 'نوع التوجيه يجب أن يكون car أو walk')
     start, end = _point(start), _point(end)
+    return cached_routing(('road', mode, start, end, SNAP_METRES[mode]),
+                          lambda: _calculate_database_route(start, end, mode))
+
+
+def _calculate_database_route(start, end, mode):
 
     with connection.cursor() as cursor:
         origin = _nearest_edge(cursor, start, mode)
