@@ -1,7 +1,7 @@
 from django.contrib import admin
 from .models import (
     AdminArea, Street, Category, SubCategory, Place, PlaceMedia,
-    Bus, BusRoute, Notification, Log, CommunicationInfo
+    Notification, Log, CommunicationInfo
 )
 
 
@@ -66,19 +66,6 @@ class AdminAreaAdmin(admin.ModelAdmin):
     list_display = ('name_ar', 'name_en', 'code', 'level', 'parent')
     list_filter = ('level',)
     search_fields = ('name_ar', 'name_en', 'code')
-
-
-@admin.register(Bus)
-class BusAdmin(admin.ModelAdmin):
-    list_display = ('name', 'color', 'old_price', 'new_price', 'is_active')
-    list_filter = ('is_active',)
-    search_fields = ('name',)
-
-
-@admin.register(BusRoute)
-class BusRouteAdmin(admin.ModelAdmin):
-    list_display = ('bus', 'direction', 'version', 'is_active')
-    list_filter = ('direction', 'is_active')
 
 
 @admin.register(Notification)

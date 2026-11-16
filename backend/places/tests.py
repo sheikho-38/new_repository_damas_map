@@ -32,7 +32,6 @@ class DamascusPlacesModelAndApiTests(TestCase):
             name_en="Healthcare",
             slug="healthcare",
             icon="hospital",
-            color="#e63946",
             is_active=True,
             sort_order=1
         )
@@ -94,18 +93,16 @@ class DamascusPlacesModelAndApiTests(TestCase):
         self.assertEqual(p.category.slug, "healthcare")
         self.assertEqual(p.category.name_ar, "القطاع الصحي والمشافي")
 
-    def test_effective_icon_and_color_fallback(self):
-        """فحص أن التصنيف الفرعي يرث الأيقونة واللون تلقائياً إذا لم يُحددا"""
+    def test_effective_icon_and_default_color(self):
+        """التصنيف الفرعي يرث أيقونة التصنيف الرئيسي، واللون الافتراضي ثابت (حقل color معطّل)"""
         sub = self.sub_category
         self.assertEqual(sub.effective_icon, "hospital")
-        self.assertEqual(sub.effective_color, "#e63946")
+        self.assertEqual(sub.effective_color, "#064239")
 
         # عند تحديد أيقونة مخصصة للتصنيف الفرعي
         sub.icon = "cross"
-        sub.color = "#00ff00"
         sub.save()
         self.assertEqual(sub.effective_icon, "cross")
-        self.assertEqual(sub.effective_color, "#00ff00")
 
     def test_category_places_property(self):
         """فحص أن خاصية category.places تُرجع الأماكن بدقة"""
@@ -186,9 +183,9 @@ class DamascusPlacesModelAndApiTests(TestCase):
         self.assertIn('title_ar', form.base_fields)
         self.assertNotIn('phone', form.base_fields)
 
-    def test_new_coordinate_and_sector_constraints(self):
+    def test_coordinate_constraints(self):
         from django.db import IntegrityError, transaction
-        for values in ({'latitude': 0}, {'longitude': None}, {'sector': 'public'}):
+        for values in ({'latitude': 0}, {'longitude': None}):
             with self.assertRaises(IntegrityError), transaction.atomic():
                 Place.objects.filter(pk=self.place.pk).update(**values)
 

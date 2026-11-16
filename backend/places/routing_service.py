@@ -22,7 +22,7 @@ def _point(point):
     try:
         lon, lat = float(point['lon']), float(point['lat'])
     except (KeyError, TypeError, ValueError):
-        raise RoutingError('invalid_coordinates', 'كل نقطة تحتاج lon وlat', 400)
+        raise RoutingError('invalid_coordinates', 'كل نقطة تحتاج lon وlat', 400) from None
     if not all(map(math.isfinite, (lon, lat))) or not (-180 <= lon <= 180 and -90 <= lat <= 90):
         raise RoutingError('invalid_coordinates', 'إحداثيات النقطة غير صالحة', 400)
     return lon, lat
@@ -81,7 +81,7 @@ def _calculate_route(waypoints, *, profile, bounds=None, max_snap_metres=None,
         if not valid:
             raise ValueError('invalid BRouter result')
     except (KeyError, IndexError, TypeError, ValueError):
-        raise RoutingError('invalid_engine_response', 'استجابة محرك التوجيه غير صالحة', 502)
+        raise RoutingError('invalid_engine_response', 'استجابة محرك التوجيه غير صالحة', 502) from None
     if max_snap_metres and (_metres(points[0], coordinates[0][:2]) > max_snap_metres or
                             _metres(points[-1], coordinates[-1][:2]) > max_snap_metres):
         raise RoutingError(no_nearby_road_code, no_nearby_road_message, 422)

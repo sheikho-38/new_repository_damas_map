@@ -1,5 +1,4 @@
 import math
-import json
 import re
 from django.http import JsonResponse, Http404
 from django.conf import settings
@@ -8,27 +7,30 @@ from django.views.decorators.http import require_GET
 from django.views.decorators.cache import never_cache
 from django.db.models import Q
 from .models import (
-    AdminArea, Street, Category, SubCategory, Place, PlaceMedia, Notification,
-    Bus, BusRoute
+    AdminArea, Street, Category, Place, Notification,
 )
+from buses.models import Bus, BusRoute
 from .contacts import serialize_contact, sector_label
 from .text_utils import normalize_arabic, generate_search_variants
 from .management_api import filtered_places
 from rest_framework.exceptions import ValidationError
+import contextlib
+
+EARTH_RADIUS_KM = 6371.0
+DEFAULT_MAP_CENTER = [36.295, 33.513]  # [lon, lat] وسط دمشق
 
 
 def haversine_distance_km(lat1, lon1, lat2, lon2):
     """
     حساب المسافة الجغرافية بالكيلومتر بين نقطتين على الكرة الأرضية
     """
-    R = 6371.0
     dlat = math.radians(lat2 - lat1)
     dlon = math.radians(lon2 - lon1)
     a = (math.sin(dlat / 2) ** 2 +
          math.cos(math.radians(lat1)) * math.cos(math.radians(lat2)) *
          math.sin(dlon / 2) ** 2)
     c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
-    return R * c
+    return EARTH_RADIUS_KM * c
 
 
 @require_GET
@@ -42,16 +44,12 @@ def list_admin_areas_geojson(request):
     queryset = AdminArea.objects.select_related('parent').all()
 
     if level:
-        try:
+        with contextlib.suppress(ValueError):
             queryset = queryset.filter(level=int(level))
-        except ValueError:
-            pass
 
     if parent_id:
-        try:
+        with contextlib.suppress(ValueError):
             queryset = queryset.filter(parent_id=int(parent_id))
-        except ValueError:
-            pass
 
     features = []
     for area in queryset:
@@ -266,7 +264,7 @@ def get_place_detail(request, place_id):
     try:
         p = Place.objects.select_related('sub_category__category', 'admin_area__parent').prefetch_related('media', 'communication_info').get(id=place_id, is_visible=True)
     except Place.DoesNotExist:
-        raise Http404("المكان غير موجود")
+        raise Http404("المكان غير موجود") from None
 
     media_list = [
         {
@@ -327,6 +325,18 @@ HIGHWAY_LABELS = {
     'service': 'طريق خدمي',
 }
 
+def _boundary_centroid(boundary):
+    """
+    متوسط رؤوس الحلقة الخارجية للمضلع كنقطة تقريبية [lon, lat]،
+    أو مركز دمشق الافتراضي إذا كانت الحدود فارغة أو غير صالحة.
+    """
+    try:
+        ring = boundary["coordinates"][0]
+        if isinstance(ring[0], list) and isinstance(ring[0][0], list):
+            ring = ring[0]  # MultiPolygon
+        return [sum(pt[0] for pt in ring) / len(ring), sum(pt[1] for pt in ring) / len(ring)]
+    except (KeyError, IndexError, TypeError, ZeroDivisionError):
+        return list(DEFAULT_MAP_CENTER)
 
 def strip_arabic_prefixes(query: str) -> str:
     """إزالة البوادئ الشائعة للبحث الذكي (مثل: شارع، حي، بلدية، دائرة خدمات)"""
@@ -361,15 +371,7 @@ def search_all(request):
     municipalities = []
     mun_qs = AdminArea.objects.filter(level=9).filter(q_admin)[:20]
     for a in mun_qs:
-        coords = [36.295, 33.513]
-        if a.boundary and a.boundary.get("coordinates"):
-            try:
-                poly = a.boundary["coordinates"][0]
-                if isinstance(poly[0], list) and isinstance(poly[0][0], list):
-                    poly = poly[0]
-                coords = [sum(pt[0] for pt in poly) / len(poly), sum(pt[1] for pt in poly) / len(poly)]
-            except Exception:
-                pass
+        coords = _boundary_centroid(a.boundary)
         municipalities.append({
             "type": "municipality",
             "id": a.id,
@@ -387,15 +389,7 @@ def search_all(request):
     neighborhoods = []
     neigh_qs = AdminArea.objects.filter(level=10).filter(q_admin).select_related('parent')[:30]
     for a in neigh_qs:
-        coords = [36.295, 33.513]
-        if a.boundary and a.boundary.get("coordinates"):
-            try:
-                poly = a.boundary["coordinates"][0]
-                if isinstance(poly[0], list) and isinstance(poly[0][0], list):
-                    poly = poly[0]
-                coords = [sum(pt[0] for pt in poly) / len(poly), sum(pt[1] for pt in poly) / len(poly)]
-            except Exception:
-                pass
+        coords = _boundary_centroid(a.boundary)
         parent_title = f"دائرة {a.parent.name_ar.replace('دائرة خدمات ', '')}" if a.parent else "دمشق"
         neighborhoods.append({
             "type": "neighborhood",
@@ -631,7 +625,7 @@ def get_transit_route_geojson(request, route_id):
     try:
         route = BusRoute.objects.select_related('bus').get(id=route_id)
     except BusRoute.DoesNotExist:
-        raise Http404("مسار الخط غير موجود")
+        raise Http404("مسار الخط غير موجود") from None
 
     spec = getattr(route, 'specifications', None)
 

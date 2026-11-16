@@ -22,7 +22,7 @@ def load_features(path):
     try:
         data = json.loads(text[start:end + 1])
     except json.JSONDecodeError as exc:
-        raise CommandError(f'JSON غير صالح: {exc}')
+        raise CommandError(f'JSON غير صالح: {exc}') from None
     return data.get('features') or []
 
 
@@ -91,7 +91,7 @@ class Command(BaseCommand):
         try:
             price = None if options['price'] in (None, '') else Decimal(str(options['price']))
         except InvalidOperation:
-            raise CommandError('السعر غير صالح.')
+            raise CommandError('السعر غير صالح.') from None
 
         groups = {}
         for feature in load_features(options['file']):
@@ -146,14 +146,14 @@ class Command(BaseCommand):
                     try:
                         snapped, distance, duration_s = calculate_geometry(waypoints)
                     except (RuntimeError, ValueError) as exc:
-                        raise CommandError(f'{label}: فشل الإلصاق عبر BRouter: {exc}')
+                        raise CommandError(f'{label}: فشل الإلصاق عبر BRouter: {exc}') from None
                     geometry = to_linestring(snapped, label)
                     minutes = minutes or max(0, round(duration_s / 60))
                 elif options['align']:
                     try:
                         aligned, st = align_line(geometry['coordinates'], roads, max_dev=options['align_max_dev'])
                     except ValueError as exc:
-                        raise CommandError(f'{label}: {exc}')
+                        raise CommandError(f'{label}: {exc}') from exc
                     geometry = {'type': 'LineString', 'coordinates': aligned}
                     distance = sum(haversine(aligned[i], aligned[i + 1]) for i in range(len(aligned) - 1))
                     self.stdout.write(

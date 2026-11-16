@@ -9,12 +9,12 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         geojson_path = Path(__file__).resolve().parent.parent.parent.parent / "data" / "damascus_admin_areas.geojson"
-        
+
         if not geojson_path.exists():
             self.stderr.write(self.style.ERROR(f"GeoJSON file not found: {geojson_path}"))
             return
 
-        with open(geojson_path, "r", encoding="utf-8") as f:
+        with open(geojson_path, encoding="utf-8") as f:
             data = json.load(f)
 
         features = data.get("features", [])
@@ -25,7 +25,7 @@ class Command(BaseCommand):
         for feat in features:
             props = feat.get("properties", {})
             if props.get("level") == 9:
-                obj, created = AdminArea.objects.update_or_create(
+                obj, _created = AdminArea.objects.update_or_create(
                     id=props.get("id"),
                     defaults={
                         "code": props.get("code") or "",

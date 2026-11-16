@@ -2,7 +2,7 @@
   "format": "postgres-binary-copy-gzip-v1",
   "data_version": "20261110T112832Z",
   "created_at_utc": "2026-11-10T11:28:32.767165+00:00",
-  "schema_sha256": "a84776f4b6f9e95e2df14e0b6d6da66f099aeea67129f532b501c3aa8aaf1aca",
+  "schema_sha256": "61f92eb95469987bf2937f00fe35db159e27651b34b43f3457103a5d579220b2",
   "tables": {
     "buses": {
       "file": "buses.copy.gz",

@@ -32,7 +32,7 @@ def get_damascus_tile(request, z, x, y):
                 (z, x, tms_y),
             ).fetchone()
     except sqlite3.Error:
-        raise Http404("Unable to read map tile")
+        raise Http404("Unable to read map tile") from None
 
     if row is None:
         raise Http404("Tile not found")

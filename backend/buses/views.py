@@ -1,11 +1,7 @@
 
 import json
-import os
 import re
 from decimal import Decimal, InvalidOperation
-from urllib.parse import urlencode
-from urllib.request import Request, urlopen
-from urllib.error import URLError, HTTPError
 
 from django.db import transaction, IntegrityError
 from django.db.models import Max
@@ -13,9 +9,17 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_GET, require_POST
 
-from places.models import Bus, BusRoute
+from buses.models import Bus, BusRoute
 from places.routing_service import calculate_car_route, RoutingError
-from django.db import transaction
+
+
+
+DIRECTION_ALIASES = {
+    "ذهاب": "outbound",
+    "إياب": "inbound",
+    "outbound": "outbound",
+    "inbound": "inbound",
+}
 
 # ---------------------------------------------------------
 # Helpers
@@ -29,7 +33,7 @@ def read_json_body(request):
     try:
         body = json.loads(request.body or b"{}")
     except (json.JSONDecodeError, UnicodeDecodeError):
-        raise ValueError("JSON المرسل غير صالح")
+        raise ValueError("JSON المرسل غير صالح") from None
 
     if not isinstance(body, dict):
         raise ValueError("يجب أن يكون جسم الطلب JSON object")
@@ -78,7 +82,7 @@ def validate_price(value):
     try:
         price = Decimal(str(value))
     except (InvalidOperation, TypeError, ValueError):
-        raise ValueError("السعر يجب أن يكون رقماً صالحاً")
+        raise ValueError("السعر يجب أن يكون رقماً صالحاً") from None
 
     if not price.is_finite() or price < 0:
         raise ValueError("السعر يجب أن يكون رقماً موجباً أو صفراً")
@@ -93,17 +97,10 @@ def validate_price(value):
 
 
 def validate_direction(value):
-    mapping = {
-        "ذهاب": "outbound",
-        "إياب": "inbound",
-        "outbound": "outbound",
-        "inbound": "inbound",
-    }
-
-    if value not in mapping:
+    if value not in DIRECTION_ALIASES:
         raise ValueError("الاتجاه يجب أن يكون ذهاب أو إياب")
 
-    return mapping[value]
+    return DIRECTION_ALIASES[value]
 
 
 def validate_endpoint(value, field_name):
@@ -160,7 +157,7 @@ def get_route_waypoints(body):
 
 
 # ---------------------------------------------------------
-# BRouter
+# Routing
 # ---------------------------------------------------------
 
 def calculate_geometry(waypoints):
@@ -466,13 +463,6 @@ def route_detail(request, route_id):
 
     try:
         body = read_json_body(request)
-
-        # direction is deliberately not editable on an existing route.
-        # if "direction" in body:
-        #     raise ValueError(
-        #         "لا يمكن تغيير اتجاه المسار؛ أنشئ مساراً جديداً للاتجاه الآخر"
-        #     )
-
         bus_updates = validate_bus_fields(body, creating=False)
 
         start_point = None
@@ -509,15 +499,9 @@ def route_detail(request, route_id):
                 .get(pk=route_id, is_active=True, bus__is_active=True)
             )
 
-            DIRECTION_MAP = {
-                "ذهاب": "outbound",
-                "إياب": "inbound",
-                "outbound": "outbound",
-                "inbound": "inbound",
-            }
 
             if "direction" in body:
-                requested_direction = DIRECTION_MAP.get(body["direction"])
+                requested_direction = DIRECTION_ALIASES.get(body["direction"])
 
                 if requested_direction is None:
                     return error_response("اتجاه المسار غير صالح", 422)

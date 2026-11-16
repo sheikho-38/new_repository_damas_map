@@ -74,7 +74,7 @@ def decode_roads(data, z, x, y):
         if field != 3 or wire != 2:
             continue
         name, extent, keys, values, feats = '', 4096, [], [], []
-        for f, w, v in _fields(layer):
+        for f, _wire, v in _fields(layer):
             if f == 1:
                 name = v.decode('utf-8', 'replace')
             elif f == 2:
@@ -243,10 +243,10 @@ def align_line(original, roads, max_dev=35.0, step=15.0, sigma=10.0, simplify_to
             f = k / n
             dense.append((a[0] + (b[0] - a[0]) * f, a[1] + (b[1] - a[1]) * f))
 
-    N = len(dense)
+    n_points = len(dense)
     headings = []
-    for i in range(N):
-        a, b = dense[max(0, i - 2)], dense[min(N - 1, i + 2)]
+    for i in range(n_points):
+        a, b = dense[max(0, i - 2)], dense[min(n_points - 1, i + 2)]
         headings.append(math.degrees(math.atan2(b[0] - a[0], b[1] - a[1])) % 180.0)
 
     none_cost = 0.5 * (max_dev / sigma) ** 2 + 1.0
@@ -272,7 +272,7 @@ def align_line(original, roads, max_dev=35.0, step=15.0, sigma=10.0, simplify_to
 
     score = emis[0][:]
     back = [[-1] * len(states[0])]
-    for i in range(1, N):
+    for i in range(n_points):
         new_score, ptr = [], []
         for j, b in enumerate(states[i]):
             best_v, best_k = None, 0
@@ -285,8 +285,8 @@ def align_line(original, roads, max_dev=35.0, step=15.0, sigma=10.0, simplify_to
         score = new_score
         back.append(ptr)
     j = min(range(len(score)), key=score.__getitem__)
-    chosen = [None] * N
-    for i in range(N - 1, -1, -1):
+    chosen = [None] * n_points
+    for i in range(n_points - 1, -1, -1):
         chosen[i] = states[i][j]
         j = back[i][j]
 
@@ -295,7 +295,7 @@ def align_line(original, roads, max_dev=35.0, step=15.0, sigma=10.0, simplify_to
     matched_idx = [i for i, o in enumerate(offs) if o is not None]
     if not matched_idx:
         raise ValueError('ما في أي طريق ضمن المسافة المسموحة من الخط.')
-    for i in range(N):
+    for i in range(n_points):
         if offs[i] is not None:
             continue
         prev = max((m for m in matched_idx if m < i), default=None)
@@ -308,13 +308,13 @@ def align_line(original, roads, max_dev=35.0, step=15.0, sigma=10.0, simplify_to
             f = (i - prev) / (nxt - prev)
             offs[i] = (offs[prev][0] + (offs[nxt][0] - offs[prev][0]) * f,
                        offs[prev][1] + (offs[nxt][1] - offs[prev][1]) * f)
-    moved = [(dense[i][0] + offs[i][0], dense[i][1] + offs[i][1]) for i in range(N)]
+    moved = [(dense[i][0] + offs[i][0], dense[i][1] + offs[i][1]) for i in range(n_points)]
     shifts = [math.hypot(*o) for o in offs]
     out_xy = _simplify(moved, simplify_tol)
     out = [[x / kx, y / ky] for x, y in out_xy]
     stats = {
-        'matched_pct': round(100.0 * len(matched_idx) / N),
-        'mean_shift_m': round(sum(shifts) / N, 1),
+        'matched_pct': round(100.0 * len(matched_idx) / n_points),
+        'mean_shift_m': round(sum(shifts) / n_points, 1),
         'max_shift_m': round(max(shifts), 1),
         'points_in': len(original),
         'points_out': len(out),

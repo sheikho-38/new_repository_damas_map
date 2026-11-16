@@ -3,21 +3,11 @@
 import gzip
 import hashlib
 import json
-from datetime import datetime, timezone
-from pathlib import Path
+from datetime import datetime, UTC
 
 from django.core.management.base import BaseCommand, CommandError
 from django.db import connection, transaction
-
-
-TABLES = (
-    'buses', 'bus_routes',
-    'routing_nodes', 'routing_edges', 'routing_boarding_points',
-    'routing_turn_restrictions', 'routing_car_states', 'routing_car_transitions',
-)
-SEED_DIR = Path(__file__).resolve().parents[2] / 'seed_data' / 'routing'
-CHUNK = 1024 * 1024
-
+from places.routing_seed import CHUNK, SEED_DIR, TABLES, text_file_sha256
 
 def table_schema(cursor, name):
     cursor.execute("""SELECT a.attname, format_type(a.atttypid, a.atttypmod),
@@ -56,9 +46,9 @@ class Command(BaseCommand):
         SEED_DIR.mkdir(parents=True, exist_ok=True)
         manifest = {
             'format': 'postgres-binary-copy-gzip-v1',
-            'data_version': datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%SZ'),
-            'created_at_utc': datetime.now(timezone.utc).isoformat(),
-            'schema_sha256': hashlib.sha256(schema_file.read_bytes()).hexdigest(),
+            'data_version': datetime.now(UTC).strftime('%Y%m%dT%H%M%SZ'),
+            'created_at_utc': datetime.now(UTC).isoformat(),
+            'schema_sha256': text_file_sha256(schema_file),
             'tables': {},
         }
         pending = []

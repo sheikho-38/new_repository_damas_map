@@ -62,7 +62,7 @@ def lookup_admin_area(request):
         lat = float(request.query_params['lat'])
         lon = float(request.query_params['lon'])
     except (KeyError, ValueError):
-        raise serializers.ValidationError({'detail': 'lat و lon مطلوبان ويجب أن يكونا أرقامًا.'})
+        raise serializers.ValidationError({'detail': 'lat و lon مطلوبان ويجب أن يكونا أرقامًا.'}) from None
     if not (math.isfinite(lat) and math.isfinite(lon) and LAT_MIN <= lat <= LAT_MAX and LON_MIN <= lon <= LON_MAX):
         return Response({'admin_area': None})
     area = find_admin_area(lon, lat)

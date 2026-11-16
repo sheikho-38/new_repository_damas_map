@@ -16,8 +16,13 @@ TABLES = {
     'routing_car_states': 'be0c19ac4e1b73c9de3286c34de84f2c895f187ff615a1a52cce068361a45682',
     'routing_car_transitions': '989eb310b50fc403d0b19363ff657cf221075443f2a73cc1837160a40a2bf3b7',
 }
-SQL_SHA256 = 'a84776f4b6f9e95e2df14e0b6d6da66f099aeea67129f532b501c3aa8aaf1aca'
+# SHA-256 of schema.sql with LF line endings (see sql_file_sha256).
+SQL_SHA256 = '61f92eb95469987bf2937f00fe35db159e27651b34b43f3457103a5d579220b2'
 
+
+def sql_file_sha256(path):
+    # Normalise CRLF so the hash is the same on Windows, Linux and Docker checkouts.
+    return hashlib.sha256(path.read_bytes().replace(b'\r\n', b'\n')).hexdigest()
 
 def structure_hash(cursor, name):
     cursor.execute("""SELECT a.attname, format_type(a.atttypid, a.atttypmod),
@@ -57,7 +62,7 @@ def create_or_verify(apps, schema_editor):
     if db.vendor != 'postgresql':
         raise RuntimeError('Routing tables require PostgreSQL with PostGIS and pgRouting.')
     sql_file = Path(__file__).resolve().parents[1] / 'seed_data' / 'routing' / 'schema.sql'
-    if not sql_file.is_file() or hashlib.sha256(sql_file.read_bytes()).hexdigest() != SQL_SHA256:
+    if not sql_file.is_file() or sql_file_sha256(sql_file) != SQL_SHA256:
         raise RuntimeError('Routing schema.sql is missing or differs from the reviewed PostgreSQL schema.')
 
     with db.cursor() as cursor:

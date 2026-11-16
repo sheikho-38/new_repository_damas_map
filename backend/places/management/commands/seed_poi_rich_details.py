@@ -1,6 +1,6 @@
 from django.core.management.base import BaseCommand
 from places.contacts import save_contact_values
-from places.models import Place, PlaceMedia, AdminArea
+from places.models import Place, PlaceMedia
 
 
 class Command(BaseCommand):

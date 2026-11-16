@@ -9,12 +9,12 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         geojson_path = Path(__file__).resolve().parent.parent.parent.parent / "data" / "damascus_streets.geojson"
-        
+
         if not geojson_path.exists():
             self.stderr.write(self.style.ERROR(f"GeoJSON file not found: {geojson_path}"))
             return
 
-        with open(geojson_path, "r", encoding="utf-8") as f:
+        with open(geojson_path, encoding="utf-8") as f:
             data = json.load(f)
 
         features = data.get("features", [])

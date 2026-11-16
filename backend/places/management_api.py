@@ -28,7 +28,7 @@ class MediaSerializer(serializers.ModelSerializer):
 
     def validate(self, attrs):
         if attrs.get('is_cover') and attrs.get('media_type', 'image') != 'image':
-            raise serializers.ValidationError({'is_cover': 'يمكن اختيار صورة فقط كغلاف.'})
+            raise serializers.ValidationError({'is_cover': 'يمكن اختيار صورة فقط كغلاف.'}) from None
         return attrs
 
 
@@ -79,7 +79,7 @@ class PlaceSerializer(serializers.ModelSerializer):
         try:
             candidate.full_clean()
         except DjangoValidationError as exc:
-            raise serializers.ValidationError(exc.message_dict)
+            raise serializers.ValidationError(exc.message_dict) from None
         return attrs
 
     @transaction.atomic
@@ -109,7 +109,7 @@ def filtered_places(params, queryset):
                 if value < 1:
                     raise ValueError
             except ValueError:
-                raise serializers.ValidationError({key: 'معرف غير صالح'})
+                raise serializers.ValidationError({key: 'معرف غير صالح'}) from None
             queryset = queryset.filter(**{lookup: value})
     for key in ('is_visible', 'is_verified'):
         if params.get(key):
@@ -125,7 +125,7 @@ def filtered_places(params, queryset):
             if not all(map(math.isfinite, [west, south, east, north])) or not (-180 <= west <= east <= 180 and -90 <= south <= north <= 90):
                 raise ValueError
         except (ValueError, TypeError):
-            raise serializers.ValidationError({'bbox': 'حدود غير صالحة'})
+            raise serializers.ValidationError({'bbox': 'حدود غير صالحة'}) from None
         queryset = queryset.filter(longitude__gte=west, longitude__lte=east, latitude__gte=south, latitude__lte=north)
     return queryset
 
@@ -143,7 +143,7 @@ class Pagination(PageNumberPagination):
                 if value < 1:
                     raise ValueError
             except ValueError:
-                raise serializers.ValidationError({'page_size': 'حجم الصفحة يجب أن يكون عددًا موجبًا'})
+                raise serializers.ValidationError({'page_size': 'حجم الصفحة يجب أن يكون عددًا موجبًا'}) from None
         return super().get_page_size(request)
 
 
@@ -175,7 +175,7 @@ def place_metadata():
     return {
         'categories': [{'id': c.id, 'name_ar': c.name_ar, 'subcategories': [{'id': s.id, 'name_ar': s.name_ar} for s in c.subcategories.all()]} for c in Category.objects.prefetch_related('subcategories')],
         'admin_areas': list(AdminArea.objects.values('id', 'name_ar')),
-        'sectors': sorted(set(['Public', 'private', 'joint']) | set(Place.objects.order_by().values_list('sector', flat=True).distinct())),
+        'sectors': sorted({'Public', 'private', 'joint'} | set(Place.objects.order_by().values_list('sector', flat=True).distinct())),
         'contact_types': list(CommunicationInfo._meta.get_field('type').choices),
     }
 

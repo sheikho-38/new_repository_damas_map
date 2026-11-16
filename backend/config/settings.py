@@ -79,6 +79,7 @@ ALLOWED_HOSTS = [
 # Application definition
 
 INSTALLED_APPS = [
+    # Django applications
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -86,12 +87,15 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.gis',
-    # Third-party apps
+
+    # Third-party applications
     'rest_framework',
     'corsheaders',
-    # Local apps
-    'places',
-    'buses'
+
+    # Project applications
+    'places.apps.PlacesConfig',
+    'buses.apps.BusesConfig',
+    'routing.apps.RoutingConfig',
 ]
 
 MIDDLEWARE = [

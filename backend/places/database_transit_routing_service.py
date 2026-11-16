@@ -245,7 +245,7 @@ def calculate_database_transit_route(start, end):
 
     legs, walking_m = [], 0.0
     walking_s = bus_m = bus_s = fare = 0.0
-    for a, b, kind, data in path:
+    for _a, _b, kind, data in path:
         if kind == 'noop':
             continue
         if kind == 'walk':

@@ -4,20 +4,10 @@ import gzip
 import hashlib
 import json
 import re
-from pathlib import Path
 
 from django.core.management.base import BaseCommand, CommandError
 from django.db import connection, transaction
-
-
-TABLES = (
-    'buses', 'bus_routes',
-    'routing_nodes', 'routing_edges', 'routing_boarding_points',
-    'routing_turn_restrictions', 'routing_car_states', 'routing_car_transitions',
-)
-SEED_DIR = Path(__file__).resolve().parents[2] / 'seed_data' / 'routing'
-CHUNK = 1024 * 1024
-
+from places.routing_seed import CHUNK, SEED_DIR, TABLES, text_file_sha256
 
 def schema_of(cursor, name):
     cursor.execute("""SELECT a.attname, format_type(a.atttypid, a.atttypmod),
@@ -73,7 +63,7 @@ class Command(BaseCommand):
             manifest = json.loads(manifest_file.read_text(encoding='utf-8'))
             if manifest['format'] != 'postgres-binary-copy-gzip-v1' or set(manifest['tables']) != set(TABLES):
                 raise ValueError('Unsupported or incomplete manifest')
-            if hashlib.sha256(schema_file.read_bytes()).hexdigest() != manifest['schema_sha256']:
+            if text_file_sha256(schema_file) != manifest['schema_sha256']:
                 raise ValueError('Routing schema checksum differs from manifest')
             for name in TABLES:
                 info = manifest['tables'][name]

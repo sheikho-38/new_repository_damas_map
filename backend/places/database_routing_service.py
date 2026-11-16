@@ -305,7 +305,7 @@ def calculate_database_route(start, end, mode):
 
     coordinates = []
     distance_m = duration_s = 0.0
-    for node, next_node, cost, first_f, last_f, length_m, geometry in rows:
+    for _node, next_node, cost, first_f, last_f, length_m, geometry in rows:
         if first_f is None or last_f is None or next_node is None:
             raise DatabaseRoutingError('invalid_graph', 'تعذر تحديد طرف جزء من المسار')
         if mode == 'walk' and (cost is None or not math.isfinite(cost)):
