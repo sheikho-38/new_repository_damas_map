@@ -5,7 +5,7 @@ import logging
 
 from django.conf import settings
 
-from .models import BusRoute
+from buses.models import BusRoute
 from .routing_service import RoutingError, calculate_walking_route
 
 

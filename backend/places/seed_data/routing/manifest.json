@@ -1,7 +1,7 @@
 {
   "format": "postgres-binary-copy-gzip-v1",
-  "data_version": "20261110T112832Z",
-  "created_at_utc": "2026-11-10T11:28:32.767165+00:00",
+  "data_version": "20261115T112036Z",
+  "created_at_utc": "2026-11-15T11:21:18.195380+00:00",
   "schema_sha256": "61f92eb95469987bf2937f00fe35db159e27651b34b43f3457103a5d579220b2",
   "tables": {
     "buses": {
@@ -300,7 +300,7 @@
     },
     "routing_nodes": {
       "file": "routing_nodes.copy.gz",
-      "rows": 25494,
+      "rows": 87772,
       "schema": {
         "columns": [
           [
@@ -369,13 +369,13 @@
           false
         ]
       },
-      "copy_sha256": "4ee2df5eb22b29d1ba513794177a86f2329c7d514bf2af1d4099cde5d435cf61",
-      "sha256": "ff96eb79a19e0581da534c0d10575069b9588af0d810ffb79bebac1ed51c9218",
-      "bytes": 422368
+      "copy_sha256": "caab717f39b6b60d94c20f6dc13e7908318d00adb5fce98bd318828f3d670a70",
+      "sha256": "c7c256efcf8a0d4de81647fdd0ccd3e02634c5438a848467cbed2e9d56ac6446",
+      "bytes": 1497626
     },
     "routing_edges": {
       "file": "routing_edges.copy.gz",
-      "rows": 63445,
+      "rows": 116106,
       "schema": {
         "columns": [
           [
@@ -560,9 +560,9 @@
           false
         ]
       },
-      "copy_sha256": "ca17472eb60f7e724cee0ce5e312a65f003b552a432a1fdd5f2817eefb09a695",
-      "sha256": "14c107f5351905c39a6c55bd8892d6a3ea6d26a0e8ad142e775562d7c63561ec",
-      "bytes": 3911335
+      "copy_sha256": "32275ecc267107e38139fc397b5dd08f8232b172d593512842a14e87f5f083d5",
+      "sha256": "2de5bc416cd830b82fb487ce4eb4ce3f4d2037d7a6907a7c11591e06d5750252",
+      "bytes": 9744555
     },
     "routing_boarding_points": {
       "file": "routing_boarding_points.copy.gz",
@@ -1075,5 +1075,11 @@
   "extensions": {
     "postgis": "3.6.2",
     "pgrouting": "4.0.1"
+  },
+  "walk_source": {
+    "file": "damasguide_routing.sqlite",
+    "sha256": "826d65bc887dad5e0d123de3e448b1f4e26d69ccbe455d06b48db27372f7826c",
+    "nodes": 64561,
+    "edges": 85426
   }
 }

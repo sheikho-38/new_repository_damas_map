@@ -8,7 +8,8 @@
     "start": "next start",
     "test": "node --experimental-strip-types scripts/run-unit-tests.mjs",
     "test:places": "node --experimental-strip-types scripts/places-refresh.test.mjs",
-    "lint": "eslint"
+    "lint": "eslint",
+    "test:routing-port": "node scripts/test-location-session.cjs && node scripts/test-transit-markers.cjs"
   },
   "dependencies": {
     "@phosphor-icons/react": "^2.1.10",

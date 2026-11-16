@@ -259,8 +259,29 @@ export default function RoutingPanel({
             </div>
 
             {mode === 'transit' && !transitUsesBus && <p className="text-xs font-bold text-[#064239]">المشي هو الخيار الأنسب لهذه الرحلة</p>}
-            {transitUsesBus && <p className="text-xs text-amber-700">زمن الانتظار غير متاح، ونقطتا الصعود والنزول مقترحتان وليستا موقفين مؤكدين.</p>}
             {/* تفاصيل مسار الخط إن وجد */}
+            {routeResult.steps.length > 0 && <div className="space-y-2">
+              <div className="space-y-2">
+                {routeResult.steps.map((step, idx) => (
+                  <div
+                    key={idx}
+                    className="flex items-start gap-3 p-3 rounded-xl bg-white dark:bg-zinc-800 border border-black/5"
+                  >
+                    <div className="w-7 h-7 rounded-lg bg-[#064239]/10 text-[#064239] dark:bg-emerald-950/60 dark:text-emerald-300 flex items-center justify-center shrink-0 font-bold text-xs mt-0.5">
+                      {idx + 1}
+                    </div>
+                    <div className="flex-1">
+                      <p className="text-xs font-bold text-zinc-800 dark:text-zinc-200 leading-relaxed">
+                        {step.instruction}
+                      </p>
+                      <span className="text-[10px] text-zinc-400 font-medium mt-1 block">
+                        تقريباً {step.duration_mins} دقيقة
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>}
             {routeResult.line_name && (
               <div className="bg-[#3a6962]/10 dark:bg-teal-950/40 p-3 rounded-xl border border-[#3a6962]/20 dark:border-teal-700/30 flex items-center gap-2.5">
                 <Bus className="w-5 h-5 text-[#3a6962] dark:text-teal-400 shrink-0" />
@@ -282,10 +303,6 @@ export default function RoutingPanel({
                 </div>
               </div>
             )}
-            {transitUsesBus && <div className="text-xs text-zinc-600 dark:text-zinc-300">
-              المشي: {routeResult.walking_distance_km} كم · الحافلة: {routeResult.bus_distance_km} كم ({routeResult.bus_duration_minutes} دقيقة)
-              {!!routeResult.planning_buffer_minutes && <span className="block">المدة تقديرية، وتشمل {routeResult.planning_buffer_minutes} دقائق احتياطية للصعود والتبديل؛ لا توجد مواعيد وصول.</span>}
-            </div>}
             {mode === 'transit' && transitPrimary?.alternatives?.length ? (
               <button type="button" onClick={transitUsesBus ? showWalkingAlternative : () => {
                 setRouteResult(transitPrimary); onApplyRouteGeoJSON(transitPrimary.route_geojson, transitPrimary);
@@ -295,32 +312,7 @@ export default function RoutingPanel({
             ) : null}
 
             {/* إرشادات خطوة بخطوة */}
-            {routeResult.steps.length > 0 ? <div className="space-y-2">
-              <h4 className="text-xs font-bold text-zinc-400 uppercase tracking-wider">
-                إرشادات الطريق خطوة بخطوة
-              </h4>
 
-              <div className="space-y-2">
-                {routeResult.steps.map((step, idx) => (
-                  <div 
-                    key={idx}
-                    className="flex items-start gap-3 p-3 rounded-xl bg-white dark:bg-zinc-800 border border-black/5"
-                  >
-                    <div className="w-7 h-7 rounded-lg bg-[#064239]/10 text-[#064239] dark:bg-emerald-950/60 dark:text-emerald-300 flex items-center justify-center shrink-0 font-bold text-xs mt-0.5">
-                      {idx + 1}
-                    </div>
-                    <div className="flex-1">
-                      <p className="text-xs font-bold text-zinc-800 dark:text-zinc-200 leading-relaxed">
-                        {step.instruction}
-                      </p>
-                      <span className="text-[10px] text-zinc-400 font-medium mt-1 block">
-                        تقريباً {step.duration_mins} دقيقة
-                      </span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div> : <p className="text-xs text-zinc-500">تعليمات الانعطاف غير متاحة لهذا المسار.</p>}
           </>
         ) : null}
       </div>
