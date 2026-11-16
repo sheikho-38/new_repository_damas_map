@@ -146,23 +146,30 @@ def _transfers(candidates, routes):
     return chosen
 
 
+def _walking_result(direct):
+    direct_leg = _walk_leg(direct)
+    return {'recommended_mode': 'walk', 'summary': 'المشي هو الخيار الأنسب لهذه الرحلة',
+            'distance_m': direct['distance_m'], 'duration_s': direct['duration_s'],
+            'walking_distance_m': direct['distance_m'],
+            'walking_duration_s': direct['duration_s'], 'cost': 0,
+            'steps': [{'instruction': 'امشِ إلى الوجهة', 'icon': 'walk',
+                       'duration_mins': round(direct['duration_s'] / 60)}],
+            'legs': [direct_leg], 'route_geojson': direct_leg['geojson']}
+
+
 def calculate_database_transit_route(start, end):
     """Find a timed journey across proposed boarding points and real walk legs."""
     if start == end:
         raise DatabaseRoutingError('empty_route', 'نقطتا البداية والنهاية متطابقتان')
     direct = _walk(start, end)
-    if direct and direct['distance_m'] <= 100:
-        direct_leg = _walk_leg(direct)
-        return {'recommended_mode': 'walk', 'summary': 'المشي هو الخيار الأنسب لهذه الرحلة',
-                'distance_m': direct['distance_m'], 'duration_s': direct['duration_s'],
-                'walking_distance_m': direct['distance_m'],
-                'walking_duration_s': direct['duration_s'], 'cost': 0,
-                'steps': [{'instruction': 'امشِ إلى الوجهة', 'icon': 'walk',
-                           'duration_mins': round(direct['duration_s'] / 60)}],
-                'legs': [direct_leg], 'route_geojson': direct_leg['geojson']}
+    if direct and (direct['distance_m'] <= 100 or
+                   direct['duration_s'] <= settings.TRANSIT_TRANSFER_PENALTY_SECONDS):
+        return _walking_result(direct)
     routes = _routes()
     candidates = _boarding_candidates(routes)
     if not candidates:
+        if direct:
+            return _walking_result(direct)
         raise DatabaseRoutingError('no_route', 'لا يتوفر مسار مواصلات مناسب بين النقطتين')
 
     # Nodes are proposed boarding sites; ride arcs follow the stored line order.
@@ -200,23 +207,16 @@ def calculate_database_transit_route(start, end):
         if _distance(candidates[key], end) < 1:
             arc(key, target, 0, 'noop', None)
             continue
-        walk = _walk(candidates[key], end)
-        if (walk and walk['start_snap_m'] <= settings.TRANSIT_MAX_BOARDING_SNAP_METRES
-                and walk['end_snap_m'] <= settings.TRANSIT_MAX_USER_SNAP_METRES
-                and walk['distance_m'] <= settings.TRANSIT_MAX_ACCESS_WALK_METRES):
-            arc(key, target, walk['duration_s'], 'walk', walk)
+        arc(key, target, 0, 'pending_walk',
+            (candidates[key], end, settings.TRANSIT_MAX_BOARDING_SNAP_METRES,
+             settings.TRANSIT_MAX_USER_SNAP_METRES, settings.TRANSIT_MAX_ACCESS_WALK_METRES))
     for a, b in _transfers(candidates, routes):
-        walk = _walk(candidates[a], candidates[b])
-        if (walk and walk['start_snap_m'] <= settings.TRANSIT_MAX_BOARDING_SNAP_METRES
-                and walk['end_snap_m'] <= settings.TRANSIT_MAX_BOARDING_SNAP_METRES
-                and walk['distance_m'] <= settings.TRANSIT_MAX_TRANSFER_WALK_METRES):
-            arc(a, b, walk['duration_s'], 'walk', walk)
-        # Walking permissions and geometry can differ by direction.
-        reverse = _walk(candidates[b], candidates[a])
-        if (reverse and reverse['start_snap_m'] <= settings.TRANSIT_MAX_BOARDING_SNAP_METRES
-                and reverse['end_snap_m'] <= settings.TRANSIT_MAX_BOARDING_SNAP_METRES
-                and reverse['distance_m'] <= settings.TRANSIT_MAX_TRANSFER_WALK_METRES):
-            arc(b, a, reverse['duration_s'], 'walk', reverse)
+        for origin, destination in ((a, b), (b, a)):
+            arc(origin, destination, 0, 'pending_walk',
+                (candidates[origin], candidates[destination],
+                 settings.TRANSIT_MAX_BOARDING_SNAP_METRES,
+                 settings.TRANSIT_MAX_BOARDING_SNAP_METRES,
+                 settings.TRANSIT_MAX_TRANSFER_WALK_METRES))
 
     first_state = (source, False, False)
     distances, previous, queue = {first_state: 0}, {}, [(0, 0, first_state)]
@@ -226,12 +226,27 @@ def calculate_database_transit_route(start, end):
         cost, _, state = heapq.heappop(queue)
         if cost != distances[state]:
             continue
+        # All arc costs are nonnegative: no continuation can beat direct walking.
+        if direct and cost >= direct['duration_s']:
+            break
         node, just_rode, has_bus = state
         if node == target:
             if has_bus:
                 finish = state
                 break
             continue
+        # Resolve walking only at reached nodes, once even if multiple states visit them.
+        resolved = []
+        for next_node, weight, kind, data in graph.get(node, []):
+            if kind == 'pending_walk':
+                origin, destination, start_snap, end_snap, max_metres = data
+                data = _walk(origin, destination)
+                if (not data or data['start_snap_m'] > start_snap
+                        or data['end_snap_m'] > end_snap or data['distance_m'] > max_metres):
+                    continue
+                weight, kind = data['duration_s'], 'walk'
+            resolved.append((next_node, weight, kind, data))
+        graph[node] = resolved
         for next_node, weight, kind, data in graph.get(node, []):
             if just_rode and kind == 'bus':
                 continue
@@ -242,6 +257,9 @@ def calculate_database_transit_route(start, end):
                 previous[next_state] = (state, kind, data)
                 counter += 1
                 heapq.heappush(queue, (new_cost, counter, next_state))
+    # Compare with the complete journey cost, including every boarding buffer.
+    if direct and (finish is None or direct['duration_s'] <= distances[finish]):
+        return _walking_result(direct)
     if finish is None:
         raise DatabaseRoutingError('no_route', 'لا يتوفر مسار مواصلات مناسب بين النقطتين')
     path, state = [], finish
