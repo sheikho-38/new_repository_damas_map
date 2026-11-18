@@ -13,10 +13,7 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.SeparateDatabaseAndState(
-            # لا ننفذ أي تغيير فعلي على جداول قاعدة البيانات.
             database_operations=[],
-
-            # ننقل ملكية الموديلات في Django migration state فقط.
             state_operations=[
                 migrations.CreateModel(
                     name="Bus",
@@ -76,7 +73,6 @@ class Migration(migrations.Migration):
                         ],
                     },
                 ),
-
                 migrations.CreateModel(
                     name="BusRoute",
                     fields=[
@@ -175,11 +171,6 @@ class Migration(migrations.Migration):
                         ],
                     },
                 ),
-
-                # إزالة الموديلات القديمة من تطبيق places
-                # دون حذف جداولها من قاعدة البيانات.
-                migrations.DeleteModel(name="BusRoute"),
-                migrations.DeleteModel(name="Bus"),
             ],
         ),
     ]
